@@ -1,0 +1,84 @@
+### PART A: Database Page
+
+Ensure Database page includes tavern at top of left window.
+
+UPDATE lib/green_man_tavern_web/live/database_live.ex:
+
+Add these functions to mount and assign left window content with tavern plus database navigation.
+
+(Start of code)
+```
+def mount(_params, _session, socket) do
+  socket =
+    socket
+    |> assign(:right_window_title, "Database")
+    |> assign(:left_window_title, "Tavern - Database")
+    |> assign_left_window_content()
+  
+  {:ok, socket}
+end
+
+defp assign_left_window_content(socket) do
+  content = ~H"""
+  <div class="tavern-scene">
+    <img src="/images/the_tavern.png" alt="Green Man Tavern" class="tavern-image" />
+  </div>
+  
+  <div class="database-nav">
+    <h2 class="nav-title">Categories</h2>
+    <nav class="category-nav">
+      <button class="category-nav-item active">Profile</button>
+      <button class="category-nav-item">Systems</button>
+      <button class="category-nav-item">Climate</button>
+      <button class="category-nav-item">Notes</button>
+    </nav>
+  </div>
+  """
+  
+  assign(socket, :left_window_content, content)
+end
+```
+
+(End of code)
+
+ADD CSS for database navigation in assets/css/app.css.
+
+---
+
+### PART B: Garden Page
+
+UPDATE lib/green_man_tavern_web/live/garden_live.ex:
+
+(Start of code)
+```
+def mount(_params, _session, socket) do
+  socket =
+    socket
+    |> assign(:right_window_title, "Garden")
+    |> assign(:left_window_title, "Tavern - Garden")
+    |> assign_left_window_content()
+  
+  {:ok, socket}
+end
+
+defp assign_left_window_content(socket) do
+  content = ~H"""
+  <div class="tavern-scene">
+    <img src="/images/the_tavern.png" alt="Green Man Tavern" class="tavern-image" />
+  </div>
+  
+  <div class="plant-library">
+    <h2 class="library-title">Plant Library</h2>
+    <p class="library-subtitle">Browse available plants</p>
+  </div>
+  """
+  
+  assign(socket, :left_window_content, content)
+end
+```
+
+(End of code)
+
+TESTING: Navigate to database and garden, verify tavern appears at top of left window and scrolls with content.
+
+Follow HyperCard aesthetic.

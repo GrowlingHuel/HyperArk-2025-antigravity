@@ -1,0 +1,4 @@
+ id | user_id | character_id | session_id | session_summary | message_preview | inserted_at 
+----+---------+--------------+------------+-----------------+-----------------+-------------
+(0 rows)
+

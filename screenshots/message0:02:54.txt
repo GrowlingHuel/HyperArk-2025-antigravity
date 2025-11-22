@@ -1,0 +1,85 @@
+[info] Starting PDF extraction
+[debug] Attempting library-based extraction
+[debug] PDF library extraction error
+[warning] Library extraction failed, trying pdftotext fallback
+[debug] Attempting pdftotext extraction
+[debug] Performing MindsDB health check
+[info] mindsdb.request get_status
+[info] PDF extraction successful
+[info] mindsdb.request query_sql
+[error] Failed to process wildernessguidetodutchovencooking.pdf: #Ecto.Changeset<action: :insert, changes: %{metadata: %{file_size: 6690906, page_count: 1, processed_at: ~U[2025-10-25 12:59:12Z], text_length: 125611, extracted_at: ~U[2025-10-25 12:59:12Z], extraction_method: :pdftotext, original_size_bytes: 6690906}, title: "Wildernessguidetodutchovencooking", processed_at: ~U[2025-10-25 12:59:12Z], file_path: "/home/jesse/Desktop/GreenMan_files/permaculture_PDFs/wildernessguidetodutchovencooking.pdf", source_file: "wildernessguidetodutchovencooking.pdf"}, errors: [metadata: {"missing required fields: category", []}], data: #GreenManTavern.Documents.Document<>, valid?: false, ...>
+[debug] Processing PDF: wildgamecookbook.pdf
+[debug] QUERY OK source="documents" db=0.7ms idle=1073.6ms
+SELECT TRUE FROM "documents" AS d0 WHERE ((d0."source_file" = $1) AND NOT (d0."processed_at" IS NULL)) LIMIT 1 ["wildgamecookbook.pdf"]
+↳ GreenManTavern.Documents.process_single_pdf/4, at: lib/green_man_tavern/documents.ex:537
+[info] Starting PDF extraction
+[debug] Attempting library-based extraction
+[debug] MindsDB health check passed
+[debug] PDF library extraction error
+[warning] Library extraction failed, trying pdftotext fallback
+[debug] Attempting pdftotext extraction
+[info] PDF extraction successful
+[error] Failed to process wildgamecookbook.pdf: #Ecto.Changeset<action: :insert, changes: %{metadata: %{file_size: 27994096, page_count: 1, processed_at: ~U[2025-10-25 12:59:14Z], text_length: 47981, extracted_at: ~U[2025-10-25 12:59:14Z], extraction_method: :pdftotext, original_size_bytes: 27994096}, title: "Wildgamecookbook", processed_at: ~U[2025-10-25 12:59:14Z], file_path: "/home/jesse/Desktop/GreenMan_files/permaculture_PDFs/wildgamecookbook.pdf", source_file: "wildgamecookbook.pdf"}, errors: [metadata: {"missing required fields: category", []}], data: #GreenManTavern.Documents.Document<>, valid?: false, ...>
+[info] Processing file 45/45: zerowaste.pdf
+[debug] Processing PDF: zerowaste.pdf
+[debug] QUERY OK source="documents" db=0.2ms idle=1313.5ms
+SELECT TRUE FROM "documents" AS d0 WHERE ((d0."source_file" = $1) AND NOT (d0."processed_at" IS NULL)) LIMIT 1 ["zerowaste.pdf"]
+↳ GreenManTavern.Documents.process_single_pdf/4, at: lib/green_man_tavern/documents.ex:537
+[info] Starting PDF extraction
+[debug] Attempting library-based extraction
+[debug] PDF library extraction error
+[warning] Library extraction failed, trying pdftotext fallback
+[debug] Attempting pdftotext extraction
+[info] PDF extraction successful
+[error] Failed to process zerowaste.pdf: #Ecto.Changeset<action: :insert, changes: %{metadata: %{file_size: 9023214, page_count: 1, processed_at: ~U[2025-10-25 12:59:15Z], text_length: 166173, extracted_at: ~U[2025-10-25 12:59:15Z], extraction_method: :pdftotext, original_size_bytes: 9023214}, title: "Zerowaste", processed_at: ~U[2025-10-25 12:59:15Z], file_path: "/home/jesse/Desktop/GreenMan_files/permaculture_PDFs/zerowaste.pdf", source_file: "zerowaste.pdf"}, errors: [metadata: {"missing required fields: category", []}], data: #GreenManTavern.Documents.Document<>, valid?: false, ...>
+✅ Processing Complete!
+
+📊 Summary:
+├─ Total Files: 45
+├─ Processed: 0
+├─ Skipped: 0
+├─ Failed: 45
+├─ Total Chunks: 0
+└─ Duration: 63 seconds
+
+
+[info] Processing complete: 0 processed, 45 failed
+❌ Failed Files:
+** (Protocol.UndefinedError) protocol String.Chars not implemented for type Ecto.Changeset (a struct). This protocol is implemented for the following type(s): Atom, BitString, Date, DateTime, Decimal, Float, Integer, List, MyXQL.Queries, MyXQL.Query, MyXQL.TextQueries, MyXQL.TextQuery, NaiveDateTime, Phoenix.LiveComponent.CID, Postgrex.Copy, Postgrex.Query, Time, URI, Version, Version.Requirement
+
+Got value:
+
+    #Ecto.Changeset<
+      action: :insert,
+      changes: %{
+        metadata: %{
+          file_size: 21045813,
+          page_count: 1,
+          processed_at: ~U[2025-10-25 12:58:15Z],
+          text_length: 187710,
+          extracted_at: ~U[2025-10-25 12:58:15Z],
+          extraction_method: :pdftotext,
+          original_size_bytes: 21045813
+        },
+        title: "1001gardeningtipsandtricks",
+        processed_at: ~U[2025-10-25 12:58:15Z],
+        file_path: "/home/jesse/Desktop/GreenMan_files/permaculture_PDFs/1001gardeningtipsandtricks.pdf",
+        source_file: "1001gardeningtipsandtricks.pdf"
+      },
+      errors: [metadata: {"missing required fields: category", []}],
+      data: #GreenManTavern.Documents.Document<>,
+      valid?: false,
+      ...
+    >
+
+    (elixir 1.18.2) lib/string/chars.ex:3: String.Chars.impl_for!/1
+    (elixir 1.18.2) lib/string/chars.ex:22: String.Chars.to_string/1
+    (green_man_tavern 0.1.0) lib/mix/tasks/documents.process_pdfs.ex:157: anonymous fn/1 in Mix.Tasks.Documents.ProcessPdfs.display_success_summary/1
+    (elixir 1.18.2) lib/enum.ex:987: Enum."-each/2-lists^foreach/1-0-"/2
+    (green_man_tavern 0.1.0) lib/mix/tasks/documents.process_pdfs.ex:156: Mix.Tasks.Documents.ProcessPdfs.display_success_summary/1
+    (mix 1.18.2) lib/mix/task.ex:495: anonymous fn/3 in Mix.Task.run_task/5
+    (mix 1.18.2) lib/mix/cli.ex:107: Mix.CLI.run_task/2
+    /home/jesse/.asdf/installs/elixir/1.18.2-otp-26/bin/mix:2: (file)
+    (elixir 1.18.2) lib/code.ex:1525: Code.require_file/2
+jesse@jesse-Alpha-V-V170PNH:~/Projects/HyperArk-2025$ 
+

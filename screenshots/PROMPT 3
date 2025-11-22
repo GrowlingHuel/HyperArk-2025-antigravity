@@ -1,0 +1,139 @@
+Add CSS styles for the Living Web legend and controls.
+
+Add these to assets/css/app.css or living-web-specific CSS file:
+
+(Start of CSS)
+```
+.living-web-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 2px solid #CCC;
+  background: #FAFAFA;
+  margin-bottom: 16px;
+}
+
+.legend {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 1px solid #CCC;
+  background: #FFF;
+  border-radius: 4px;
+}
+
+.legend-line {
+  width: 20px;
+  height: 3px;
+  flex-shrink: 0;
+}
+
+.legend-active {
+  background: #22c55e;
+}
+
+.legend-potential {
+  background: #f97316;
+  background-image: repeating-linear-gradient(
+    90deg,
+    #f97316,
+    #f97316 4px,
+    transparent 4px,
+    transparent 8px
+  );
+}
+
+.legend-badge {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #8b5cf6;
+  color: #FFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Monaco, monospace;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.legend-label {
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  color: #333;
+  white-space: nowrap;
+}
+
+.control-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  color: #000;
+}
+
+.control-checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.node-details-panel {
+  margin-top: 24px;
+  padding: 16px;
+  border: 2px solid #000;
+  background: #FAFAFA;
+}
+
+.details-title {
+  font-family: Monaco, monospace;
+  font-size: 16px;
+  font-weight: bold;
+  color: #000;
+  margin: 0 0 16px 0;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #CCC;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-label {
+  font-family: Monaco, monospace;
+  font-size: 10px;
+  font-weight: bold;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.detail-value {
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  color: #000;
+}
+```
+
+(End of CSS)
+
+VERIFICATION: Legend displays horizontally, checkbox styled, details panel has proper borders.
+
+Follow HyperCard aesthetic.

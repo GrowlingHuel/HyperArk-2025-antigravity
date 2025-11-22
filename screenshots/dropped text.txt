@@ -1,0 +1,32 @@
+
+  end
+"
+This will tell us exactly which part is failing! 🎯
+
+jesse@jesse-Alpha-V-V170PNH:~/Projects/HyperArk-2025$ mix run -e "
+  Application.ensure_all_started(:green_man_tavern)
+  
+  IO.puts(\"Testing HTTP client...\")
+  case GreenManTavern.MindsDB.HTTPClient.get_status() do
+    {:ok, status} -> IO.puts(\"✅ HTTP client working: #{status[:mindsdb_version]}\")
+    {:error, reason} -> IO.puts(\"❌ HTTP client failed: #{inspect(reason)}\")
+  end
+  
+  IO.puts(\"Testing SQL client...\")
+  case GreenManTavern.MindsDB.SQLClient.query(\"SELECT 'OK' as status\") do
+    {:ok, result} -> IO.puts(\"✅ SQL client working\")
+    {:error, reason} -> IO.puts(\"❌ SQL client failed: #{inspect(reason)}\")
+  end
+"
+    warning: unused import Phoenix.LiveView
+    │
+ 11 │   import Phoenix.LiveView, only: [push_navigate: 2]
+    │   ~
+    │
+    └─ lib/green_man_tavern_web/controllers/user_auth.ex:11:3
+
+    warning: unused import Phoenix.Token
+    │
+ 12 │   import Phoenix.Token
+    │   ~
+    │

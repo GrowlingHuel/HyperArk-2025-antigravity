@@ -1,0 +1,32 @@
+code,name,category,description,temperature_pattern,precipitation_pattern
+Af,Tropical Rainforest,Tropical,Hot and wet year-round with no dry season,All months >18°C,All months >60mm precipitation
+Am,Tropical Monsoon,Tropical,Hot with short dry season compensated by heavy monsoon rains,All months >18°C,Short dry season but annual rainfall very high
+Aw,Tropical Savanna,Tropical,Hot with distinct wet and dry seasons,All months >18°C,Winter dry season
+As,Tropical Savanna (summer dry),Tropical,Hot with summer dry season (rare),All months >18°C,Summer dry season
+BWh,Hot Desert,Arid,Very hot and extremely dry year-round,Mean annual temp >18°C,Precipitation <250mm/year
+BWk,Cold Desert,Arid,Cold winters and extremely dry,Mean annual temp <18°C,Precipitation <250mm/year
+BSh,Hot Semi-Arid,Arid,Hot and semi-dry steppe climate,Mean annual temp >18°C,Precipitation 250-500mm/year
+BSk,Cold Semi-Arid,Arid,Cold winters and semi-dry,Mean annual temp <18°C,Precipitation 250-500mm/year
+Csa,Mediterranean Hot Summer,Temperate,Hot dry summers and mild wet winters,Hottest month >22°C,Summer drought
+Csb,Mediterranean Warm Summer,Temperate,Warm dry summers and mild wet winters,Hottest month <22°C,Summer drought
+Csc,Mediterranean Cool Summer,Temperate,Cool dry summers and mild wet winters,<4 months >10°C,Summer drought
+Cwa,Humid Subtropical (dry winter),Temperate,Hot humid summers with dry winters,Hottest month >22°C,Winter dry season
+Cwb,Subtropical Highland (dry winter),Temperate,Mild summers with dry winters,Hottest month <22°C,Winter dry season
+Cwc,Subtropical Highland (cool),Temperate,Cool summers with dry winters,<4 months >10°C,Winter dry season
+Cfa,Humid Subtropical,Temperate,Hot humid summers with year-round rain,Hottest month >22°C,No dry season
+Cfb,Oceanic,Temperate,Mild year-round with consistent rainfall,Hottest month <22°C,No dry season
+Cfc,Subpolar Oceanic,Temperate,Cool summers with consistent rainfall,<4 months >10°C,No dry season
+Dsa,Mediterranean Continental Hot Summer,Continental,Hot dry summers and cold snowy winters,Hottest month >22°C,Summer drought and cold winter
+Dsb,Mediterranean Continental Warm Summer,Continental,Warm dry summers and cold snowy winters,Hottest month <22°C,Summer drought and cold winter
+Dsc,Subarctic (dry summer),Continental,Cool dry summers and very cold winters,<4 months >10°C,Summer drought
+Dsd,Subarctic (very cold dry summer),Continental,Short cool summers and extremely cold winters,Coldest month <-38°C,Summer drought
+Dwa,Humid Continental Hot Summer (dry winter),Continental,Hot summers and cold dry winters,Hottest month >22°C,Winter dry season
+Dwb,Humid Continental Warm Summer (dry winter),Continental,Warm summers and cold dry winters,Hottest month <22°C,Winter dry season
+Dwc,Subarctic (dry winter),Continental,Cool summers and very cold dry winters,<4 months >10°C,Winter dry season
+Dwd,Subarctic (very cold dry winter),Continental,Short cool summers and extremely cold dry winters,Coldest month <-38°C,Winter dry season
+Dfa,Humid Continental Hot Summer,Continental,Hot humid summers and cold snowy winters,Hottest month >22°C,No dry season
+Dfb,Humid Continental Warm Summer,Continental,Warm humid summers and cold snowy winters,Hottest month <22°C,No dry season
+Dfc,Subarctic,Continental,Short cool summers and very cold snowy winters,<4 months >10°C,No dry season
+Dfd,Subarctic (extremely cold),Continental,Short cool summers and extremely cold winters,Coldest month <-38°C,No dry season
+ET,Tundra,Polar,Short cool summers and long freezing winters,Warmest month 0-10°C,Low precipitation mostly as snow
+EF,Ice Cap,Polar,Permanent ice and snow,All months <0°C,Very low precipitation all as snow

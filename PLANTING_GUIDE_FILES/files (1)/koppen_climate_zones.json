@@ -1,0 +1,250 @@
+[
+  {
+    "code": "Af",
+    "name": "Tropical Rainforest",
+    "category": "Tropical",
+    "description": "Hot and wet year-round with no dry season",
+    "temperature_pattern": "All months >18\u00b0C",
+    "precipitation_pattern": "All months >60mm precipitation"
+  },
+  {
+    "code": "Am",
+    "name": "Tropical Monsoon",
+    "category": "Tropical",
+    "description": "Hot with short dry season compensated by heavy monsoon rains",
+    "temperature_pattern": "All months >18\u00b0C",
+    "precipitation_pattern": "Short dry season but annual rainfall very high"
+  },
+  {
+    "code": "Aw",
+    "name": "Tropical Savanna",
+    "category": "Tropical",
+    "description": "Hot with distinct wet and dry seasons",
+    "temperature_pattern": "All months >18\u00b0C",
+    "precipitation_pattern": "Winter dry season"
+  },
+  {
+    "code": "As",
+    "name": "Tropical Savanna (summer dry)",
+    "category": "Tropical",
+    "description": "Hot with summer dry season (rare)",
+    "temperature_pattern": "All months >18\u00b0C",
+    "precipitation_pattern": "Summer dry season"
+  },
+  {
+    "code": "BWh",
+    "name": "Hot Desert",
+    "category": "Arid",
+    "description": "Very hot and extremely dry year-round",
+    "temperature_pattern": "Mean annual temp >18\u00b0C",
+    "precipitation_pattern": "Precipitation <250mm/year"
+  },
+  {
+    "code": "BWk",
+    "name": "Cold Desert",
+    "category": "Arid",
+    "description": "Cold winters and extremely dry",
+    "temperature_pattern": "Mean annual temp <18\u00b0C",
+    "precipitation_pattern": "Precipitation <250mm/year"
+  },
+  {
+    "code": "BSh",
+    "name": "Hot Semi-Arid",
+    "category": "Arid",
+    "description": "Hot and semi-dry steppe climate",
+    "temperature_pattern": "Mean annual temp >18\u00b0C",
+    "precipitation_pattern": "Precipitation 250-500mm/year"
+  },
+  {
+    "code": "BSk",
+    "name": "Cold Semi-Arid",
+    "category": "Arid",
+    "description": "Cold winters and semi-dry",
+    "temperature_pattern": "Mean annual temp <18\u00b0C",
+    "precipitation_pattern": "Precipitation 250-500mm/year"
+  },
+  {
+    "code": "Csa",
+    "name": "Mediterranean Hot Summer",
+    "category": "Temperate",
+    "description": "Hot dry summers and mild wet winters",
+    "temperature_pattern": "Hottest month >22\u00b0C",
+    "precipitation_pattern": "Summer drought"
+  },
+  {
+    "code": "Csb",
+    "name": "Mediterranean Warm Summer",
+    "category": "Temperate",
+    "description": "Warm dry summers and mild wet winters",
+    "temperature_pattern": "Hottest month <22\u00b0C",
+    "precipitation_pattern": "Summer drought"
+  },
+  {
+    "code": "Csc",
+    "name": "Mediterranean Cool Summer",
+    "category": "Temperate",
+    "description": "Cool dry summers and mild wet winters",
+    "temperature_pattern": "<4 months >10\u00b0C",
+    "precipitation_pattern": "Summer drought"
+  },
+  {
+    "code": "Cwa",
+    "name": "Humid Subtropical (dry winter)",
+    "category": "Temperate",
+    "description": "Hot humid summers with dry winters",
+    "temperature_pattern": "Hottest month >22\u00b0C",
+    "precipitation_pattern": "Winter dry season"
+  },
+  {
+    "code": "Cwb",
+    "name": "Subtropical Highland (dry winter)",
+    "category": "Temperate",
+    "description": "Mild summers with dry winters",
+    "temperature_pattern": "Hottest month <22\u00b0C",
+    "precipitation_pattern": "Winter dry season"
+  },
+  {
+    "code": "Cwc",
+    "name": "Subtropical Highland (cool)",
+    "category": "Temperate",
+    "description": "Cool summers with dry winters",
+    "temperature_pattern": "<4 months >10\u00b0C",
+    "precipitation_pattern": "Winter dry season"
+  },
+  {
+    "code": "Cfa",
+    "name": "Humid Subtropical",
+    "category": "Temperate",
+    "description": "Hot humid summers with year-round rain",
+    "temperature_pattern": "Hottest month >22\u00b0C",
+    "precipitation_pattern": "No dry season"
+  },
+  {
+    "code": "Cfb",
+    "name": "Oceanic",
+    "category": "Temperate",
+    "description": "Mild year-round with consistent rainfall",
+    "temperature_pattern": "Hottest month <22\u00b0C",
+    "precipitation_pattern": "No dry season"
+  },
+  {
+    "code": "Cfc",
+    "name": "Subpolar Oceanic",
+    "category": "Temperate",
+    "description": "Cool summers with consistent rainfall",
+    "temperature_pattern": "<4 months >10\u00b0C",
+    "precipitation_pattern": "No dry season"
+  },
+  {
+    "code": "Dsa",
+    "name": "Mediterranean Continental Hot Summer",
+    "category": "Continental",
+    "description": "Hot dry summers and cold snowy winters",
+    "temperature_pattern": "Hottest month >22\u00b0C",
+    "precipitation_pattern": "Summer drought and cold winter"
+  },
+  {
+    "code": "Dsb",
+    "name": "Mediterranean Continental Warm Summer",
+    "category": "Continental",
+    "description": "Warm dry summers and cold snowy winters",
+    "temperature_pattern": "Hottest month <22\u00b0C",
+    "precipitation_pattern": "Summer drought and cold winter"
+  },
+  {
+    "code": "Dsc",
+    "name": "Subarctic (dry summer)",
+    "category": "Continental",
+    "description": "Cool dry summers and very cold winters",
+    "temperature_pattern": "<4 months >10\u00b0C",
+    "precipitation_pattern": "Summer drought"
+  },
+  {
+    "code": "Dsd",
+    "name": "Subarctic (very cold dry summer)",
+    "category": "Continental",
+    "description": "Short cool summers and extremely cold winters",
+    "temperature_pattern": "Coldest month <-38\u00b0C",
+    "precipitation_pattern": "Summer drought"
+  },
+  {
+    "code": "Dwa",
+    "name": "Humid Continental Hot Summer (dry winter)",
+    "category": "Continental",
+    "description": "Hot summers and cold dry winters",
+    "temperature_pattern": "Hottest month >22\u00b0C",
+    "precipitation_pattern": "Winter dry season"
+  },
+  {
+    "code": "Dwb",
+    "name": "Humid Continental Warm Summer (dry winter)",
+    "category": "Continental",
+    "description": "Warm summers and cold dry winters",
+    "temperature_pattern": "Hottest month <22\u00b0C",
+    "precipitation_pattern": "Winter dry season"
+  },
+  {
+    "code": "Dwc",
+    "name": "Subarctic (dry winter)",
+    "category": "Continental",
+    "description": "Cool summers and very cold dry winters",
+    "temperature_pattern": "<4 months >10\u00b0C",
+    "precipitation_pattern": "Winter dry season"
+  },
+  {
+    "code": "Dwd",
+    "name": "Subarctic (very cold dry winter)",
+    "category": "Continental",
+    "description": "Short cool summers and extremely cold dry winters",
+    "temperature_pattern": "Coldest month <-38\u00b0C",
+    "precipitation_pattern": "Winter dry season"
+  },
+  {
+    "code": "Dfa",
+    "name": "Humid Continental Hot Summer",
+    "category": "Continental",
+    "description": "Hot humid summers and cold snowy winters",
+    "temperature_pattern": "Hottest month >22\u00b0C",
+    "precipitation_pattern": "No dry season"
+  },
+  {
+    "code": "Dfb",
+    "name": "Humid Continental Warm Summer",
+    "category": "Continental",
+    "description": "Warm humid summers and cold snowy winters",
+    "temperature_pattern": "Hottest month <22\u00b0C",
+    "precipitation_pattern": "No dry season"
+  },
+  {
+    "code": "Dfc",
+    "name": "Subarctic",
+    "category": "Continental",
+    "description": "Short cool summers and very cold snowy winters",
+    "temperature_pattern": "<4 months >10\u00b0C",
+    "precipitation_pattern": "No dry season"
+  },
+  {
+    "code": "Dfd",
+    "name": "Subarctic (extremely cold)",
+    "category": "Continental",
+    "description": "Short cool summers and extremely cold winters",
+    "temperature_pattern": "Coldest month <-38\u00b0C",
+    "precipitation_pattern": "No dry season"
+  },
+  {
+    "code": "ET",
+    "name": "Tundra",
+    "category": "Polar",
+    "description": "Short cool summers and long freezing winters",
+    "temperature_pattern": "Warmest month 0-10\u00b0C",
+    "precipitation_pattern": "Low precipitation mostly as snow"
+  },
+  {
+    "code": "EF",
+    "name": "Ice Cap",
+    "category": "Polar",
+    "description": "Permanent ice and snow",
+    "temperature_pattern": "All months <0\u00b0C",
+    "precipitation_pattern": "Very low precipitation all as snow"
+  }
+]

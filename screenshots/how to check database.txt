@@ -1,0 +1,5 @@
+# If you're in development, this usually works:
+psql -d green_man_tavern_dev
+
+# Or if you need to specify user:
+psql -U jesse -d green_man_tavern_dev

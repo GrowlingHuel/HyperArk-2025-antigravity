@@ -1,0 +1,121 @@
+city_id,city_name,country,last_frost_date,first_frost_date,growing_season_days,data_source,confidence_level,notes
+1,Canberra,Australia,October 5,April 15,173,Quality Plants & Seedlings AU,high,ACT capital with significant frost risk
+2,Sydney,Australia,No frost,No frost,365,Quality Plants & Seedlings AU,high,Coastal city rarely experiences frost
+3,Melbourne,Australia,September 20,May 20,245,Quality Plants & Seedlings AU (outer suburbs),medium,CBD rarely frosts; outer suburbs mid-May to mid-Sept
+4,Brisbane,Australia,No frost,No frost,365,Quality Plants & Seedlings AU,high,Subtropical climate
+5,Perth,Australia,No frost,No frost,365,Quality Plants & Seedlings AU,high,Mediterranean coastal climate
+6,Adelaide,Australia,No frost,No frost,365,Quality Plants & Seedlings AU,high,Coastal Mediterranean climate
+7,Hobart,Australia,September 25,May 5,227,Quality Plants & Seedlings AU,high,Cool temperate with regular frost
+8,Darwin,Australia,No frost,No frost,365,Quality Plants & Seedlings AU,high,Tropical savanna climate
+9,Orange,Australia,September 25,April 25,213,Quality Plants & Seedlings AU,high,Inland NSW highland town
+10,Bathurst,Australia,September 25,April 25,213,Quality Plants & Seedlings AU,high,Inland NSW highland town
+11,Armidale,Australia,October 25,April 15,192,Quality Plants & Seedlings AU,high,High elevation NSW town
+12,Ballarat,Australia,September 25,April 25,213,Quality Plants & Seedlings AU,high,Inland Victorian highland city
+13,Bendigo,Australia,September 25,April 25,213,Quality Plants & Seedlings AU,high,Inland Victorian city
+14,Shepparton,Australia,September 15,May 5,223,Quality Plants & Seedlings AU,high,Inland Victorian city
+15,Wangaratta,Australia,September 25,April 25,213,Quality Plants & Seedlings AU,high,Inland Victorian city
+16,Toowoomba,Australia,October 5,April 25,223,Quality Plants & Seedlings AU,high,Queensland highland city
+17,Stanthorpe,Australia,September 25,April 25,213,Quality Plants & Seedlings AU,high,Queensland Granite Belt
+18,Warwick,Australia,October 5,April 25,223,Quality Plants & Seedlings AU,high,Queensland Darling Downs
+19,Kingaroy,Australia,September 15,May 5,223,Quality Plants & Seedlings AU,high,Queensland South Burnett
+20,Mount Gambier,Australia,September 25,April 25,213,Quality Plants & Seedlings AU,high,Inland SA volcanic region
+21,Clare,Australia,September 15,April 25,233,Quality Plants & Seedlings AU,high,SA wine region
+22,Murray Bridge,Australia,September 5,May 5,245,Quality Plants & Seedlings AU,high,SA Riverland
+23,Barossa Valley,Australia,September 25,May 5,227,Quality Plants & Seedlings AU,high,SA wine region
+24,Kalgoorlie,Australia,September 15,April 25,233,Quality Plants & Seedlings AU,high,WA goldfields arid region
+25,Manjimup,Australia,September 25,April 25,213,Quality Plants & Seedlings AU,high,WA southwest forest region
+26,Launceston,Australia,September 25,April 25,213,Quality Plants & Seedlings AU,high,Tasmania inland city
+27,Devonport,Australia,September 25,May 5,227,Quality Plants & Seedlings AU,high,Tasmania north coast
+28,Burnie,Australia,September 25,May 5,227,Quality Plants & Seedlings AU,high,Tasmania north coast
+29,Queenstown,Australia,September 25,May 5,227,Quality Plants & Seedlings AU,high,Tasmania west coast mining town
+30,Alice Springs,Australia,September 25,April 25,213,Quality Plants & Seedlings AU,high,Central Australian desert
+31,Auckland,New Zealand,October 15,April 15,182,Climate data NZ,medium,Coastal city with mild frosts in inland suburbs
+32,Wellington,New Zealand,October 10,April 20,192,Climate data NZ,medium,Coastal capital with occasional frost
+33,Christchurch,New Zealand,October 20,April 10,172,Climate data NZ,medium,Canterbury Plains with regular winter frost
+34,Dunedin,New Zealand,October 15,April 15,182,Climate data NZ,medium,Otago with cool temperate climate
+35,Hamilton,New Zealand,October 10,April 20,192,Climate data NZ,medium,Waikato inland city
+36,Bangkok,Thailand,No frost,No frost,365,Regional climate guides,high,Tropical climate year-round
+37,Singapore,Singapore,No frost,No frost,365,Regional climate guides,high,Equatorial tropical climate
+38,Kuala Lumpur,Malaysia,No frost,No frost,365,Regional climate guides,high,Tropical rainforest climate
+39,Manila,Philippines,No frost,No frost,365,Regional climate guides,high,Tropical monsoon climate
+40,Jakarta,Indonesia,No frost,No frost,365,Regional climate guides,high,Tropical monsoon climate
+41,Hanoi,Vietnam,January 10,December 20,325,Regional climate guides,medium,Northern Vietnam with cool winter season
+42,Ho Chi Minh City,Vietnam,No frost,No frost,365,Regional climate guides,high,Southern Vietnam tropical climate
+43,Washington DC,United States,April 10,November 10,214,NOAA 1991-2020 normals,high,Mid-Atlantic humid subtropical
+44,Montgomery,United States,March 20,November 15,240,NOAA estimated,medium,Alabama humid subtropical
+45,Juneau,United States,May 15,September 15,123,NOAA estimated,medium,Alaska oceanic subarctic
+46,Phoenix,United States,February 1,December 15,317,NOAA estimated,medium,Arizona hot desert
+47,Little Rock,United States,March 25,November 10,230,NOAA estimated,medium,Arkansas humid subtropical
+48,Sacramento,United States,February 15,December 10,298,NOAA estimated,medium,California Mediterranean
+49,Los Angeles,United States,No frost,No frost,365,NOAA estimated,high,California Mediterranean coastal
+50,San Francisco,United States,No frost,No frost,365,NOAA estimated,high,California Mediterranean coastal
+51,Denver,United States,May 5,October 5,153,NOAA estimated,medium,Colorado semi-arid continental
+52,Hartford,United States,April 25,October 15,173,NOAA estimated,medium,Connecticut humid continental
+53,Dover,United States,April 15,November 1,200,NOAA estimated,medium,Delaware humid subtropical
+54,Tallahassee,United States,March 1,November 30,274,NOAA estimated,medium,Florida humid subtropical
+55,Miami,United States,No frost,No frost,365,NOAA estimated,high,Florida tropical
+56,Atlanta,United States,March 25,November 15,235,NOAA estimated,medium,Georgia humid subtropical
+57,Honolulu,United States,No frost,No frost,365,NOAA estimated,high,Hawaii tropical
+58,Boise,United States,May 10,October 10,153,NOAA estimated,medium,Idaho semi-arid continental
+59,Springfield,United States,April 20,October 20,183,NOAA estimated,medium,Illinois humid continental
+60,Chicago,United States,April 25,October 25,183,NOAA estimated,medium,Illinois humid continental
+61,Indianapolis,United States,April 20,October 20,183,NOAA estimated,medium,Indiana humid continental
+62,Des Moines,United States,April 25,October 15,173,NOAA estimated,medium,Iowa humid continental
+63,Topeka,United States,April 15,October 25,193,NOAA estimated,medium,Kansas humid continental
+64,Frankfort,United States,April 15,October 25,193,NOAA estimated,medium,Kentucky humid subtropical
+65,Baton Rouge,United States,March 1,November 30,274,NOAA estimated,medium,Louisiana humid subtropical
+66,Augusta,United States,May 10,September 25,138,NOAA estimated,medium,Maine humid continental
+67,Annapolis,United States,April 15,November 1,200,NOAA estimated,medium,Maryland humid subtropical
+68,Boston,United States,April 20,November 5,199,NOAA estimated,medium,Massachusetts humid continental
+69,Lansing,United States,May 5,October 10,158,NOAA estimated,medium,Michigan humid continental
+70,Saint Paul,United States,May 1,October 1,153,NOAA estimated,medium,Minnesota humid continental
+71,Jackson,United States,March 20,November 10,235,NOAA estimated,medium,Mississippi humid subtropical
+72,Jefferson City,United States,April 15,October 25,193,NOAA estimated,medium,Missouri humid continental
+73,Helena,United States,May 20,September 20,123,NOAA estimated,medium,Montana continental
+74,Lincoln,United States,April 25,October 15,173,NOAA estimated,medium,Nebraska humid continental
+75,Carson City,United States,May 15,September 25,133,NOAA estimated,medium,Nevada semi-arid
+76,Concord,United States,May 15,September 20,128,NOAA estimated,medium,New Hampshire humid continental
+77,Trenton,United States,April 15,November 5,204,NOAA estimated,medium,New Jersey humid subtropical
+78,Santa Fe,United States,May 10,October 10,153,NOAA estimated,medium,New Mexico semi-arid
+79,Albany,United States,May 1,October 10,162,NOAA estimated,medium,New York humid continental
+80,New York City,United States,April 15,November 10,209,NOAA estimated,medium,New York humid subtropical
+81,Raleigh,United States,April 10,November 5,209,NOAA estimated,medium,North Carolina humid subtropical
+82,Bismarck,United States,May 15,September 20,128,NOAA estimated,medium,North Dakota continental
+83,Columbus,United States,April 25,October 20,178,NOAA estimated,medium,Ohio humid continental
+84,Oklahoma City,United States,April 1,November 5,218,NOAA estimated,medium,Oklahoma humid subtropical
+85,Salem,United States,May 5,October 15,163,NOAA estimated,medium,Oregon Mediterranean
+86,Portland,United States,April 15,November 1,200,NOAA estimated,medium,Oregon Mediterranean
+87,Harrisburg,United States,April 20,October 25,188,NOAA estimated,medium,Pennsylvania humid continental
+88,Philadelphia,United States,April 10,November 10,214,NOAA estimated,medium,Pennsylvania humid subtropical
+89,Providence,United States,April 25,October 25,183,NOAA estimated,medium,Rhode Island humid continental
+90,Columbia,United States,March 25,November 15,235,NOAA estimated,medium,South Carolina humid subtropical
+91,Pierre,United States,May 10,September 25,138,NOAA estimated,medium,South Dakota continental
+92,Nashville,United States,April 5,November 1,210,NOAA estimated,medium,Tennessee humid subtropical
+93,Austin,United States,February 15,December 1,289,NOAA estimated,medium,Texas humid subtropical
+94,Houston,United States,February 1,December 15,317,NOAA estimated,medium,Texas humid subtropical
+95,Dallas,United States,March 20,November 20,245,NOAA estimated,medium,Texas humid subtropical
+96,Salt Lake City,United States,April 25,October 20,178,NOAA estimated,medium,Utah semi-arid continental
+97,Montpelier,United States,May 20,September 20,123,NOAA estimated,medium,Vermont humid continental
+98,Richmond,United States,April 10,November 1,205,NOAA estimated,medium,Virginia humid subtropical
+99,Olympia,United States,April 20,October 25,188,NOAA estimated,medium,Washington Mediterranean
+100,Seattle,United States,March 25,November 15,235,NOAA estimated,medium,Washington Mediterranean
+101,Charleston,United States,April 20,October 20,183,NOAA estimated,medium,West Virginia humid continental
+102,Madison,United States,May 1,October 5,157,NOAA estimated,medium,Wisconsin humid continental
+103,Cheyenne,United States,May 20,September 15,118,NOAA estimated,medium,Wyoming semi-arid continental
+104,Ottawa,Canada,May 5,October 5,153,Environment Canada estimated,medium,Ontario humid continental
+105,Toronto,Canada,April 20,October 25,188,Environment Canada estimated,medium,Ontario humid continental
+106,Montreal,Canada,May 1,October 10,162,Environment Canada estimated,medium,Quebec humid continental
+107,Quebec City,Canada,May 10,October 1,144,Environment Canada estimated,medium,Quebec humid continental
+108,Vancouver,Canada,March 20,November 15,240,Environment Canada estimated,medium,BC Mediterranean oceanic
+109,Victoria,Canada,March 10,November 20,255,Environment Canada estimated,medium,BC Mediterranean oceanic
+110,Calgary,Canada,May 25,September 15,113,Environment Canada estimated,medium,Alberta continental
+111,Edmonton,Canada,May 20,September 20,123,Environment Canada estimated,medium,Alberta continental
+112,Winnipeg,Canada,May 20,September 20,123,Environment Canada estimated,medium,Manitoba continental
+113,Regina,Canada,May 25,September 15,113,Environment Canada estimated,medium,Saskatchewan continental
+114,Halifax,Canada,May 10,October 10,153,Environment Canada estimated,medium,Nova Scotia humid continental
+115,St. John's,Canada,June 1,October 1,122,Environment Canada estimated,medium,Newfoundland subarctic oceanic
+116,Charlottetown,Canada,May 15,October 5,143,Environment Canada estimated,medium,PEI humid continental
+117,Fredericton,Canada,May 15,September 25,133,Environment Canada estimated,medium,New Brunswick humid continental
+118,Whitehorse,Canada,June 1,August 31,91,Environment Canada estimated,medium,Yukon subarctic
+119,Yellowknife,Canada,June 10,August 20,71,Environment Canada estimated,medium,NWT subarctic
+120,Iqaluit,Canada,July 1,August 15,45,Environment Canada estimated,low,Nunavut polar tundra

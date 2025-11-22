@@ -1,0 +1,237 @@
+common_name,scientific_name,plant_family,plant_type,climate_zones,growing_difficulty,space_required,sunlight_needs,water_needs,days_to_germination,days_to_harvest,perennial_annual,planting_months_sh,planting_months_nh,height_cm,spread_cm,native_region,description
+Tomato,Solanum lycopersicum,Solanaceae,Vegetable,"Cfa,Cfb,Csa,Csb,Aw",Easy,Medium,Full sun,Medium,7-14,60-85,Annual,Sep-Nov,Mar-May,100-200,50-100,South America,Versatile fruit vegetable with hundreds of varieties
+Basil,Ocimum basilicum,Lamiaceae,Herb,"Cfa,Cfb,Csa,Csb,Aw,Am",Easy,Small,Full sun,Medium,7-10,60-90,Annual,Sep-Nov,Apr-Jun,30-60,30-40,Southeast Asia,Aromatic culinary herb essential for Italian and Thai cuisine
+Lettuce,Lactuca sativa,Asteraceae,Vegetable,"Cfb,Cfa,Csa,Csb,Dfb",Easy,Small,Partial shade,Medium,7-14,45-70,Annual,Mar-May/Aug-Oct,Mar-May/Aug-Sep,20-30,25-35,Mediterranean,Cool-season salad green with many leaf types
+Carrot,Daucus carota,Apiaceae,Vegetable,"Cfb,Cfa,Dfb,Csb",Moderate,Small,Full sun,Medium,14-21,70-80,Annual,Mar-May/Jul-Sep,Mar-Jun/Aug-Sep,30,15,Europe/Asia,Root vegetable requiring loose deep soil
+Spinach,Spinacia oleracea,Amaranthaceae,Vegetable,"Cfb,Dfb,Cfa",Easy,Small,Partial shade,Medium,7-14,40-50,Annual,Mar-May/Aug-Oct,Mar-May/Aug-Oct,30,20,Persia,Nutrient-dense cool-season leafy green
+Kale,Brassica oleracea,Brassicaceae,Vegetable,"Cfb,Dfb,Cfa,Csb",Easy,Medium,Full sun,Medium,7-10,55-75,Annual,Feb-Apr/Aug-Oct,Mar-May/Aug-Sep,60-90,45,Mediterranean,Hardy cold-tolerant brassica superfood
+Beans (Bush),Phaseolus vulgaris,Fabaceae,Vegetable,"Cfa,Cfb,Csa,Aw",Easy,Small,Full sun,Medium,7-14,50-60,Annual,Sep-Dec,Apr-Jul,40-50,30,Central America,Nitrogen-fixing legume in dwarf form
+Beans (Pole),Phaseolus vulgaris,Fabaceae,Vegetable,"Cfa,Cfb,Csa,Aw",Easy,Small,Full sun,Medium,7-14,60-70,Annual,Sep-Dec,Apr-Jul,180-250,30,Central America,Climbing nitrogen-fixing legume
+Peas,Pisum sativum,Fabaceae,Vegetable,"Cfb,Dfb,Cfa",Easy,Small,Full sun,Medium,7-14,60-70,Annual,Mar-May/Aug-Sep,Mar-May/Aug-Sep,60-180,30,Mediterranean,Cool-season nitrogen-fixing legume
+Zucchini,Cucurbita pepo,Cucurbitaceae,Vegetable,"Cfa,Cfb,Csa,Aw",Easy,Large,Full sun,High,7-10,45-55,Annual,Oct-Dec,May-Jul,60-90,90-120,Americas,Prolific summer squash
+Cucumber,Cucumis sativus,Cucurbitaceae,Vegetable,"Cfa,Cfb,Csa,Aw",Easy,Medium,Full sun,High,7-10,50-70,Annual,Oct-Dec,May-Jul,30-180,50-100,South Asia,Vining fruiting vegetable
+Beetroot,Beta vulgaris,Amaranthaceae,Vegetable,"Cfb,Cfa,Dfb,Csb",Easy,Small,Full sun,Medium,7-14,55-70,Annual,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,30,15,Mediterranean,Dual-purpose root and greens
+Broccoli,Brassica oleracea,Brassicaceae,Vegetable,"Cfb,Dfb,Cfa",Moderate,Medium,Full sun,Medium,7-10,70-100,Annual,Feb-Apr/Aug-Oct,Mar-May/Jul-Aug,60-90,45,Mediterranean,Cool-season brassica with edible florets
+Cauliflower,Brassica oleracea,Brassicaceae,Vegetable,"Cfb,Dfb",Moderate,Medium,Full sun,Medium,7-10,75-100,Annual,Feb-Apr/Aug-Sep,Mar-May/Jul-Aug,60,50,Mediterranean,Cool-season brassica requiring consistent conditions
+Cabbage,Brassica oleracea,Brassicaceae,Vegetable,"Cfb,Dfb,Cfa",Easy,Medium,Full sun,Medium,7-10,70-120,Annual,Feb-Apr/Aug-Oct,Mar-May/Jul-Aug,40-50,45-60,Europe,Dense-heading cool-season brassica
+Brussels Sprouts,Brassica oleracea,Brassicaceae,Vegetable,"Cfb,Dfb",Moderate,Medium,Full sun,Medium,7-10,100-120,Annual,Jan-Mar/Aug-Sep,Mar-May/Jul-Aug,90-120,45,Mediterranean,Cold-tolerant brassica forming miniature heads
+Radish,Raphanus sativus,Brassicaceae,Vegetable,"Cfb,Cfa,Dfb",Easy,Small,Partial shade,Medium,4-6,25-35,Annual,Mar-May/Aug-Oct,Mar-Jun/Aug-Oct,15,10,Southeast Asia,Fast-growing cool-season root
+Onion,Allium cepa,Amaryllidaceae,Vegetable,"Cfb,Cfa,Dfb,Csa",Moderate,Small,Full sun,Medium,7-10,100-175,Annual,Mar-Jun,Mar-Jun,40,15,Central Asia,Bulbing allium storing well
+Garlic,Allium sativum,Amaryllidaceae,Vegetable,"Cfb,Cfa,Dfb,Csa",Moderate,Small,Full sun,Low,7-14,150-240,Annual,Mar-Jun,Sep-Nov,60,15,Central Asia,Winter-planted bulbing allium
+Leek,Allium ampeloprasum,Amaryllidaceae,Vegetable,"Cfb,Dfb",Moderate,Small,Full sun,Medium,7-14,120-150,Annual,Mar-May,Mar-May,60,10,Mediterranean,Mild onion relative
+Potato,Solanum tuberosum,Solanaceae,Vegetable,"Cfb,Dfb,Cfa",Easy,Medium,Full sun,Medium,10-14,90-120,Annual,Aug-Oct,Mar-May,60,50,South America,Tuber-forming staple crop
+Sweet Potato,Ipomoea batatas,Convolvulaceae,Vegetable,"Cfa,Csa,Aw",Moderate,Large,Full sun,Medium,7-14,100-120,Annual,Oct-Dec,May-Jun,30-40,150-300,Central America,Heat-loving tuber crop
+Pumpkin,Cucurbita maxima,Cucurbitaceae,Vegetable,"Cfa,Cfb,Csa,Aw",Easy,Very large,Full sun,Medium,7-10,100-120,Annual,Oct-Nov,May-Jun,40-60,300-600,Americas,Large winter squash
+Corn,Zea mays,Poaceae,Vegetable,"Cfa,Csa,Aw,Dfb",Moderate,Medium,Full sun,Medium,7-10,70-100,Annual,Sep-Dec,Apr-Jun,180-250,45,Central America,Wind-pollinated grain crop
+Eggplant,Solanum melongena,Solanaceae,Vegetable,"Cfa,Csa,Aw",Moderate,Medium,Full sun,Medium,10-14,70-90,Annual,Sep-Nov,Apr-Jun,60-100,50-70,South Asia,Heat-loving fruiting vegetable
+Capsicum,Capsicum annuum,Solanaceae,Vegetable,"Cfa,Csa,Aw",Moderate,Medium,Full sun,Medium,10-14,70-90,Annual,Sep-Nov,Apr-Jun,50-100,40-60,Central America,Sweet and hot peppers
+Chilli,Capsicum annuum,Solanaceae,Vegetable,"Cfa,Csa,Aw",Moderate,Medium,Full sun,Medium,10-14,75-100,Annual,Sep-Nov,Apr-Jun,50-120,40-60,Central America,Hot pepper varieties
+Parsley,Petroselinum crispum,Apiaceae,Herb,"Cfb,Cfa,Csa,Dfb",Easy,Small,Partial shade,Medium,14-21,70-90,Biennial,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,30-40,25,Mediterranean,Culinary herb and garnish
+Coriander,Coriandrum sativum,Apiaceae,Herb,"Cfb,Cfa,Csa",Easy,Small,Full sun,Medium,7-14,40-50,Annual,Mar-May/Aug-Oct,Mar-Jun/Aug-Oct,30-50,20,Mediterranean,Dual-purpose herb (leaves and seeds)
+Dill,Anethum graveolens,Apiaceae,Herb,"Cfb,Cfa,Csa,Dfb",Easy,Small,Full sun,Medium,7-14,40-60,Annual,Sep-Nov,Apr-Jun,60-90,30,Mediterranean,Aromatic herb with feathery foliage
+Oregano,Origanum vulgare,Lamiaceae,Herb,"Cfa,Cfb,Csa,Csb",Easy,Small,Full sun,Low,7-14,90,Perennial,Sep-Nov,Apr-Jun,30-60,45,Mediterranean,Drought-tolerant perennial culinary herb
+Thyme,Thymus vulgaris,Lamiaceae,Herb,"Cfa,Cfb,Csa,Csb",Easy,Small,Full sun,Low,14-21,90,Perennial,Sep-Nov,Apr-Jun,15-30,30,Mediterranean,Low-growing aromatic perennial herb
+Rosemary,Salvia rosmarinus,Lamiaceae,Herb,"Cfa,Csa,Csb",Easy,Medium,Full sun,Low,14-28,90,Perennial,Sep-Nov,Apr-Jun,100-150,75-100,Mediterranean,Woody evergreen aromatic herb
+Sage,Salvia officinalis,Lamiaceae,Herb,"Cfa,Cfb,Csa,Csb",Easy,Medium,Full sun,Low,14-21,90,Perennial,Sep-Nov,Apr-Jun,60-75,60,Mediterranean,Medicinal and culinary perennial herb
+Mint,Mentha,Lamiaceae,Herb,"Cfb,Cfa,Csa,Dfb",Easy,Medium,Partial shade,Medium,10-15,70-90,Perennial,Sep-May,Mar-Sep,30-100,60-120,Europe/Asia/Africa,Vigorous spreading aromatic perennial
+Chives,Allium schoenoprasum,Amaryllidaceae,Herb,"Cfb,Cfa,Dfb,Csa",Easy,Small,Full sun,Medium,7-14,60-80,Perennial,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,30-40,20,Europe/Asia/North America,Mild onion-flavored perennial herb
+Lemongrass,Cymbopogon citratus,Poaceae,Herb,"Cfa,Csa,Aw",Moderate,Medium,Full sun,Medium,14-21,90-120,Perennial,Sep-Nov,Apr-Jun,90-180,60-90,Southeast Asia,Tropical grass with citrus aroma
+Lavender,Lavandula angustifolia,Lamiaceae,Herb,"Cfa,Csa,Csb,Cfb",Moderate,Medium,Full sun,Low,14-28,90-120,Perennial,Sep-Nov,Apr-Jun,60-90,60-90,Mediterranean,Aromatic medicinal and ornamental perennial
+Chamomile,Matricaria chamomilla,Asteraceae,Herb,"Cfb,Cfa,Csa,Dfb",Easy,Small,Full sun,Low,7-14,60-65,Annual,Mar-May/Aug-Oct,Mar-Jun,30-60,30,Europe,Medicinal herb with daisy-like flowers
+Fennel,Foeniculum vulgare,Apiaceae,Herb,"Cfa,Csa,Csb",Easy,Medium,Full sun,Medium,7-14,65-90,Perennial,Mar-May/Aug-Oct,Apr-Jun,150-200,60,Mediterranean,Licorice-flavored herb and vegetable
+Tarragon,Artemisia dracunculus,Asteraceae,Herb,"Cfb,Cfa,Dfb,Csa",Moderate,Medium,Full sun,Low,14-21,90,Perennial,Sep-Nov,Apr-Jun,60-90,45,Eurasia,Anise-flavored culinary perennial
+Marjoram,Origanum majorana,Lamiaceae,Herb,"Cfa,Csa,Csb",Easy,Small,Full sun,Low,7-14,70-90,Perennial,Sep-Nov,Apr-Jun,30-60,30,Mediterranean,Sweet oregano relative
+Bay Laurel,Laurus nobilis,Lauraceae,Herb,"Csa,Csb,Cfb",Moderate,Large,Full sun,Low,30-180,730-1095,Perennial,Sep-Nov,Apr-Jun,300-1200,200-600,Mediterranean,Aromatic evergreen tree for culinary use
+Ginger,Zingiber officinale,Zingiberaceae,Herb,"Cfa,Aw,Am",Moderate,Medium,Partial shade,High,14-21,240-300,Perennial,Sep-Nov,Mar-May,60-100,45,Southeast Asia,Tropical rhizome spice
+Turmeric,Curcuma longa,Zingiberaceae,Herb,"Cfa,Aw,Am",Moderate,Medium,Partial shade,High,21-30,240-300,Perennial,Sep-Nov,Mar-May,90-120,60,South Asia,Tropical rhizome spice and dye
+Stevia,Stevia rebaudiana,Asteraceae,Herb,"Cfa,Csa,Aw",Moderate,Small,Full sun,Medium,7-14,90-120,Perennial,Sep-Nov,Apr-Jun,60-80,30,South America,Natural sweetener herb
+Lemon Balm,Melissa officinalis,Lamiaceae,Herb,"Cfb,Cfa,Csa,Dfb",Easy,Medium,Partial shade,Medium,7-14,70-90,Perennial,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,60-90,45,Mediterranean,Lemon-scented medicinal herb
+Catnip,Nepeta cataria,Lamiaceae,Herb,"Cfb,Cfa,Dfb,Csa",Easy,Medium,Full sun,Low,7-14,90,Perennial,Mar-May/Aug-Oct,Mar-Jun,60-100,45,Mediterranean,Aromatic herb attractive to cats
+Borage,Borago officinalis,Boraginaceae,Herb,"Cfb,Cfa,Csa",Easy,Medium,Full sun,Medium,7-14,70-80,Annual,Mar-May/Aug-Oct,Apr-Jun,60-100,50,Mediterranean,Edible flowers and cucumber-flavored leaves
+Nasturtium,Tropaeolum majus,Tropaeolaceae,Herb,"Cfb,Cfa,Csa",Easy,Medium,Full sun,Low,7-14,60,Annual,Mar-May/Sep-Oct,Apr-Jun,30-180,30-120,South America,Edible flowers and peppery leaves
+Rocket,Eruca vesicaria,Brassicaceae,Herb,"Cfb,Cfa,Csa,Dfb",Easy,Small,Partial shade,Medium,7-10,35-45,Annual,Mar-May/Aug-Oct,Mar-Jun/Aug-Oct,20-40,20,Mediterranean,Peppery salad green
+Mustard Greens,Brassica juncea,Brassicaceae,Vegetable,"Cfb,Cfa,Dfb",Easy,Small,Full sun,Medium,7-10,40-50,Annual,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,30-60,30,Asia,Spicy leafy green
+Chard,Beta vulgaris,Amaranthaceae,Vegetable,"Cfb,Cfa,Csa,Dfb",Easy,Medium,Full sun,Medium,7-14,50-60,Annual,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,45-60,30,Mediterranean,Colorful nutrient-dense leafy green
+Asian Greens,Brassica rapa,Brassicaceae,Vegetable,"Cfb,Cfa,Dfb",Easy,Small,Partial shade,Medium,7-10,45-60,Annual,Mar-May/Aug-Oct,Mar-Jun/Aug-Oct,30-45,25,Asia,Fast-growing brassica greens
+Strawberry,Fragaria × ananassa,Rosaceae,Fruit,"Cfb,Cfa,Dfb,Csa",Moderate,Small,Full sun,Medium,14-21,120-180,Perennial,Mar-May,Mar-May,20-30,30-45,Americas,Low-growing perennial berry
+Blueberry,Vaccinium corymbosum,Ericaceae,Fruit,"Cfb,Dfb,Cfa",Moderate,Large,Full sun,Medium,30-90,730-1095,Perennial,May-Aug,May-Aug,120-200,100-150,North America,Acid-loving perennial berry shrub
+Raspberry,Rubus idaeus,Rosaceae,Fruit,"Cfb,Dfb,Cfa",Moderate,Medium,Full sun,Medium,21-28,365-730,Perennial,May-Aug,May-Aug,120-180,100-150,Europe,Cane fruit producing summer and fall
+Blackberry,Rubus fruticosus,Rosaceae,Fruit,"Cfb,Cfa,Csa",Easy,Large,Full sun,Medium,21-28,730-1095,Perennial,May-Aug,May-Aug,150-300,150-300,Europe/Americas,Vigorous thorny cane fruit
+Grape,Vitis vinifera,Vitaceae,Fruit,"Cfa,Csa,Csb",Moderate,Large,Full sun,Medium,14-21,1095-1460,Perennial,May-Aug,May-Aug,200-600,150-400,Mediterranean,Climbing vine fruit for fresh eating and wine
+Fig,Ficus carica,Moraceae,Fruit,"Csa,Csb,Cfa",Moderate,Large,Full sun,Medium,14-28,730-1095,Perennial,Dec-Feb,Jun-Aug,300-800,300-800,Mediterranean,Deciduous tree with sweet fruit
+Apple,Malus domestica,Rosaceae,Fruit,"Cfb,Dfb,Cfa",Moderate,Very large,Full sun,Medium,30-60,1460-2190,Perennial,Dec-Feb,Jun-Aug,300-600,300-600,Central Asia,Deciduous tree requiring chill hours
+Pear,Pyrus communis,Rosaceae,Fruit,"Cfb,Dfb,Cfa",Moderate,Very large,Full sun,Medium,30-60,1460-2190,Perennial,Dec-Feb,Jun-Aug,400-800,300-500,Europe/Asia,Deciduous tree requiring chill hours
+Plum,Prunus domestica,Rosaceae,Fruit,"Cfb,Cfa,Csa",Moderate,Large,Full sun,Medium,30-60,1095-1460,Perennial,Dec-Feb,Jun-Aug,300-600,300-500,Europe/Asia,Stone fruit tree
+Cherry,Prunus avium,Rosaceae,Fruit,"Cfb,Dfb,Cfa",Moderate,Very large,Full sun,Medium,30-90,1460-2190,Perennial,Dec-Feb,Jun-Aug,400-800,300-600,Europe/Asia,Stone fruit tree requiring chill hours
+Peach,Prunus persica,Rosaceae,Fruit,"Cfa,Csa",Moderate,Large,Full sun,Medium,30-60,1095-1460,Perennial,Dec-Feb,Jun-Aug,300-500,300-500,China,Stone fruit tree for warm climates
+Apricot,Prunus armeniaca,Rosaceae,Fruit,"Csa,Cfa,BSk",Moderate,Large,Full sun,Low,30-60,1095-1460,Perennial,Dec-Feb,Jun-Aug,300-600,300-500,Central Asia,Early-flowering stone fruit
+Nectarine,Prunus persica,Rosaceae,Fruit,"Cfa,Csa",Moderate,Large,Full sun,Medium,30-60,1095-1460,Perennial,Dec-Feb,Jun-Aug,300-500,300-500,China,Smooth-skinned peach variant
+Citrus (Lemon),Citrus × limon,Rutaceae,Fruit,"Csa,Cfa",Moderate,Large,Full sun,Medium,14-21,730-1095,Perennial,Aug-Oct,Feb-Apr,300-600,300-400,Asia,Evergreen citrus tree
+Citrus (Orange),Citrus × sinensis,Rutaceae,Fruit,"Csa,Cfa",Moderate,Large,Full sun,Medium,14-21,1095-1460,Perennial,Aug-Oct,Feb-Apr,400-800,300-500,Asia,Evergreen sweet citrus tree
+Citrus (Mandarin),Citrus reticulata,Rutaceae,Fruit,"Csa,Cfa",Moderate,Medium,Full sun,Medium,14-21,1095-1460,Perennial,Aug-Oct,Feb-Apr,300-500,250-400,Asia,Small evergreen citrus tree
+Citrus (Lime),Citrus × aurantiifolia,Rutaceae,Fruit,"Csa,Cfa,Aw",Moderate,Medium,Full sun,Medium,14-21,730-1095,Perennial,Aug-Oct,Feb-Apr,200-400,200-300,Southeast Asia,Tropical evergreen citrus
+Avocado,Persea americana,Lauraceae,Fruit,"Csa,Cfa,Aw",Moderate,Very large,Full sun,Medium,30-60,1460-2190,Perennial,Aug-Oct,Feb-Apr,600-1200,500-1000,Central America,Tropical/subtropical evergreen tree
+Mango,Mangifera indica,Anacardiaceae,Fruit,"Aw,Am,Cfa",Moderate,Very large,Full sun,Medium,14-28,1825-2555,Perennial,Sep-Nov,Mar-May,1000-4000,800-1200,South Asia,Tropical evergreen tree
+Banana,Musa acuminata,Musaceae,Fruit,"Aw,Am,Cfa",Moderate,Medium,Full sun,High,21-28,365-547,Perennial,Sep-Dec,Mar-Jun,300-600,200-300,Southeast Asia,Tropical herbaceous plant
+Passionfruit,Passiflora edulis,Passifloraceae,Fruit,"Cfa,Csa,Aw",Moderate,Large,Full sun,Medium,14-21,365-547,Perennial,Sep-Nov,Mar-May,300-600,200-400,South America,Vigorous climbing vine
+Kiwifruit,Actinidia deliciosa,Actinidiaceae,Fruit,"Cfa,Cfb,Csa",Moderate,Very large,Full sun,Medium,21-28,1095-1460,Perennial,Dec-Feb,Jun-Aug,400-800,300-600,China,Vigorous deciduous climbing vine
+Pomegranate,Punica granatum,Lythraceae,Fruit,"Csa,BWh,BSh",Moderate,Large,Full sun,Low,14-21,1095-1460,Perennial,Dec-Feb,Jun-Aug,300-600,300-500,Middle East,Drought-tolerant deciduous shrub
+Olive,Olea europaea,Oleaceae,Fruit,"Csa,Csb",Moderate,Large,Full sun,Low,30-90,1825-2555,Perennial,Sep-Nov,Mar-May,400-1000,400-800,Mediterranean,Evergreen tree for oil and table olives
+Persimmon,Diospyros kaki,Ebenaceae,Fruit,"Cfa,Csa,Cfb",Moderate,Large,Full sun,Medium,30-60,1460-2190,Perennial,Dec-Feb,Jun-Aug,400-800,400-600,Asia,Deciduous tree with sweet fall fruit
+Mulberry,Morus,Moraceae,Fruit,"Cfa,Csa,Cfb",Easy,Large,Full sun,Medium,14-21,1095-1460,Perennial,Dec-Feb,Jun-Aug,600-1500,600-1000,Asia,Fast-growing deciduous tree
+Guava,Psidium guajava,Myrtaceae,Fruit,"Aw,Cfa,Am",Moderate,Large,Full sun,Medium,14-21,730-1095,Perennial,Sep-Nov,Mar-May,300-1000,300-800,Tropical Americas,Tropical evergreen shrub/tree
+Papaya,Carica papaya,Caricaceae,Fruit,"Aw,Am,Cfa",Moderate,Medium,Full sun,Medium,14-21,365-547,Perennial,Sep-Dec,Mar-Jun,200-500,100-200,Central America,Fast-growing tropical tree
+Dragon Fruit,Hylocereus undatus,Cactaceae,Fruit,"Aw,Cfa,BSh",Moderate,Large,Full sun,Low,14-28,730-1095,Perennial,Sep-Nov,Mar-May,300-600,150-300,Central America,Climbing cactus with exotic fruit
+Loquat,Eriobotrya japonica,Rosaceae,Fruit,"Cfa,Csa",Easy,Large,Full sun,Medium,30-60,1095-1460,Perennial,Dec-Feb,Jun-Aug,400-800,400-600,China,Evergreen tree with early spring fruit
+Feijoa,Acca sellowiana,Myrtaceae,Fruit,"Cfa,Csb,Csa",Easy,Large,Full sun,Medium,14-28,1095-1460,Perennial,Sep-Nov,Mar-May,300-500,300-500,South America,Evergreen shrub with aromatic fruit
+Macadamia,Macadamia integrifolia,Proteaceae,Nut,"Cfa,Csa",Moderate,Very large,Full sun,Medium,30-90,2555-3650,Perennial,Aug-Oct,Feb-Apr,700-1200,500-800,Australia,Native evergreen nut tree
+Almond,Prunus dulcis,Rosaceae,Nut,"Csa,BSh",Moderate,Large,Full sun,Low,30-60,1460-1825,Perennial,Dec-Feb,Jun-Aug,400-800,400-600,Middle East,Deciduous nut tree for warm dry climates
+Walnut,Juglans regia,Juglandaceae,Nut,"Cfa,Cfb,Csa",Moderate,Very large,Full sun,Medium,30-90,1825-3650,Perennial,Dec-Feb,Jun-Aug,1000-2500,800-1500,Persia,Large deciduous nut tree
+Hazelnut,Corylus avellana,Betulaceae,Nut,"Cfb,Dfb,Cfa",Moderate,Large,Partial shade,Medium,30-90,1095-1460,Perennial,Dec-Feb,Jun-Aug,300-600,300-500,Europe,Deciduous nut shrub/tree
+Chestnut,Castanea sativa,Fagaceae,Nut,"Cfa,Cfb",Moderate,Very large,Full sun,Medium,30-60,1825-2555,Perennial,Dec-Feb,Jun-Aug,1000-3000,1000-2000,Europe/Asia,Large deciduous nut tree
+Pecan,Carya illinoinensis,Juglandaceae,Nut,"Cfa,Cwa",Moderate,Very large,Full sun,Medium,30-90,2555-3650,Perennial,Dec-Feb,Jun-Aug,2000-4000,1500-2500,North America,Large deciduous nut tree
+Clover (White),Trifolium repens,Fabaceae,Cover Crop,"Cfb,Cfa,Dfb,Csa",Easy,Low,Full sun,Medium,7-10,60-90,Perennial,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,10-30,30-60,Europe,Nitrogen-fixing groundcover
+Clover (Red),Trifolium pratense,Fabaceae,Cover Crop,"Cfb,Cfa,Dfb",Easy,Low,Full sun,Medium,7-10,60-90,Perennial,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,30-60,45,Europe,Deep-rooted nitrogen-fixing cover
+Vetch,Vicia sativa,Fabaceae,Cover Crop,"Cfb,Cfa,Dfb,Csa",Easy,Low,Full sun,Medium,7-14,60-90,Annual,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,60-100,30,Mediterranean,Fast-growing nitrogen-fixing cover
+Alfalfa,Medicago sativa,Fabaceae,Cover Crop,"Cfa,Csa,BSk,Dfb",Moderate,Medium,Full sun,Medium,7-10,90-120,Perennial,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,60-90,45,Middle East,Deep-rooted nitrogen-fixer and fodder
+Buckwheat,Fagopyrum esculentum,Polygonaceae,Cover Crop,"Cfb,Cfa,Dfb",Easy,Low,Full sun,Low,7-10,70-90,Annual,Sep-Dec,Apr-Jul,60-120,30,Central Asia,Fast-growing warm-season cover
+Mustard (Cover),Sinapis alba,Brassicaceae,Cover Crop,"Cfb,Cfa,Dfb",Easy,Low,Full sun,Medium,4-7,45-60,Annual,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,60-90,30,Mediterranean,Biofumigant and quick cover crop
+Ryegrass,Lolium multiflorum,Poaceae,Cover Crop,"Cfb,Cfa,Dfb,Csa",Easy,Low,Full sun,Medium,7-10,60-90,Annual,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,30-60,15,Mediterranean,Fast germinating grass cover
+Oats,Avena sativa,Poaceae,Cover Crop,"Cfb,Dfb,Cfa",Easy,Low,Full sun,Medium,7-10,90-120,Annual,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,90-150,15,Mediterranean,Cool-season grain and cover
+Phacelia,Phacelia tanacetifolia,Boraginaceae,Cover Crop,"Cfb,Cfa,Csa",Easy,Low,Full sun,Low,7-14,60-90,Annual,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,60-100,30,North America,Excellent bee forage and cover
+Lupin,Lupinus,Fabaceae,Cover Crop,"Cfb,Csa,Csb",Easy,Medium,Full sun,Low,10-20,90-120,Annual,Mar-May/Aug-Sep,Mar-Jun,60-120,30,Mediterranean,Nitrogen-fixing with colorful flowers
+Daikon Radish,Raphanus sativus,Brassicaceae,Cover Crop,"Cfb,Cfa,Dfb",Easy,Low,Full sun,Medium,4-7,60-70,Annual,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,30-60,30,Asia,Deep-rooted soil-breaking cover
+Fenugreek,Trigonella foenum-graecum,Fabaceae,Cover Crop,"Cfa,Csa,BSh",Easy,Low,Full sun,Low,7-10,90-120,Annual,Mar-May/Aug-Oct,Mar-Jun,60-90,30,Mediterranean,Nitrogen-fixing herb and spice
+Chicory,Cichorium intybus,Asteraceae,Cover Crop,"Cfb,Cfa,Csa,Dfb",Easy,Medium,Full sun,Low,7-14,90-120,Perennial,Mar-May/Aug-Oct,Mar-Jun,60-150,30,Europe,Deep-rooted perennial for soil health
+Comfrey,Symphytum officinale,Boraginaceae,Perennial Vegetable,"Cfb,Cfa,Dfb",Easy,Large,Partial shade,Medium,14-28,365-547,Perennial,Mar-May/Aug-Oct,Mar-Jun,60-120,60-100,Europe,Dynamic accumulator and mulch crop
+Jerusalem Artichoke,Helianthus tuberosus,Asteraceae,Perennial Vegetable,"Cfb,Cfa,Dfb,Csa",Easy,Large,Full sun,Low,14-21,180-240,Perennial,Feb-Apr,Feb-Apr,180-300,60-100,North America,Tuberous sunflower relative
+Asparagus,Asparagus officinalis,Asparagaceae,Perennial Vegetable,"Cfb,Cfa,Dfb,Csa",Moderate,Medium,Full sun,Medium,21-28,730-1095,Perennial,Jun-Aug,Jun-Aug,100-150,60,Mediterranean,Long-lived perennial vegetable
+Rhubarb,Rheum rhabarbarum,Polygonaceae,Perennial Vegetable,"Cfb,Dfb",Easy,Large,Full sun,Medium,14-21,365-730,Perennial,Jun-Aug,Jun-Aug,90-120,100-150,Siberia,Cold-hardy perennial with edible stems
+Globe Artichoke,Cynara cardunculus,Asteraceae,Perennial Vegetable,"Cfa,Csa,Csb",Moderate,Large,Full sun,Medium,14-21,365-547,Perennial,Sep-Nov,Mar-May,120-180,100-150,Mediterranean,Architectural perennial with edible buds
+Walking Onion,Allium × proliferum,Amaryllidaceae,Perennial Vegetable,"Cfb,Cfa,Dfb",Easy,Small,Full sun,Medium,14-21,365,Perennial,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,60-90,30,North America,Self-propagating perennial onion
+Welsh Onion,Allium fistulosum,Amaryllidaceae,Perennial Vegetable,"Cfb,Cfa,Dfb,Csa",Easy,Small,Full sun,Medium,7-14,60-90,Perennial,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,45-60,15,Asia,Clumping perennial onion
+Sea Kale,Crambe maritima,Brassicaceae,Perennial Vegetable,"Cfb,Csa",Moderate,Medium,Full sun,Low,14-28,730-1095,Perennial,Mar-May,Mar-May,60-75,60,Europe,Maritime perennial brassica
+Good King Henry,Blitum bonus-henricus,Amaranthaceae,Perennial Vegetable,"Cfb,Dfb,Cfa",Easy,Medium,Partial shade,Medium,14-21,90-365,Perennial,Mar-May/Aug-Oct,Mar-Jun,60-80,45,Europe,Spinach-like perennial green
+Sorrel,Rumex acetosa,Polygonaceae,Perennial Vegetable,"Cfb,Dfb,Cfa",Easy,Small,Partial shade,Medium,7-14,60-90,Perennial,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,30-60,30,Europe/Asia,Lemony perennial salad green
+Watercress,Nasturtium officinale,Brassicaceae,Perennial Vegetable,"Cfb,Cfa",Moderate,Small,Partial shade,Very high,7-14,60-70,Perennial,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,15-30,30-60,Europe/Asia,Aquatic peppery green
+Miner's Lettuce,Claytonia perfoliata,Montiaceae,Vegetable,"Cfb,Csb",Easy,Small,Partial shade,Medium,7-14,40-60,Annual,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,15-30,20,North America,Cold-hardy salad green
+Purslane,Portulaca oleracea,Portulacaceae,Vegetable,"Cfa,Csa,Aw",Easy,Small,Full sun,Low,7-10,40-50,Annual,Oct-Dec,May-Jul,10-20,30-45,North Africa/Middle East,Succulent salad green
+New Zealand Spinach,Tetragonia tetragonioides,Aizoaceae,Vegetable,"Cfa,Csa,Csb",Easy,Medium,Full sun,Medium,10-21,50-70,Annual,Sep-Nov,Apr-Jun,30-60,60-90,Australia/New Zealand,Heat-tolerant spinach substitute
+Amaranth,Amaranthus,Amaranthaceae,Vegetable,"Cfa,Csa,Aw",Easy,Medium,Full sun,Medium,7-10,60-90,Annual,Sep-Dec,Apr-Jul,100-200,45-60,Central America,Edible leaves and grain
+Quinoa,Chenopodium quinoa,Amaranthaceae,Grain,"Cfb,BSk,Csb",Moderate,Medium,Full sun,Low,7-10,90-120,Annual,Sep-Nov,Apr-Jun,100-180,45,South America,High-protein Andean grain
+Sorghum,Sorghum bicolor,Poaceae,Grain,"Cfa,Csa,Aw,BSh",Moderate,Medium,Full sun,Low,7-10,100-130,Annual,Oct-Dec,May-Jun,100-300,30-45,Africa,Drought-tolerant grain
+Millet,Panicum miliaceum,Poaceae,Grain,"Cfa,Csa,BSh,Aw",Easy,Medium,Full sun,Low,7-10,70-90,Annual,Oct-Dec,May-Jul,60-150,30,Asia,Fast-growing drought-tolerant grain
+Sunflower,Helianthus annuus,Asteraceae,Grain,"Cfa,Cfb,Csa,Dfb",Easy,Medium,Full sun,Medium,7-14,80-120,Annual,Sep-Dec,Apr-Jul,150-300,45-60,North America,Oilseed and snack crop
+Sesame,Sesamum indicum,Pedaliaceae,Grain,"Cfa,Csa,Aw",Moderate,Small,Full sun,Low,7-10,90-120,Annual,Oct-Nov,May-Jun,60-120,30,Africa,Ancient oilseed crop
+Flax,Linum usitatissimum,Linaceae,Grain,"Cfb,Cfa,Dfb",Moderate,Low,Full sun,Medium,7-10,100-120,Annual,Mar-May/Aug-Oct,Mar-Jun,60-120,15,Middle East,Oilseed and fiber crop
+Hemp,Cannabis sativa,Cannabaceae,Grain,"Cfa,Cfb,Dfb",Moderate,Large,Full sun,Medium,7-10,100-120,Annual,Sep-Nov,Apr-Jun,200-400,30-60,Central Asia,Seed oil and fiber crop
+Chia,Salvia hispanica,Lamiaceae,Grain,"Cfa,Csa,BSh",Easy,Small,Full sun,Low,7-14,90-120,Annual,Sep-Nov,Apr-Jun,100-150,30,Central America,Omega-3 rich seed crop
+Native Violet,Viola hederacea,Violaceae,Native Ground Cover,"Cfb,Cfa,Csa",Easy,Low,Partial shade,Medium,14-21,365,Perennial,Year-round,Year-round,5-10,30-60,Australia,Edible native groundcover
+Warrigal Greens,Tetragonia tetragonioides,Aizoaceae,Native Vegetable,"Cfa,Csa,Csb,Cfb",Easy,Medium,Full sun,Low,10-21,60-90,Annual,Sep-Nov,Year-round,30-60,60-120,Australia/New Zealand,Salt-tolerant native spinach
+Kangaroo Apple,Solanum aviculare,Solanaceae,Native Fruit,"Cfa,Cfb",Moderate,Large,Full sun,Medium,14-21,365-547,Perennial,Sep-Nov,Year-round,200-400,150-300,Australia/New Zealand,Fast-growing native fruit shrub
+Muntries,Kunzea pomifera,Myrtaceae,Native Fruit,"Csa,Csb",Moderate,Low,Full sun,Low,30-90,730-1095,Perennial,Sep-Nov,Year-round,10-30,100-200,Australia,Ground-hugging native berry
+Davidson's Plum,Davidsonia pruriens,Cunoniaceae,Native Fruit,"Cfa,Aw",Moderate,Large,Partial shade,Medium,30-90,1095-1460,Perennial,Sep-Nov,Year-round,500-1000,400-600,Australia,Rainforest understorey fruit tree
+Finger Lime,Citrus australasica,Rutaceae,Native Fruit,"Cfa,Csa",Moderate,Large,Partial shade,Medium,14-28,1095-1460,Perennial,Aug-Oct,Year-round,200-600,200-400,Australia,Native citrus with caviar-like vesicles
+Lilly Pilly,Syzygium,Myrtaceae,Native Fruit,"Cfa,Csa,Aw",Easy,Large,Full sun,Medium,14-28,1095-1460,Perennial,Sep-Nov,Year-round,300-1000,200-600,Australia,Versatile native shrub/tree with edible berries
+Riberry,Syzygium luehmannii,Myrtaceae,Native Fruit,"Cfa,Aw",Moderate,Large,Full sun,Medium,21-30,1095-1460,Perennial,Sep-Nov,Year-round,1000-3000,600-1000,Australia,Tall native tree with tart berries
+Native Raspberry,Rubus parvifolius,Rosaceae,Native Fruit,"Cfa,Cfb",Easy,Medium,Partial shade,Medium,14-21,365-547,Perennial,Sep-Nov,Year-round,100-150,100-150,Australia/Asia,Scrambling native berry
+Quandong,Santalum acuminatum,Santalaceae,Native Fruit,"Csa,BSk,BSh",Hard,Large,Full sun,Low,60-180,1825-3650,Perennial,Jun-Aug,Year-round,300-700,300-600,Australia,Desert native with tart fruit
+Kakadu Plum,Terminalia ferdinandiana,Combretaceae,Native Fruit,"Aw",Hard,Large,Full sun,Medium,30-90,1825-3650,Perennial,Sep-Nov,Year-round,400-1000,400-800,Australia,World's highest vitamin C fruit
+Bush Tomato,Solanum centrale,Solanaceae,Native Fruit,"BSh,BWh",Moderate,Small,Full sun,Low,14-21,120-180,Perennial,Sep-Nov,Year-round,30-100,60-100,Australia,Desert native with intense flavor
+Lemon Myrtle,Backhousia citriodora,Myrtaceae,Native Herb,"Cfa,Csa,Aw",Moderate,Large,Partial shade,Medium,14-28,1095-1460,Perennial,Sep-Nov,Year-round,500-2000,300-800,Australia,Intensely lemon-scented native
+Aniseed Myrtle,Syzygium anisatum,Myrtaceae,Native Herb,"Cfa,Aw",Moderate,Large,Partial shade,Medium,21-30,1095-1460,Perennial,Sep-Nov,Year-round,500-1500,400-600,Australia,Anise-flavored rainforest tree
+Native Ginger,Alpinia caerulea,Zingiberaceae,Native Herb,"Cfa,Aw",Moderate,Medium,Partial shade,High,14-21,365-547,Perennial,Sep-Nov,Year-round,100-300,100-200,Australia,Edible fruit and rhizome
+Wattleseed,Acacia victoriae,Fabaceae,Native Grain,"BSh,BWh,Csa",Moderate,Large,Full sun,Low,30-90,1095-1460,Perennial,Aug-Oct,Year-round,300-600,300-500,Australia,Nitrogen-fixing native with edible seeds
+Native Tamarind,Diploglottis australis,Sapindaceae,Native Fruit,"Cfa,Aw",Moderate,Very large,Partial shade,Medium,30-60,1825-3650,Perennial,Sep-Nov,Year-round,1500-3500,1000-1500,Australia,Large rainforest tree with tart fruit
+Bunya Pine,Araucaria bidwillii,Araucariaceae,Native Nut,"Cfa,Csa",Hard,Very large,Full sun,Medium,60-180,5475-7300,Perennial,Aug-Oct,Year-round,3000-5000,2000-3000,Australia,Ancient conifer with large edible nuts
+Sea Celery,Apium prostratum,Apiaceae,Native Herb,"Csa,Csb,Cfb",Easy,Small,Partial shade,Medium,14-21,60-90,Perennial,Year-round,Year-round,10-30,30-60,Australia,Coastal native with celery flavor
+Bower Spinach,Tetragonia implexicoma,Aizoaceae,Native Vegetable,"Csa,Csb,Cfb",Easy,Medium,Partial shade,Low,10-21,60-90,Perennial,Year-round,Year-round,30-100,60-120,Australia,Spreading native spinach
+Pigface,Carpobrotus glaucescens,Aizoaceae,Native Fruit,"Csa,Csb,Cfa",Easy,Low,Full sun,Low,14-21,365-547,Perennial,Year-round,Year-round,10-20,100-300,Australia,Succulent coastal groundcover with edible fruit
+Midyim Berry,Austromyrtus dulcis,Myrtaceae,Native Fruit,"Cfa,Csa",Moderate,Medium,Partial shade,Medium,21-30,1095-1460,Perennial,Sep-Nov,Year-round,100-200,100-150,Australia,Compact native shrub with sweet berries
+Native Mint,Mentha australis,Lamiaceae,Native Herb,"Cfb,Cfa",Easy,Small,Partial shade,High,10-15,60-90,Perennial,Year-round,Year-round,20-60,30-60,Australia,Australian mint species
+Blue Flax Lily,Dianella caerulea,Xanthorrhoeaceae,Native Fruit,"Cfa,Csa,Cfb",Easy,Medium,Partial shade,Low,30-90,730-1095,Perennial,Year-round,Year-round,60-100,45,Australia,Strappy-leaved native with edible berries
+Saltbush,Atriplex,Amaranthaceae,Native Vegetable,"Csa,BSh,BWh",Easy,Medium,Full sun,Low,7-14,60-90,Perennial,Year-round,Year-round,30-200,60-300,Australia,Salt-tolerant native edible
+Samphire,Tecticornia,Amaranthaceae,Native Vegetable,"Csa,BSh",Moderate,Small,Full sun,Low,14-21,90-120,Perennial,Year-round,Year-round,10-50,30-60,Australia,Succulent coastal native vegetable
+Kurrajong,Brachychiton populneus,Malvaceae,Native Tree,"Cfa,Csa,BSh",Moderate,Very large,Full sun,Low,14-28,1825-3650,Perennial,Sep-Nov,Year-round,1000-2000,600-1000,Australia,Drought-tolerant native with edible seeds
+Native Cherry,Exocarpos cupressiformis,Santalaceae,Native Fruit,"Cfa,Csa,Csb,Cfb",Moderate,Large,Full sun,Low,30-90,1825-3650,Perennial,Aug-Oct,Year-round,300-1000,300-600,Australia,Small native tree with sweet fruit
+Snow Pea,Pisum sativum,Fabaceae,Vegetable,"Cfb,Dfb,Cfa",Easy,Small,Full sun,Medium,7-14,60-70,Annual,Mar-May/Aug-Sep,Mar-May/Aug-Sep,60-180,30,Mediterranean,Edible-pod pea variety
+Sugar Snap Pea,Pisum sativum,Fabaceae,Vegetable,"Cfb,Dfb,Cfa",Easy,Small,Full sun,Medium,7-14,60-70,Annual,Mar-May/Aug-Sep,Mar-May/Aug-Sep,60-180,30,Mediterranean,Sweet edible-pod pea
+Broad Bean,Vicia faba,Fabaceae,Vegetable,"Cfb,Dfb,Cfa,Csa",Easy,Medium,Full sun,Medium,7-14,90-120,Annual,Mar-Jun,Mar-Jun/Aug-Oct,90-150,45,Mediterranean,Cool-season nitrogen-fixing legume
+Runner Bean,Phaseolus coccineus,Fabaceae,Vegetable,"Cfb,Cfa",Easy,Small,Full sun,Medium,7-14,60-90,Annual,Sep-Nov,Apr-Jun,200-400,30,Central America,Ornamental climbing bean
+Lima Bean,Phaseolus lunatus,Fabaceae,Vegetable,"Cfa,Csa,Aw",Moderate,Medium,Full sun,Medium,7-14,70-90,Annual,Oct-Nov,May-Jun,30-300,45,Central America,Heat-loving bush or pole bean
+Soybean,Glycine max,Fabaceae,Vegetable,"Cfa,Cwa,Dfb",Moderate,Small,Full sun,Medium,7-10,90-120,Annual,Oct-Nov,May-Jun,60-120,30,East Asia,Nitrogen-fixing edible bean
+Chickpea,Cicer arietinum,Fabaceae,Vegetable,"Cfa,Csa,BSh",Moderate,Small,Full sun,Low,7-10,100-120,Annual,Apr-Jun,Apr-Jun,30-60,30,Middle East,Drought-tolerant pulse crop
+Lentil,Lens culinaris,Fabaceae,Vegetable,"Cfa,Csa,BSh,Dfb",Moderate,Small,Full sun,Low,7-10,100-110,Annual,Apr-Jun,Apr-Jun,30-45,15,Middle East,Cool-season pulse crop
+Peanut,Arachis hypogaea,Fabaceae,Vegetable,"Cfa,Csa,Aw",Moderate,Medium,Full sun,Medium,10-14,120-150,Annual,Oct-Nov,May-Jun,30-60,30,South America,Underground legume requiring warm soil
+Edamame,Glycine max,Fabaceae,Vegetable,"Cfa,Dfb",Moderate,Small,Full sun,Medium,7-10,75-90,Annual,Oct-Nov,May-Jun,60-90,30,East Asia,Immature soybean harvested green
+Kohlrabi,Brassica oleracea,Brassicaceae,Vegetable,"Cfb,Cfa,Dfb",Easy,Small,Full sun,Medium,7-10,55-70,Annual,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,25-30,30,Europe,Swollen stem brassica
+Turnip,Brassica rapa,Brassicaceae,Vegetable,"Cfb,Dfb,Cfa",Easy,Small,Full sun,Medium,7-10,50-60,Annual,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,30,20,Europe,Fast-growing cool-season root
+Rutabaga,Brassica napus,Brassicaceae,Vegetable,"Cfb,Dfb",Easy,Small,Full sun,Medium,7-10,90-100,Annual,Feb-Apr/Jul-Aug,Mar-May/Jul-Aug,40,25,Scandinavia,Large yellow-fleshed root
+Celeriac,Apium graveolens,Apiaceae,Vegetable,"Cfb,Cfa,Dfb",Moderate,Small,Full sun,High,14-21,110-120,Annual,Feb-Apr,Feb-Apr,30,25,Mediterranean,Celery root variety
+Celery,Apium graveolens,Apiaceae,Vegetable,"Cfb,Cfa,Dfb",Moderate,Small,Partial shade,High,14-21,100-130,Annual,Feb-May/Aug-Oct,Mar-Jun,60-75,30,Mediterranean,Cool-season stalk vegetable
+Parsnip,Pastinaca sativa,Apiaceae,Vegetable,"Cfb,Dfb,Cfa",Moderate,Small,Full sun,Medium,14-21,120-180,Annual,Mar-Jun,Mar-Jun,40,20,Europe,Sweet root improved by frost
+Salsify,Tragopogon porrifolius,Asteraceae,Vegetable,"Cfb,Cfa,Dfb",Moderate,Small,Full sun,Medium,10-21,120-150,Biennial,Mar-May,Mar-May,100,10,Mediterranean,Oyster-flavored root vegetable
+Scorzonera,Scorzonera hispanica,Asteraceae,Vegetable,"Cfb,Cfa,Dfb",Moderate,Small,Full sun,Medium,14-21,120-150,Perennial,Mar-May,Mar-May,100,10,Europe,Black-skinned root vegetable
+Okra,Abelmoschus esculentus,Malvaceae,Vegetable,"Cfa,Csa,Aw",Moderate,Medium,Full sun,Medium,7-14,50-65,Annual,Oct-Dec,May-Jul,100-200,45-60,Africa,Heat-loving pod vegetable
+Tomatillo,Physalis philadelphica,Solanaceae,Vegetable,"Cfa,Csa,Aw",Moderate,Medium,Full sun,Medium,7-14,75-100,Annual,Oct-Nov,May-Jun,90-150,75-100,Central America,Tart green fruit in husk
+Ground Cherry,Physalis pruinosa,Solanaceae,Vegetable,"Cfa,Csa",Moderate,Medium,Full sun,Medium,7-14,70-90,Annual,Oct-Nov,May-Jun,45-90,60-90,Americas,Sweet golden berries in papery husks
+Water Spinach,Ipomoea aquatica,Convolvulaceae,Vegetable,"Aw,Am,Cfa",Easy,Medium,Full sun,Very high,7-10,40-60,Annual,Oct-Jan,May-Aug,15-30,30-60,Southeast Asia,Aquatic or semi-aquatic leafy green
+Taro,Colocasia esculenta,Araceae,Vegetable,"Aw,Am,Cfa",Moderate,Large,Partial shade,Very high,14-21,180-365,Perennial,Oct-Dec,May-Jul,100-150,60-100,Southeast Asia,Tropical root crop requiring wet conditions
+Yam,Dioscorea,Dioscoreaceae,Vegetable,"Aw,Am,Cfa",Moderate,Large,Partial shade,Medium,14-21,180-365,Perennial,Oct-Dec,May-Jul,200-600,100-200,Africa/Asia,Climbing tropical tuber crop
+Cassava,Manihot esculenta,Euphorbiaceae,Vegetable,"Aw,Am,BSh",Moderate,Large,Full sun,Low,14-21,365-547,Perennial,Oct-Dec,Year-round,100-300,100-150,South America,Drought-tolerant tropical root staple
+Arrowroot,Maranta arundinacea,Marantaceae,Vegetable,"Aw,Am,Cfa",Moderate,Medium,Partial shade,High,21-30,240-365,Perennial,Oct-Dec,May-Jul,60-120,60-90,South America,Tropical rhizome for starch
+Galangal,Alpinia galanga,Zingiberaceae,Herb,"Aw,Am,Cfa",Moderate,Medium,Partial shade,High,14-21,240-300,Perennial,Sep-Nov,Mar-May,100-200,60-100,Southeast Asia,Aromatic tropical rhizome
+Cardamom,Elettaria cardamomum,Zingiberaceae,Herb,"Aw,Am",Hard,Medium,Partial shade,High,21-30,730-1095,Perennial,Year-round,Year-round,200-400,100-200,India,Tropical spice requiring humid conditions
+Vanilla,Vanilla planifolia,Orchidaceae,Herb,"Aw,Am",Hard,Large,Partial shade,High,30-60,1095-1460,Perennial,Year-round,Year-round,1000-3000,100-200,Central America,Climbing orchid producing spice pods
+Black Pepper,Piper nigrum,Piperaceae,Herb,"Aw,Am",Hard,Large,Partial shade,High,21-30,1095-1460,Perennial,Year-round,Year-round,300-1000,100-300,India,Tropical climbing vine spice
+Cinnamon,Cinnamomum verum,Lauraceae,Herb,"Aw,Am",Hard,Large,Partial shade,High,30-90,1825-3650,Perennial,Year-round,Year-round,1000-2000,500-1000,Sri Lanka,Tropical tree with aromatic bark
+Clove,Syzygium aromaticum,Myrtaceae,Herb,"Aw,Am",Hard,Very large,Full sun,High,30-60,1825-3650,Perennial,Year-round,Year-round,1000-2000,600-1000,Indonesia,Tropical tree with aromatic flower buds
+Nutmeg,Myristica fragrans,Myristicaceae,Herb,"Aw,Am",Hard,Very large,Partial shade,High,30-90,2555-3650,Perennial,Year-round,Year-round,1500-2000,800-1200,Indonesia,Tropical tree producing two spices
+Allspice,Pimenta dioica,Myrtaceae,Herb,"Aw,Am",Hard,Very large,Full sun,Medium,30-90,2190-3650,Perennial,Year-round,Year-round,1000-1500,600-900,Caribbean,Tropical tree with aromatic berries
+Star Anise,Illicium verum,Schisandraceae,Herb,"Cfa,Aw",Hard,Large,Partial shade,Medium,30-90,2190-3650,Perennial,Sep-Nov,Year-round,500-1500,400-800,China,Evergreen tree with star-shaped fruit
+Horseradish,Armoracia rusticana,Brassicaceae,Herb,"Cfb,Dfb,Cfa",Easy,Medium,Full sun,Medium,14-21,150-200,Perennial,Mar-May,Mar-May,60-90,45-60,Europe,Pungent root condiment
+Wasabi,Eutrema japonicum,Brassicaceae,Herb,"Cfb,Cfa",Hard,Small,Partial shade,Very high,21-30,365-547,Perennial,Year-round,Year-round,30-60,30,Japan,Cool-climate aquatic rhizome
+Shiso,Perilla frutescens,Lamiaceae,Herb,"Cfa,Cfb,Csa",Easy,Small,Full sun,Medium,7-14,60-90,Annual,Sep-Nov,Apr-Jun,60-100,45,East Asia,Aromatic culinary herb
+Vietnamese Mint,Persicaria odorata,Polygonaceae,Herb,"Aw,Cfa,Am",Easy,Small,Partial shade,High,7-14,50-70,Perennial,Sep-Dec,Mar-Sep,20-40,30-60,Southeast Asia,Tropical mint-like herb
+Thai Basil,Ocimum basilicum,Lamiaceae,Herb,"Cfa,Csa,Aw",Easy,Small,Full sun,Medium,7-10,60-90,Annual,Oct-Nov,May-Jun,40-60,30,Southeast Asia,Anise-flavored basil variety
+Holy Basil,Ocimum tenuiflorum,Lamiaceae,Herb,"Aw,Cfa",Moderate,Small,Full sun,Medium,7-14,60-90,Annual,Oct-Nov,May-Jun,30-60,30,India,Sacred culinary and medicinal herb
+Lemon Verbena,Aloysia citrodora,Verbenaceae,Herb,"Cfa,Csa",Moderate,Large,Full sun,Medium,14-28,90-120,Perennial,Sep-Nov,Apr-Jun,200-300,150-200,South America,Intensely lemon-scented herb
+Epazote,Dysphania ambrosioides,Amaranthaceae,Herb,"Cfa,Csa,Aw",Easy,Medium,Full sun,Low,7-14,60-90,Annual,Sep-Nov,Apr-Jun,60-120,45,Central America,Pungent Mexican culinary herb
+Culantro,Eryngium foetidum,Apiaceae,Herb,"Aw,Am,Cfa",Moderate,Small,Partial shade,Medium,14-21,90-120,Biennial,Oct-Dec,May-Jul,20-40,20,Caribbean,Pungent coriander relative
+Mexican Oregano,Lippia graveolens,Verbenaceae,Herb,"Cfa,Csa,BSh",Moderate,Large,Full sun,Low,14-28,365-547,Perennial,Sep-Nov,Apr-Jun,150-300,100-200,Central America,Drought-tolerant oregano relative
+Lovage,Levisticum officinale,Apiaceae,Herb,"Cfb,Dfb,Cfa",Easy,Large,Full sun,Medium,14-21,90-120,Perennial,Mar-May/Aug-Oct,Mar-Jun,150-200,60,Mediterranean,Tall celery-flavored perennial
+Angelica,Angelica archangelica,Apiaceae,Herb,"Cfb,Dfb",Moderate,Large,Partial shade,Medium,21-28,365-730,Biennial,Aug-Oct,Aug-Oct,150-250,90,Europe,Architectural aromatic biennial
+Hyssop,Hyssopus officinalis,Lamiaceae,Herb,"Cfa,Csa,Csb",Easy,Medium,Full sun,Low,14-21,90-120,Perennial,Sep-Nov,Apr-Jun,60-90,45,Mediterranean,Aromatic medicinal herb
+Winter Savory,Satureja montana,Lamiaceae,Herb,"Cfa,Csa,Csb",Easy,Small,Full sun,Low,10-14,90,Perennial,Sep-Nov,Apr-Jun,30-40,30,Mediterranean,Compact peppery herb
+Summer Savory,Satureja hortensis,Lamiaceae,Herb,"Cfa,Csa",Easy,Small,Full sun,Low,10-14,70,Annual,Sep-Nov,Apr-Jun,30-45,20,Mediterranean,Peppery culinary annual
+Caraway,Carum carvi,Apiaceae,Herb,"Cfb,Dfb,Cfa",Easy,Small,Full sun,Medium,14-21,120-150,Biennial,Mar-May/Aug-Oct,Mar-Jun,60-75,25,Europe,Aromatic seed spice
+Cumin,Cuminum cyminum,Apiaceae,Herb,"Csa,BSh,Aw",Moderate,Small,Full sun,Low,7-14,120-150,Annual,Mar-May/Sep-Oct,Apr-Jun,30-50,15,Middle East,Warm-climate seed spice
+Anise,Pimpinella anisum,Apiaceae,Herb,"Cfa,Csa",Easy,Small,Full sun,Medium,14-21,120-130,Annual,Sep-Nov,Apr-Jun,45-60,20,Mediterranean,Licorice-flavored seed spice
+Nigella,Nigella sativa,Ranunculaceae,Herb,"Cfa,Csa,BSh",Easy,Small,Full sun,Low,14-21,120-140,Annual,Mar-May/Sep-Oct,Mar-Jun,30-60,20,Mediterranean,Black seed spice and ornamental
+Wormwood,Artemisia absinthium,Asteraceae,Herb,"Cfb,Cfa,Csa,Dfb",Easy,Medium,Full sun,Low,14-21,90-120,Perennial,Mar-May/Aug-Oct,Mar-Jun,60-120,60,Europe,Bitter aromatic herb for absinthe
+Rue,Ruta graveolens,Rutaceae,Herb,"Cfa,Csa,Csb",Moderate,Small,Full sun,Low,14-28,90-120,Perennial,Sep-Nov,Apr-Jun,60-90,45,Mediterranean,Bitter medicinal herb (handle with care)
+Tansy,Tanacetum vulgare,Asteraceae,Herb,"Cfb,Dfb,Cfa",Easy,Medium,Full sun,Low,14-21,90-120,Perennial,Mar-May/Aug-Oct,Mar-Jun,90-150,60,Europe,Aromatic pest-deterrent herb
+Valerian,Valeriana officinalis,Caprifoliaceae,Herb,"Cfb,Dfb,Cfa",Easy,Large,Partial shade,Medium,21-28,365-730,Perennial,Mar-May/Aug-Oct,Mar-Jun,100-150,60,Europe/Asia,Medicinal root herb
+Echinacea,Echinacea purpurea,Asteraceae,Herb,"Cfb,Cfa,Dfb",Easy,Medium,Full sun,Low,14-28,365-730,Perennial,Mar-May/Aug-Oct,Mar-Jun,60-120,45,North America,Immune-supporting medicinal flower
+Calendula,Calendula officinalis,Asteraceae,Herb,"Cfb,Cfa,Csa",Easy,Small,Full sun,Low,7-14,60-90,Annual,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,30-60,30,Mediterranean,Edible medicinal marigold
+St John's Wort,Hypericum perforatum,Hypericaceae,Herb,"Cfb,Cfa,Dfb,Csa",Easy,Medium,Full sun,Low,14-28,365-730,Perennial,Mar-May/Aug-Oct,Mar-Jun,60-90,30,Europe,Medicinal herb with yellow flowers
+Yarrow,Achillea millefolium,Asteraceae,Herb,"Cfb,Cfa,Dfb,Csa",Easy,Medium,Full sun,Low,14-21,365-730,Perennial,Mar-May/Aug-Oct,Mar-Jun,60-90,45,Europe/Asia/North America,Medicinal herb and dynamic accumulator
+Marshmallow,Althaea officinalis,Malvaceae,Herb,"Cfb,Cfa,Dfb",Easy,Large,Full sun,High,14-21,365-730,Perennial,Mar-May/Aug-Oct,Mar-Jun,100-150,60,Europe,Medicinal root and leaf herb
+Mullein,Verbascum thapsus,Scrophulariaceae,Herb,"Cfb,Cfa,Dfb,Csa",Easy,Large,Full sun,Low,14-21,365-730,Biennial,Mar-May/Aug-Oct,Mar-Jun,150-200,60,Europe/Asia,Tall medicinal herb
+Evening Primrose,Oenothera biennis,Onagraceae,Herb,"Cfb,Cfa,Dfb",Easy,Medium,Full sun,Low,14-21,365-730,Biennial,Mar-May/Aug-Oct,Mar-Jun,100-150,45,North America,Medicinal oil seed plant
+Dandelion,Taraxacum officinale,Asteraceae,Herb,"Cfb,Cfa,Dfb,Csa",Easy,Small,Full sun,Low,7-14,90-120,Perennial,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,15-40,20,Europe,Edible and medicinal weed
+Chicory,Cichorium intybus,Asteraceae,Herb,"Cfb,Cfa,Dfb,Csa",Easy,Medium,Full sun,Low,7-14,90-120,Perennial,Mar-May/Aug-Oct,Mar-Jun,90-150,30,Europe,Bitter salad green and coffee substitute
+Radicchio,Cichorium intybus,Asteraceae,Vegetable,"Cfb,Cfa,Dfb",Moderate,Small,Full sun,Medium,7-14,80-100,Annual,Feb-Apr/Aug-Sep,Mar-May/Jul-Aug,20-30,25,Mediterranean,Bitter heading chicory
+Endive,Cichorium endivia,Asteraceae,Vegetable,"Cfb,Cfa,Dfb",Easy,Small,Partial shade,Medium,7-14,70-90,Annual,Feb-Apr/Aug-Oct,Mar-May/Jul-Sep,30-40,35,Mediterranean,Frilly bitter salad green
+Escarole,Cichorium endivia,Asteraceae,Vegetable,"Cfb,Cfa,Dfb",Easy,Small,Partial shade,Medium,7-14,80-100,Annual,Feb-Apr/Aug-Oct,Mar-May/Jul-Sep,30-40,35,Mediterranean,Broad-leaved bitter green
+Mache,Valerianella locusta,Caprifoliaceae,Vegetable,"Cfb,Dfb",Easy,Small,Partial shade,Medium,10-14,50-60,Annual,Feb-Apr/Aug-Oct,Mar-May/Aug-Sep,10-20,15,Europe,Cold-hardy salad green
+Claytonia,Claytonia perfoliata,Montiaceae,Vegetable,"Cfb,Csb",Easy,Small,Partial shade,Medium,7-14,40-60,Annual,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,15-30,20,North America,Winter salad green
+Land Cress,Barbarea verna,Brassicaceae,Vegetable,"Cfb,Dfb",Easy,Small,Partial shade,Medium,7-14,50-60,Biennial,Feb-Apr/Aug-Oct,Mar-May/Aug-Sep,20-30,25,Europe,Peppery cold-hardy green
+Mizuna,Brassica rapa,Brassicaceae,Vegetable,"Cfb,Cfa,Dfb",Easy,Small,Partial shade,Medium,7-10,40-50,Annual,Mar-May/Aug-Oct,Mar-Jun/Aug-Oct,30-40,30,Japan,Mild frilly Asian green
+Mibuna,Brassica rapa,Brassicaceae,Vegetable,"Cfb,Cfa,Dfb",Easy,Small,Partial shade,Medium,7-10,40-50,Annual,Mar-May/Aug-Oct,Mar-Jun/Aug-Oct,30-40,25,Japan,Smooth-leaved Asian green
+Tatsoi,Brassica rapa,Brassicaceae,Vegetable,"Cfb,Cfa,Dfb",Easy,Small,Partial shade,Medium,7-10,45-50,Annual,Mar-May/Aug-Oct,Mar-Jun/Aug-Oct,20-30,30,China,Spoon-shaped Asian green
+Bok Choy,Brassica rapa,Brassicaceae,Vegetable,"Cfb,Cfa,Dfb",Easy,Small,Partial shade,Medium,7-10,45-60,Annual,Mar-May/Aug-Oct,Mar-Jun/Aug-Oct,30-45,25,China,White-stemmed Asian green
+Choy Sum,Brassica rapa,Brassicaceae,Vegetable,"Cfb,Cfa",Easy,Small,Full sun,Medium,7-10,50-60,Annual,Mar-May/Aug-Oct,Mar-Jun/Aug-Oct,30-45,20,China,Flowering Asian green
+Gai Lan,Brassica oleracea,Brassicaceae,Vegetable,"Cfb,Cfa",Easy,Small,Full sun,Medium,7-10,60-70,Annual,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,45-60,30,China,Chinese broccoli
+Komatsuna,Brassica rapa,Brassicaceae,Vegetable,"Cfb,Cfa,Dfb",Easy,Small,Partial shade,Medium,7-10,35-40,Annual,Mar-May/Aug-Oct,Mar-Jun/Aug-Oct,30-45,25,Japan,Spinach mustard hybrid
+Shungiku,Glebionis coronaria,Asteraceae,Vegetable,"Cfb,Cfa",Easy,Small,Partial shade,Medium,7-10,40-50,Annual,Mar-May/Aug-Oct,Mar-Jun/Aug-Sep,30-60,30,Asia,Edible chrysanthemum greens

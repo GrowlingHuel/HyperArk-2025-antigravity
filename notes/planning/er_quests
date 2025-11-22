@@ -1,0 +1,5 @@
+ id |           title            |     steps     |                        required_skills                        |                             xp_rewards                              
+----+----------------------------+---------------+---------------------------------------------------------------+---------------------------------------------------------------------
+  1 | The Sacred Bokashi Journey | {"steps": []} | {"composing": 6, "system_building": 5, "water_management": 4} | {"composting": 150, "system_building": 100, "water_management": 75}
+(1 row)
+

@@ -1,0 +1,211 @@
+plant_a,plant_b,relationship_type,evidence_level,mechanism,notes
+Tomato,Basil,good,traditional_strong,Pest deterrence and flavor enhancement,Basil repels aphids and whiteflies from tomatoes; traditional pairing
+Tomato,Carrots,good,traditional_strong,Root/foliage synergy,Carrots break up soil for tomato roots; different nutrient needs
+Tomato,Marigold,good,scientific,Pest deterrence,Marigolds produce thiopenes that deter nematodes and aphids
+Tomato,Nasturtium,good,traditional_strong,Trap crop,Nasturtiums attract aphids away from tomatoes
+Tomato,Parsley,good,traditional_weak,Companion benefit,Traditional pairing with anecdotal support
+Tomato,Onion,good,traditional_strong,Pest deterrence,Onion family deters spider mites and aphids
+Tomato,Garlic,good,scientific,Pest and disease deterrence,Garlic compounds inhibit fungal diseases
+Tomato,Chives,good,traditional_strong,Pest deterrence,Allium family repels aphids
+Tomato,Asparagus,good,traditional_weak,Mutual benefit,Asparagus beetles reduced near tomatoes; tomatoes may deter asparagus beetles
+Tomato,Borage,good,traditional_strong,Pest deterrence and pollination,Attracts predatory insects and pollinators
+Tomato,Lettuce,good,traditional_weak,Space and shade utilization,Lettuce benefits from tomato shade in hot weather
+Tomato,Brassicas,bad,traditional_strong,Nutrient competition,Both heavy feeders competing for same nutrients
+Tomato,Fennel,bad,scientific,Allelopathy,Fennel produces compounds inhibiting growth of most plants
+Tomato,Potato,bad,scientific,Disease susceptibility,Share same diseases (blight, wilt); should not follow each other
+Tomato,Dill (mature),bad,traditional_strong,Growth inhibition,Mature dill may stunt tomato growth
+Tomato,Walnut,bad,scientific,Allelopathy,Walnut juglone highly toxic to tomatoes
+Basil,Capsicum,good,traditional_strong,Pest deterrence,Same benefits as basil-tomato pairing
+Basil,Oregano,good,traditional_weak,Aromatic companion,May enhance each other's flavors
+Basil,Rue,bad,traditional_strong,Allelopathy,Rue inhibits basil growth
+Beans (all),Corn,good,scientific,Three Sisters companion,Beans fix nitrogen for corn; corn provides trellis
+Beans (all),Squash,good,scientific,Three Sisters companion,Squash shades soil reducing evaporation and weeds
+Beans (all),Carrots,good,traditional_strong,Nitrogen benefit,Beans provide nitrogen for carrots
+Beans (all),Cucumber,good,traditional_strong,Nitrogen benefit,Beans provide nitrogen; cucumbers provide ground cover
+Beans (all),Potato,good,traditional_strong,Nitrogen benefit,Beans provide nitrogen for potatoes
+Beans (all),Radish,good,traditional_weak,Pest deterrence,Radishes may deter bean beetles
+Beans (all),Brassicas,good,traditional_weak,Nitrogen benefit,Beans provide nitrogen for heavy-feeding brassicas
+Beans (all),Beets,good,traditional_weak,Compatible growth,Different rooting depths and nutrient needs
+Beans (all),Strawberry,good,traditional_strong,Nitrogen benefit,Beans improve strawberry growth
+Beans (all),Onion,bad,traditional_strong,Growth inhibition,Alliums inhibit bean growth
+Beans (all),Garlic,bad,traditional_strong,Growth inhibition,Alliums inhibit bean growth
+Beans (all),Fennel,bad,scientific,Allelopathy,Fennel inhibits most plants
+Beans (all),Sunflower,bad,traditional_weak,Allelopathy,Sunflowers may inhibit bean growth
+Carrots,Onion,good,scientific,Pest deterrence,Onions deter carrot rust fly
+Carrots,Leek,good,scientific,Pest deterrence,Leeks deter carrot rust fly
+Carrots,Rosemary,good,traditional_strong,Pest deterrence,Strong scent confuses carrot fly
+Carrots,Sage,good,traditional_strong,Pest deterrence,Strong scent confuses carrot fly
+Carrots,Radish,good,traditional_weak,Soil breaking,Radishes break up soil for carrots
+Carrots,Lettuce,good,traditional_weak,Space utilization,Compatible spacing and growth rates
+Carrots,Peas,good,traditional_strong,Nitrogen benefit,Peas provide nitrogen for carrots
+Carrots,Chives,good,traditional_strong,Pest deterrence,Allium scent deters pests
+Carrots,Dill,bad,traditional_strong,Growth inhibition,Dill stunts carrot growth
+Carrots,Parsnip,bad,traditional_weak,Disease sharing,Share similar pests and diseases
+Cucumber,Beans,good,traditional_strong,Nitrogen benefit,Beans provide nitrogen
+Cucumber,Peas,good,traditional_strong,Nitrogen benefit,Peas provide nitrogen
+Cucumber,Corn,good,traditional_strong,Trellis and companion,Corn provides support; compatible growth
+Cucumber,Radish,good,traditional_weak,Pest deterrence,Radishes may deter cucumber beetles
+Cucumber,Nasturtium,good,traditional_strong,Trap crop,Attracts aphids away from cucumbers
+Cucumber,Sunflower,good,traditional_weak,Trellis support,Sunflowers can support vining cucumbers
+Cucumber,Marigold,good,traditional_strong,Pest deterrence,Deters beetles and aphids
+Cucumber,Dill,good,traditional_weak,Pollination,Attracts beneficial insects
+Cucumber,Potato,bad,traditional_strong,Disease susceptibility,Share some diseases
+Cucumber,Aromatic herbs (strong),bad,traditional_weak,Growth inhibition,Sage and rosemary may inhibit cucumber growth
+Cucumber,Melon,bad,scientific,Disease sharing,Cross-contamination of diseases and pests
+Lettuce,Carrots,good,traditional_strong,Space and timing,Different growth rates allow successive harvest
+Lettuce,Radish,good,traditional_strong,Marker and spacing,Radishes mark slow-germinating lettuce
+Lettuce,Strawberry,good,traditional_weak,Ground cover,Compatible low-growers
+Lettuce,Chives,good,traditional_strong,Pest deterrence,Chives deter aphids
+Lettuce,Garlic,good,traditional_strong,Pest deterrence,Garlic deters aphids and slugs
+Lettuce,Onion,good,traditional_weak,Space utilization,Compatible growth habits
+Lettuce,Mint,good,traditional_weak,Pest deterrence,Mint may deter slugs
+Lettuce,Brassicas,bad,traditional_weak,Spacing conflict,Both prefer similar spacing and conditions
+Lettuce,Parsley,bad,traditional_weak,Competition,Compete for similar resources
+Onion,Carrots,good,scientific,Pest deterrence,Mutual pest deterrence (carrot fly/onion fly)
+Onion,Beets,good,traditional_strong,Compatible growth,Different rooting depths
+Onion,Lettuce,good,traditional_weak,Space utilization,Compatible spacing
+Onion,Brassicas,good,traditional_strong,Pest deterrence,Deters cabbage moths and aphids
+Onion,Strawberry,good,traditional_strong,Disease deterrence,Deters fungal diseases
+Onion,Tomato,good,traditional_strong,Pest deterrence,Deters aphids and spider mites
+Onion,Chamomile,good,traditional_weak,Flavor enhancement,May improve onion flavor and health
+Onion,Beans,bad,traditional_strong,Growth inhibition,Inhibits bean growth
+Onion,Peas,bad,traditional_strong,Growth inhibition,Inhibits pea growth
+Onion,Sage,bad,traditional_strong,Growth inhibition,Mutual growth inhibition
+Garlic,Roses,good,scientific,Pest and disease deterrence,Deters aphids and black spot
+Garlic,Tomato,good,scientific,Disease deterrence,Antifungal properties protect tomatoes
+Garlic,Brassicas,good,traditional_strong,Pest deterrence,Deters cabbage moths
+Garlic,Beets,good,traditional_strong,Compatible growth,Different nutrient needs
+Garlic,Carrots,good,traditional_strong,Pest deterrence,Deters carrot fly
+Garlic,Lettuce,good,traditional_strong,Pest deterrence,Deters aphids
+Garlic,Strawberry,good,traditional_strong,Disease deterrence,Antifungal protection
+Garlic,Beans,bad,traditional_strong,Growth inhibition,Inhibits bean growth
+Garlic,Peas,bad,traditional_strong,Growth inhibition,Inhibits pea growth
+Garlic,Asparagus,bad,traditional_weak,Growth inhibition,May stunt asparagus
+Peas,Carrots,good,traditional_strong,Nitrogen benefit,Peas provide nitrogen
+Peas,Turnip,good,traditional_strong,Nitrogen benefit,Peas provide nitrogen
+Peas,Radish,good,traditional_strong,Nitrogen benefit,Peas provide nitrogen
+Peas,Corn,good,traditional_strong,Trellis and nitrogen,Corn provides support
+Peas,Beans,good,traditional_weak,Legume companions,Compatible nitrogen fixers
+Peas,Cucumber,good,traditional_strong,Nitrogen and space,Peas provide nitrogen; compatible growth
+Peas,Mint,good,traditional_weak,Pest deterrence,Mint may deter pea moths
+Peas,Onion,bad,traditional_strong,Growth inhibition,Alliums inhibit pea growth
+Peas,Garlic,bad,traditional_strong,Growth inhibition,Alliums inhibit pea growth
+Squash,Corn,good,scientific,Three Sisters companion,Ground cover reduces weeds and moisture loss
+Squash,Beans,good,scientific,Three Sisters companion,Compatible growth and nutrient cycling
+Squash,Marigold,good,traditional_strong,Pest deterrence,Deters squash bugs and beetles
+Squash,Nasturtium,good,traditional_strong,Trap crop,Attracts squash bugs away from plants
+Squash,Radish,good,traditional_weak,Pest deterrence,May deter squash borers
+Squash,Borage,good,traditional_strong,Pollination and pest deterrence,Attracts pollinators and deters worms
+Squash,Potato,bad,scientific,Disease sharing,Share some diseases and pests
+Brassicas,Beans,good,traditional_weak,Nitrogen benefit,Beans provide nitrogen for heavy feeders
+Brassicas,Beets,good,traditional_weak,Compatible growth,Different nutrient needs
+Brassicas,Celery,good,traditional_strong,Pest deterrence,Celery deters cabbage moths
+Brassicas,Chamomile,good,traditional_weak,Health and flavor,May improve growth and flavor
+Brassicas,Dill,good,traditional_strong,Pest control,Attracts beneficial wasps that prey on caterpillars
+Brassicas,Mint,good,traditional_strong,Pest deterrence,Deters flea beetles and cabbage moths
+Brassicas,Onion,good,traditional_strong,Pest deterrence,Deters cabbage moths and aphids
+Brassicas,Garlic,good,traditional_strong,Pest deterrence,Deters cabbage moths and aphids
+Brassicas,Nasturtium,good,traditional_strong,Trap crop,Attracts aphids away from brassicas
+Brassicas,Rosemary,good,traditional_strong,Pest deterrence,Strong scent confuses cabbage moths
+Brassicas,Sage,good,traditional_strong,Pest deterrence,Deters cabbage moths
+Brassicas,Thyme,good,traditional_strong,Pest deterrence,Deters cabbage worms
+Brassicas,Tomato,bad,traditional_strong,Nutrient competition,Both heavy feeders
+Brassicas,Strawberry,bad,traditional_weak,Growth inhibition,May inhibit each other
+Brassicas,Rue,bad,traditional_weak,Allelopathy,Rue may inhibit brassica growth
+Potato,Beans,good,traditional_strong,Nitrogen and pest deterrence,Beans provide nitrogen; deter Colorado beetles
+Potato,Corn,good,traditional_weak,Compatible growth,Different rooting depths
+Potato,Peas,good,traditional_weak,Nitrogen benefit,Peas provide nitrogen
+Potato,Marigold,good,scientific,Pest deterrence,Deters Colorado beetles and nematodes
+Potato,Horseradish,good,traditional_strong,Disease resistance,May improve disease resistance
+Potato,Nasturtium,good,traditional_weak,Trap crop,May attract pests away
+Potato,Tomato,bad,scientific,Disease sharing,Share blight and other diseases
+Potato,Cucumber,bad,traditional_strong,Disease susceptibility,Share some diseases
+Potato,Squash,bad,traditional_weak,Disease sharing,May share diseases
+Potato,Sunflower,bad,traditional_weak,Growth inhibition,May compete for nutrients
+Potato,Raspberry,bad,scientific,Disease vector,Both susceptible to verticillium wilt
+Capsicum,Basil,good,traditional_strong,Pest deterrence and flavor,Basil repels aphids and may improve flavor
+Capsicum,Onion,good,traditional_strong,Pest deterrence,Onions deter aphids
+Capsicum,Carrots,good,traditional_weak,Space utilization,Compatible growth
+Capsicum,Parsley,good,traditional_weak,Beneficial insects,Attracts predatory insects
+Capsicum,Oregano,good,traditional_weak,Pest deterrence,May deter pests
+Capsicum,Fennel,bad,scientific,Allelopathy,Fennel inhibits most plants
+Capsicum,Brassicas,bad,traditional_weak,Disease sharing,May share some diseases
+Corn,Beans,good,scientific,Three Sisters - nitrogen and support,Beans fix nitrogen; corn provides trellis
+Corn,Squash,good,scientific,Three Sisters - ground cover,Squash suppresses weeds and retains moisture
+Corn,Cucumber,good,traditional_strong,Trellis and nitrogen,Compatible growth; beans nearby benefit both
+Corn,Peas,good,traditional_strong,Nitrogen and support,Peas fix nitrogen; corn provides support
+Corn,Potato,good,traditional_weak,Compatible growth,Different rooting patterns
+Corn,Sunflower,good,traditional_weak,Beneficial insects,Both attract pollinators
+Corn,Tomato,bad,scientific,Pest sharing,Share corn earworm/tomato fruitworm
+Strawberry,Beans,good,traditional_strong,Nitrogen benefit,Beans provide nitrogen
+Strawberry,Borage,good,traditional_strong,Pollination and health,Attracts pollinators; improves growth
+Strawberry,Chives,good,traditional_strong,Pest deterrence,Deters aphids
+Strawberry,Garlic,good,traditional_strong,Disease deterrence,Antifungal protection
+Strawberry,Lettuce,good,traditional_weak,Space utilization,Compatible low-growers
+Strawberry,Onion,good,traditional_strong,Pest deterrence,Deters pests and diseases
+Strawberry,Sage,good,traditional_weak,Pest deterrence,May deter pests
+Strawberry,Spinach,good,traditional_weak,Compatible growth,Similar growing conditions
+Strawberry,Thyme,good,traditional_strong,Pest deterrence,Deters slugs and worms
+Strawberry,Brassicas,bad,traditional_weak,Growth inhibition,May inhibit each other
+Marigold,Tomato,good,scientific,Nematode deterrence,Root exudates kill nematodes
+Marigold,Cucumber,good,traditional_strong,Beetle deterrence,Deters cucumber beetles
+Marigold,Squash,good,traditional_strong,Bug deterrence,Deters squash bugs
+Marigold,Potato,good,scientific,Beetle deterrence,Deters Colorado potato beetles
+Marigold,Beans,good,traditional_strong,Beetle deterrence,Deters Mexican bean beetles
+Marigold,Cabbage,good,traditional_weak,Pest deterrence,May deter cabbage moths
+Nasturtium,Tomato,good,traditional_strong,Aphid trap crop,Attracts aphids away from tomatoes
+Nasturtium,Cucumber,good,traditional_strong,Pest trap crop,Attracts aphids and beetles away
+Nasturtium,Squash,good,traditional_strong,Pest trap crop,Attracts squash bugs away
+Nasturtium,Brassicas,good,traditional_strong,Aphid trap crop,Attracts aphids away
+Nasturtium,Apple trees,good,traditional_strong,Pest deterrence,Deters woolly aphids
+Borage,Tomato,good,traditional_strong,Pest deterrence and pollination,Deters hornworms; attracts pollinators
+Borage,Squash,good,traditional_strong,Pollination,Excellent pollinator attractor
+Borage,Strawberry,good,traditional_strong,Pollination and health,Improves growth and fruit production
+Parsley,Tomato,good,traditional_weak,Beneficial insects,Attracts predatory insects
+Parsley,Asparagus,good,traditional_strong,Compatible growth,Parsley thrives near asparagus
+Parsley,Carrot,good,traditional_weak,Beneficial insects,Attracts predatory wasps
+Parsley,Lettuce,bad,traditional_weak,Competition,Compete for similar resources
+Dill,Cabbage,good,traditional_strong,Pest control,Attracts beneficial wasps
+Dill,Cucumber,good,traditional_weak,Beneficial insects,Attracts pollinators
+Dill,Lettuce,good,traditional_weak,Beneficial insects,Attracts predatory insects
+Dill,Onion,good,traditional_weak,Beneficial insects,Attracts predatory insects
+Dill,Carrot,bad,traditional_strong,Growth inhibition,Stunts carrot growth
+Dill,Tomato (mature),bad,traditional_strong,Growth inhibition,Mature dill stunts tomatoes
+Fennel,Most plants,bad,scientific,Allelopathy,Produces compounds inhibiting most plants; grow in isolation
+Mint,Brassicas,good,traditional_strong,Pest deterrence,Deters flea beetles and cabbage moths
+Mint,Tomato,good,traditional_weak,Pest deterrence,May deter aphids
+Mint,Peas,good,traditional_weak,Pest deterrence,May deter pea moths
+Mint,Most plants,bad,traditional_strong,Aggressive spreading,Invasive roots compete with most plants
+Rosemary,Brassicas,good,traditional_strong,Pest deterrence,Strong scent confuses cabbage moths
+Rosemary,Beans,good,traditional_weak,Pest deterrence,May deter bean beetles
+Rosemary,Carrots,good,traditional_strong,Pest deterrence,Deters carrot flies
+Sage,Brassicas,good,traditional_strong,Pest deterrence,Deters cabbage moths
+Sage,Carrots,good,traditional_strong,Pest deterrence,Deters carrot flies
+Sage,Strawberry,good,traditional_weak,Pest deterrence,May deter pests
+Sage,Onion,bad,traditional_strong,Growth inhibition,Mutual growth inhibition
+Sage,Cucumber,bad,traditional_weak,Growth inhibition,May inhibit cucumber growth
+Thyme,Brassicas,good,traditional_strong,Pest deterrence,Deters cabbage worms
+Thyme,Strawberry,good,traditional_strong,Pest deterrence,Deters slugs and worms
+Thyme,Tomato,good,traditional_weak,Pest deterrence,May deter whiteflies
+Chives,Carrots,good,traditional_strong,Pest deterrence,Deters carrot flies
+Chives,Tomato,good,traditional_strong,Pest deterrence,Deters aphids
+Chives,Roses,good,traditional_strong,Disease deterrence,Deters black spot and aphids
+Oregano,Brassicas,good,traditional_weak,Pest deterrence,May deter pests
+Oregano,Cucumber,good,traditional_weak,Beneficial insects,Attracts pollinators
+Lavender,Most plants,good,traditional_strong,Pollinator attraction,Attracts bees and beneficial insects
+Chamomile,Brassicas,good,traditional_weak,Health improvement,May improve health and flavor
+Chamomile,Onion,good,traditional_weak,Health improvement,May improve growth
+Sunflower,Corn,good,traditional_weak,Beneficial insects,Both attract pollinators
+Sunflower,Cucumber,good,traditional_weak,Trellis support,Can support vining cucumbers
+Sunflower,Beans,bad,traditional_weak,Allelopathy,May inhibit bean growth
+Sunflower,Potato,bad,traditional_weak,Competition,Compete for nutrients
+Radish,Most plants,good,traditional_strong,Soil breaking and pest deterrence,Breaks up soil; deters many pests
+Asparagus,Tomato,good,traditional_weak,Pest deterrence,Mutual pest deterrence
+Asparagus,Parsley,good,traditional_strong,Compatible growth,Parsley thrives near asparagus
+Asparagus,Basil,good,traditional_weak,Pest deterrence,May deter asparagus beetles
+Asparagus,Garlic,bad,traditional_weak,Growth inhibition,May stunt asparagus
+Asparagus,Onion,bad,traditional_weak,Growth inhibition,May compete for resources
+Walnut tree,Most plants,bad,scientific,Juglone toxicity,Produces toxic juglone affecting most plants
+Rue,Basil,bad,traditional_strong,Allelopathy,Inhibits basil growth
+Rue,Brassicas,bad,traditional_weak,Allelopathy,May inhibit growth
+Rue,Sage,bad,traditional_weak,Allelopathy,May inhibit growth

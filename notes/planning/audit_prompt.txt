@@ -1,0 +1,116 @@
+Perform a comprehensive codebase audit for Green Man Tavern with the following focus areas:
+
+claude-code "Perform a comprehensive codebase audit for Green Man Tavern with the following focus areas:
+
+## 1. SECURITY AUDIT
+- Authentication/authorization vulnerabilities in LiveViews
+- SQL injection risks (check for string interpolation in queries)
+- XSS vulnerabilities in user-generated content rendering
+- CSRF token usage in forms
+- Insecure direct object references
+- Exposure of sensitive data in logs or error messages
+- API keys or secrets hardcoded (should be in env vars)
+- User input sanitization
+- File upload security (if applicable)
+- Rate limiting on expensive operations
+
+## 2. MINDSDB PURGE VERIFICATION
+- Search entire codebase for 'mindsdb', 'MindsDB', 'minds_db' (case-insensitive)
+- Check for orphaned AI agent code, imports, or dependencies
+- Verify mix.exs has no MindsDB-related dependencies
+- Check for commented-out MindsDB code that should be removed
+- Look for database tables/columns related to MindsDB that need cleanup
+- Identify any configuration files (config/*.exs) with MindsDB references
+- Flag any documentation mentioning MindsDB that needs updating
+
+## 3. FEATURE INTEGRATION ANALYSIS
+Assess how well these features integrate:
+- Living Web (systems diagram visualization)
+- Journal (user entries/reflections)
+- Planting Guide (permaculture recommendations)
+- Character Chats (interaction system)
+
+For each feature:
+- Does it share common data models appropriately?
+- Are there consistent navigation patterns between features?
+- Do they use shared LiveView components or duplicate code?
+- Is PubSub used consistently for real-time updates across features?
+- Are there integration points that feel forced or missing?
+- Do they follow the same authentication/authorization patterns?
+
+## 4. TECH STACK PURITY CHECK
+Evaluate adherence to Phoenix/Elixir/LiveView + minimal external dependencies:
+
+JavaScript/TypeScript:
+- List all .js/.ts files and their purposes
+- Identify any that could be replaced with LiveView features
+- Check if XyFlow is truly minimal or if usage has sprawled
+- Flag any unnecessary npm packages in assets/package.json
+
+CSS/Styling:
+- Are we using Tailwind or custom CSS or both (inconsistently)?
+- Any CSS frameworks that could be eliminated?
+- Inline styles vs. CSS classes - is there a clear pattern?
+
+External Dependencies:
+- Review mix.exs for dependencies beyond Phoenix core
+- Flag any that seem unnecessary or have native Elixir alternatives
+- Check for unused dependencies
+
+Frontend Libraries:
+- Beyond XyFlow, what other JS libraries are loaded?
+- Any jQuery, React, Vue, or other frameworks sneaking in?
+- Could LiveView JS commands replace custom JavaScript?
+
+## 5. CSS/STYLING CONFLICTS
+- Contradictory CSS rules (same element styled differently in different files)
+- Specificity wars (overly specific selectors fighting each other)
+- !important usage (often indicates conflict resolution attempts)
+- Inline styles overriding class styles
+- Inconsistent color schemes (hex codes that should be variables)
+- Duplicate class definitions across files
+- Responsive breakpoints used inconsistently
+- Z-index chaos (arbitrary values suggesting stacking conflicts)
+
+## 6. STANDARD BEST PRACTICES
+- Code duplication (functions/modules that could be consolidated)
+- Missing tests for critical business logic
+- Inconsistent naming conventions (snake_case, camelCase, PascalCase)
+- Large functions that should be broken down (>50 lines)
+- Missing documentation for public functions
+- Unused functions/modules
+- TODO/FIXME comments that indicate incomplete work
+- Error handling consistency (some using tuples, some raising)
+- Database queries in LiveViews (should be in contexts)
+- Missing database indexes on frequently queried columns
+- Ecto schema associations properly defined
+
+## OUTPUT FORMAT
+Provide findings in this structure:
+
+### CRITICAL ISSUES (fix immediately)
+[List with file locations and specific line numbers]
+
+### HIGH PRIORITY (fix before next release)
+[List with file locations and specific line numbers]
+
+### MEDIUM PRIORITY (fix in next sprint)
+[List with file locations and specific line numbers]
+
+### LOW PRIORITY (technical debt to address eventually)
+[List with file locations and specific line numbers]
+
+### POSITIVE FINDINGS (things we're doing well)
+[List examples of good practices to maintain]
+
+For each issue, provide:
+1. File path and line number(s)
+2. Description of the problem
+3. Why it matters
+4. Suggested fix (brief, not full code)
+5. Estimated complexity (Simple/Medium/Complex)
+
+End with:
+- Overall codebase health score (1-10)
+- Top 3 priorities to address first
+- Estimated effort to resolve all HIGH priority issues" > audit_$(date +%Y%m%d).md

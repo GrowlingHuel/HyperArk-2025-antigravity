@@ -1,0 +1,203 @@
+jesse@jesse-Alpha-V-V170PNH:~/Projects/HyperArk-2025$ # In IEx (or start it if closed: iex -S mix)
+iex> HyperArk.MindsDB.SQLClient.query("SELECT 'OK' as status")
+iex> HyperArk.MindsDB.SQLClient.list_models()
+bash: syntax error near unexpected token `('
+bash: syntax error near unexpected token `('
+jesse@jesse-Alpha-V-V170PNH:~/Projects/HyperArk-2025$ # Start IEx
+iex -S mix
+Erlang/OTP 26 [erts-14.2.5] [source] [64-bit] [smp:20:20] [ds:20:20:10] [async-threads:1] [jit:ns]
+
+Compiling 2 files (.ex)
+    warning: unused import Phoenix.LiveView
+    │
+ 11 │   import Phoenix.LiveView, only: [push_navigate: 2]
+    │   ~
+    │
+    └─ lib/green_man_tavern_web/controllers/user_auth.ex:11:3
+
+    warning: unused import Phoenix.Token
+    │
+ 12 │   import Phoenix.Token
+    │   ~
+    │
+    └─ lib/green_man_tavern_web/controllers/user_auth.ex:12:3
+
+     warning: no route path for GreenManTavernWeb.Router matches ~p"/users/confirm/#{capture}"
+     │
+ 111 │             &url(~p"/users/confirm/#{&1}")
+     │                    ~
+     │
+     └─ lib/green_man_tavern_web/live/user_registration_live.ex:111: GreenManTavernWeb.UserRegistrationLive.handle_event/3
+
+    warning: no route path for GreenManTavernWeb.Router matches "/database"
+    │
+ 37 │         <.link navigate={~p"/database"} class="banner-menu-item">Database</.link>
+    │         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    │
+    └─ lib/green_man_tavern_web/components/banner_menu_component.ex:37: GreenManTavernWeb.BannerMenuComponent.banner_menu/1
+
+    warning: no route path for GreenManTavernWeb.Router matches "/garden"
+    │
+ 38 │         <.link navigate={~p"/garden"} class="banner-menu-item">Garden</.link>
+    │         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    │
+    └─ lib/green_man_tavern_web/components/banner_menu_component.ex:38: GreenManTavernWeb.BannerMenuComponent.banner_menu/1
+
+    warning: no route path for GreenManTavernWeb.Router matches ~p"/users/confirm/#{capture}"
+    │
+ 24 │             &url(~p"/users/confirm/#{&1}")
+    │                    ~
+    │
+    └─ lib/green_man_tavern_web/controllers/user_registration_controller.ex:24: GreenManTavernWeb.UserRegistrationController.create/2
+
+    warning: no route path for GreenManTavernWeb.Router matches "/users/settings"
+    │
+ 22 │     |> put_session(:user_return_to, ~p"/users/settings")
+    │                                       ~
+    │
+    └─ lib/green_man_tavern_web/controllers/user_session_controller.ex:22: GreenManTavernWeb.UserSessionController.create/2
+
+Generated green_man_tavern app
+Interactive Elixir (1.18.2) - press Ctrl+C to exit (type h() ENTER for help)
+iex(1)> HyperArk.MindsDB.SQLClient.query("SELECT 'OK' as status")
+[warning] SQL protocol mismatch, falling back to HTTP client
+[error] ** State machine #PID<0.482.0> terminating
+** Reason for termination ==
+** (DBConnection.ConnectionError) client #PID<0.479.0> stopped: ** (MatchError) no match of right hand side value: <<5, 0, 0, 4, 0, 0, 2, 79, 75, 5, 0, 0, 5, 254, 0, 0, 2, 0>>
+    (myxql 0.7.1) lib/myxql/protocol.ex:539: MyXQL.Protocol.decode_resultset/4
+    (myxql 0.7.1) lib/myxql/client.ex:257: MyXQL.Client.recv_packets/7
+    (myxql 0.7.1) lib/myxql/connection.ex:104: MyXQL.Connection.handle_execute/4
+    (db_connection 2.8.1) lib/db_connection/holder.ex:354: DBConnection.Holder.holder_apply/4
+    (db_connection 2.8.1) lib/db_connection.ex:1555: DBConnection.run_execute/5
+    (db_connection 2.8.1) lib/db_connection.ex:1650: DBConnection.run/6
+    (db_connection 2.8.1) lib/db_connection.ex:769: DBConnection.parsed_prepare_execute/5
+    (db_connection 2.8.1) lib/db_connection.ex:761: DBConnection.prepare_execute/4
+    (myxql 0.7.1) lib/myxql.ex:354: MyXQL.do_query/4
+    (green_man_tavern 0.1.0) lib/hyperark/mindsdb/sql_client.ex:36: HyperArk.MindsDB.SQLClient.query/2
+    (elixir 1.18.2) src/elixir.erl:386: :elixir.eval_external_handler/3
+    (stdlib 5.2.3) erl_eval.erl:750: :erl_eval.do_apply/7
+    (elixir 1.18.2) src/elixir.erl:364: :elixir.eval_forms/4
+    (elixir 1.18.2) lib/module/parallel_checker.ex:120: Module.ParallelChecker.verify/1
+    (iex 1.18.2) lib/iex/evaluator.ex:336: IEx.Evaluator.eval_and_inspect/3
+    (iex 1.18.2) lib/iex/evaluator.ex:310: IEx.Evaluator.eval_and_inspect_parsed/3
+    (iex 1.18.2) lib/iex/evaluator.ex:299: IEx.Evaluator.parse_eval_inspect/4
+    (iex 1.18.2) lib/iex/evaluator.ex:189: IEx.Evaluator.loop/1
+    (iex 1.18.2) lib/iex/evaluator.ex:34: IEx.Evaluator.init/5
+    (stdlib 5.2.3) proc_lib.erl:241: :proc_lib.init_p_do_apply/3
+
+
+[error] :gen_statem #PID<0.482.0> terminating
+** (stop) an exception was raised:
+    ** (DBConnection.ConnectionError) client #PID<0.479.0> stopped: ** (MatchError) no match of right hand side value: <<5, 0, 0, 4, 0, 0, 2, 79, 75, 5, 0, 0, 5, 254, 0, 0, 2, 0>>
+    (myxql 0.7.1) lib/myxql/protocol.ex:539: MyXQL.Protocol.decode_resultset/4
+    (myxql 0.7.1) lib/myxql/client.ex:257: MyXQL.Client.recv_packets/7
+    (myxql 0.7.1) lib/myxql/connection.ex:104: MyXQL.Connection.handle_execute/4
+    (db_connection 2.8.1) lib/db_connection/holder.ex:354: DBConnection.Holder.holder_apply/4
+    (db_connection 2.8.1) lib/db_connection.ex:1555: DBConnection.run_execute/5
+    (db_connection 2.8.1) lib/db_connection.ex:1650: DBConnection.run/6
+    (db_connection 2.8.1) lib/db_connection.ex:769: DBConnection.parsed_prepare_execute/5
+    (db_connection 2.8.1) lib/db_connection.ex:761: DBConnection.prepare_execute/4
+    (myxql 0.7.1) lib/myxql.ex:354: MyXQL.do_query/4
+    (green_man_tavern 0.1.0) lib/hyperark/mindsdb/sql_client.ex:36: HyperArk.MindsDB.SQLClient.query/2
+    (elixir 1.18.2) src/elixir.erl:386: :elixir.eval_external_handler/3
+    (stdlib 5.2.3) erl_eval.erl:750: :erl_eval.do_apply/7
+    (elixir 1.18.2) src/elixir.erl:364: :elixir.eval_forms/4
+    (elixir 1.18.2) lib/module/parallel_checker.ex:120: Module.ParallelChecker.verify/1
+    (iex 1.18.2) lib/iex/evaluator.ex:336: IEx.Evaluator.eval_and_inspect/3
+    (iex 1.18.2) lib/iex/evaluator.ex:310: IEx.Evaluator.eval_and_inspect_parsed/3
+    (iex 1.18.2) lib/iex/evaluator.ex:299: IEx.Evaluator.parse_eval_inspect/4
+    (iex 1.18.2) lib/iex/evaluator.ex:189: IEx.Evaluator.loop/1
+    (iex 1.18.2) lib/iex/evaluator.ex:34: IEx.Evaluator.init/5
+    (stdlib 5.2.3) proc_lib.erl:241: :proc_lib.init_p_do_apply/3
+
+        (db_connection 2.8.1) lib/db_connection/connection.ex:192: DBConnection.Connection.handle_event/4
+        (stdlib 5.2.3) gen_statem.erl:1397: :gen_statem.loop_state_callback/11
+        (stdlib 5.2.3) proc_lib.erl:251: :proc_lib.wake_up/3
+    (stdlib 5.2.3) gen_statem.erl:1524: :gen_statem.loop_state_callback_result/11
+    (stdlib 5.2.3) proc_lib.erl:251: :proc_lib.wake_up/3
+Queue: [cast: {:stop, #Reference<0.3092171827.1646395400.96218>, %DBConnection.ConnectionError{message: "client #PID<0.479.0> stopped: ** (MatchError) no match of right hand side value: <<5, 0, 0, 4, 0, 0, 2, 79, 75, 5, 0, 0, 5, 254, 0, 0, 2, 0>>\n    (myxql 0.7.1) lib/myxql/protocol.ex:539: MyXQL.Protocol.decode_resultset/4\n    (myxql 0.7.1) lib/myxql/client.ex:257: MyXQL.Client.recv_packets/7\n    (myxql 0.7.1) lib/myxql/connection.ex:104: MyXQL.Connection.handle_execute/4\n    (db_connection 2.8.1) lib/db_connection/holder.ex:354: DBConnection.Holder.holder_apply/4\n    (db_connection 2.8.1) lib/db_connection.ex:1555: DBConnection.run_execute/5\n    (db_connection 2.8.1) lib/db_connection.ex:1650: DBConnection.run/6\n    (db_connection 2.8.1) lib/db_connection.ex:769: DBConnection.parsed_prepare_execute/5\n    (db_connection 2.8.1) lib/db_connection.ex:761: DBConnection.prepare_execute/4\n    (myxql 0.7.1) lib/myxql.ex:354: MyXQL.do_query/4\n    (green_man_tavern 0.1.0) lib/hyperark/mindsdb/sql_client.ex:36: HyperArk.MindsDB.SQLClient.query/2\n    (elixir 1.18.2) src/elixir.erl:386: :elixir.eval_external_handler/3\n    (stdlib 5.2.3) erl_eval.erl:750: :erl_eval.do_apply/7\n    (elixir 1.18.2) src/elixir.erl:364: :elixir.eval_forms/4\n    (elixir 1.18.2) lib/module/parallel_checker.ex:120: Module.ParallelChecker.verify/1\n    (iex 1.18.2) lib/iex/evaluator.ex:336: IEx.Evaluator.eval_and_inspect/3\n    (iex 1.18.2) lib/iex/evaluator.ex:310: IEx.Evaluator.eval_and_inspect_parsed/3\n    (iex 1.18.2) lib/iex/evaluator.ex:299: IEx.Evaluator.parse_eval_inspect/4\n    (iex 1.18.2) lib/iex/evaluator.ex:189: IEx.Evaluator.loop/1\n    (iex 1.18.2) lib/iex/evaluator.ex:34: IEx.Evaluator.init/5\n    (stdlib 5.2.3) proc_lib.erl:241: :proc_lib.init_p_do_apply/3\n", severity: :error, reason: :error}, %MyXQL.Connection{client: %MyXQL.Client{sock: {:gen_tcp, #Port<0.30>}, connection_id: 7}, cursors: %{}, disconnect_on_error_codes: [1461], ping_timeout: 15000, prepare: :named, queries: #Reference<0.3092171827.1646395400.96216>, transaction_status: :idle, last_ref: #Reference<0.3092171827.1646264328.96223>}}]
+Postponed: []
+State: {MyXQL.Connection, %MyXQL.Connection{client: %MyXQL.Client{sock: {:gen_tcp, #Port<0.30>}, connection_id: 7}, cursors: %{}, disconnect_on_error_codes: [1461], ping_timeout: 15000, prepare: :named, queries: #Reference<0.3092171827.1646395400.96216>, transaction_status: :idle, last_ref: #Reference<0.3092171827.1646264328.96223>}}
+Callback mode: :handle_event_function, state_enter: false
+{:ok,
+ %MyXQL.Result{
+   columns: ["status"],
+   connection_id: nil,
+   last_insert_id: nil,
+   num_rows: 1,
+   rows: [["OK"]],
+   num_warnings: nil
+ }}
+iex(2)> HyperArk.MindsDB.SQLClient.list_models()
+[warning] SQL protocol mismatch, falling back to HTTP client
+[error] ** State machine #PID<0.486.0> terminating
+** Reason for termination ==
+** (DBConnection.ConnectionError) client #PID<0.479.0> stopped: ** (MatchError) no match of right hand side value: <<5, 0, 0, 22, 254, 0, 0, 2, 0>>
+    (myxql 0.7.1) lib/myxql/protocol.ex:539: MyXQL.Protocol.decode_resultset/4
+    (myxql 0.7.1) lib/myxql/client.ex:257: MyXQL.Client.recv_packets/7
+    (myxql 0.7.1) lib/myxql/connection.ex:104: MyXQL.Connection.handle_execute/4
+    (db_connection 2.8.1) lib/db_connection/holder.ex:354: DBConnection.Holder.holder_apply/4
+    (db_connection 2.8.1) lib/db_connection.ex:1555: DBConnection.run_execute/5
+    (db_connection 2.8.1) lib/db_connection.ex:1650: DBConnection.run/6
+    (db_connection 2.8.1) lib/db_connection.ex:769: DBConnection.parsed_prepare_execute/5
+    (db_connection 2.8.1) lib/db_connection.ex:761: DBConnection.prepare_execute/4
+    (myxql 0.7.1) lib/myxql.ex:354: MyXQL.do_query/4
+    (green_man_tavern 0.1.0) lib/hyperark/mindsdb/sql_client.ex:36: HyperArk.MindsDB.SQLClient.query/2
+    (green_man_tavern 0.1.0) lib/hyperark/mindsdb/sql_client.ex:165: HyperArk.MindsDB.SQLClient.list_models/0
+    (elixir 1.18.2) src/elixir.erl:386: :elixir.eval_external_handler/3
+    (stdlib 5.2.3) erl_eval.erl:750: :erl_eval.do_apply/7
+    (elixir 1.18.2) src/elixir.erl:364: :elixir.eval_forms/4
+    (elixir 1.18.2) lib/module/parallel_checker.ex:120: Module.ParallelChecker.verify/1
+    (iex 1.18.2) lib/iex/evaluator.ex:336: IEx.Evaluator.eval_and_inspect/3
+    (iex 1.18.2) lib/iex/evaluator.ex:310: IEx.Evaluator.eval_and_inspect_parsed/3
+    (iex 1.18.2) lib/iex/evaluator.ex:299: IEx.Evaluator.parse_eval_inspect/4
+    (iex 1.18.2) lib/iex/evaluator.ex:189: IEx.Evaluator.loop/1
+    (iex 1.18.2) lib/iex/evaluator.ex:34: IEx.Evaluator.init/5
+
+
+[error] :gen_statem #PID<0.486.0> terminating
+** (stop) an exception was raised:
+    ** (DBConnection.ConnectionError) client #PID<0.479.0> stopped: ** (MatchError) no match of right hand side value: <<5, 0, 0, 22, 254, 0, 0, 2, 0>>
+    (myxql 0.7.1) lib/myxql/protocol.ex:539: MyXQL.Protocol.decode_resultset/4
+    (myxql 0.7.1) lib/myxql/client.ex:257: MyXQL.Client.recv_packets/7
+    (myxql 0.7.1) lib/myxql/connection.ex:104: MyXQL.Connection.handle_execute/4
+    (db_connection 2.8.1) lib/db_connection/holder.ex:354: DBConnection.Holder.holder_apply/4
+    (db_connection 2.8.1) lib/db_connection.ex:1555: DBConnection.run_execute/5
+    (db_connection 2.8.1) lib/db_connection.ex:1650: DBConnection.run/6
+    (db_connection 2.8.1) lib/db_connection.ex:769: DBConnection.parsed_prepare_execute/5
+    (db_connection 2.8.1) lib/db_connection.ex:761: DBConnection.prepare_execute/4
+    (myxql 0.7.1) lib/myxql.ex:354: MyXQL.do_query/4
+    (green_man_tavern 0.1.0) lib/hyperark/mindsdb/sql_client.ex:36: HyperArk.MindsDB.SQLClient.query/2
+    (green_man_tavern 0.1.0) lib/hyperark/mindsdb/sql_client.ex:165: HyperArk.MindsDB.SQLClient.list_models/0
+    (elixir 1.18.2) src/elixir.erl:386: :elixir.eval_external_handler/3
+    (stdlib 5.2.3) erl_eval.erl:750: :erl_eval.do_apply/7
+    (elixir 1.18.2) src/elixir.erl:364: :elixir.eval_forms/4
+    (elixir 1.18.2) lib/module/parallel_checker.ex:120: Module.ParallelChecker.verify/1
+    (iex 1.18.2) lib/iex/evaluator.ex:336: IEx.Evaluator.eval_and_inspect/3
+    (iex 1.18.2) lib/iex/evaluator.ex:310: IEx.Evaluator.eval_and_inspect_parsed/3
+    (iex 1.18.2) lib/iex/evaluator.ex:299: IEx.Evaluator.parse_eval_inspect/4
+    (iex 1.18.2) lib/iex/evaluator.ex:189: IEx.Evaluator.loop/1
+    (iex 1.18.2) lib/iex/evaluator.ex:34: IEx.Evaluator.init/5
+
+        (db_connection 2.8.1) lib/db_connection/connection.ex:192: DBConnection.Connection.handle_event/4
+        (stdlib 5.2.3) gen_statem.erl:1397: :gen_statem.loop_state_callback/11
+        (stdlib 5.2.3) proc_lib.erl:251: :proc_lib.wake_up/3
+    (stdlib 5.2.3) gen_statem.erl:1524: :gen_statem.loop_state_callback_result/11
+    (stdlib 5.2.3) proc_lib.erl:251: :proc_lib.wake_up/3
+Queue: [cast: {:stop, #Reference<0.3092171827.1646395400.96472>, %DBConnection.ConnectionError{message: "client #PID<0.479.0> stopped: ** (MatchError) no match of right hand side value: <<5, 0, 0, 22, 254, 0, 0, 2, 0>>\n    (myxql 0.7.1) lib/myxql/protocol.ex:539: MyXQL.Protocol.decode_resultset/4\n    (myxql 0.7.1) lib/myxql/client.ex:257: MyXQL.Client.recv_packets/7\n    (myxql 0.7.1) lib/myxql/connection.ex:104: MyXQL.Connection.handle_execute/4\n    (db_connection 2.8.1) lib/db_connection/holder.ex:354: DBConnection.Holder.holder_apply/4\n    (db_connection 2.8.1) lib/db_connection.ex:1555: DBConnection.run_execute/5\n    (db_connection 2.8.1) lib/db_connection.ex:1650: DBConnection.run/6\n    (db_connection 2.8.1) lib/db_connection.ex:769: DBConnection.parsed_prepare_execute/5\n    (db_connection 2.8.1) lib/db_connection.ex:761: DBConnection.prepare_execute/4\n    (myxql 0.7.1) lib/myxql.ex:354: MyXQL.do_query/4\n    (green_man_tavern 0.1.0) lib/hyperark/mindsdb/sql_client.ex:36: HyperArk.MindsDB.SQLClient.query/2\n    (green_man_tavern 0.1.0) lib/hyperark/mindsdb/sql_client.ex:165: HyperArk.MindsDB.SQLClient.list_models/0\n    (elixir 1.18.2) src/elixir.erl:386: :elixir.eval_external_handler/3\n    (stdlib 5.2.3) erl_eval.erl:750: :erl_eval.do_apply/7\n    (elixir 1.18.2) src/elixir.erl:364: :elixir.eval_forms/4\n    (elixir 1.18.2) lib/module/parallel_checker.ex:120: Module.ParallelChecker.verify/1\n    (iex 1.18.2) lib/iex/evaluator.ex:336: IEx.Evaluator.eval_and_inspect/3\n    (iex 1.18.2) lib/iex/evaluator.ex:310: IEx.Evaluator.eval_and_inspect_parsed/3\n    (iex 1.18.2) lib/iex/evaluator.ex:299: IEx.Evaluator.parse_eval_inspect/4\n    (iex 1.18.2) lib/iex/evaluator.ex:189: IEx.Evaluator.loop/1\n    (iex 1.18.2) lib/iex/evaluator.ex:34: IEx.Evaluator.init/5\n", severity: :error, reason: :error}, %MyXQL.Connection{client: %MyXQL.Client{sock: {:gen_tcp, #Port<0.32>}, connection_id: 8}, cursors: %{}, disconnect_on_error_codes: [1461], ping_timeout: 15000, prepare: :named, queries: #Reference<0.3092171827.1646395400.96470>, transaction_status: :idle, last_ref: #Reference<0.3092171827.1646264328.96473>}}]
+Postponed: []
+State: {MyXQL.Connection, %MyXQL.Connection{client: %MyXQL.Client{sock: {:gen_tcp, #Port<0.32>}, connection_id: 8}, cursors: %{}, disconnect_on_error_codes: [1461], ping_timeout: 15000, prepare: :named, queries: #Reference<0.3092171827.1646395400.96470>, transaction_status: :idle, last_ref: #Reference<0.3092171827.1646264328.96473>}}
+Callback mode: :handle_event_function, state_enter: false
+{:ok, []}
+iex(3)> # In IEx
+nil
+iex(4)> HyperArk.MindsDB.Connection.healthy?()
+** (UndefinedFunctionError) function HyperArk.MindsDB.Connection.healthy?/0 is undefined (module HyperArk.MindsDB.Connection is not available)
+    HyperArk.MindsDB.Connection.healthy?()
+    iex:4: (file)
+iex(4)> HyperArk.MindsDB.Connection.get_status()
+** (UndefinedFunctionError) function HyperArk.MindsDB.Connection.get_status/0 is undefined (module HyperArk.MindsDB.Connection is not available)
+    HyperArk.MindsDB.Connection.get_status()
+    iex:4: (file)
+iex(4)> 
+

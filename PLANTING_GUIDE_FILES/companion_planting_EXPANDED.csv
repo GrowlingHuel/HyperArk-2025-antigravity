@@ -1,0 +1,378 @@
+plant_a,plant_b,relationship_type,effect_description,evidence_tier,notes
+Basil,Tomato,beneficial,Repels aphids and hornworms; improves flavor and growth,strong,Classic pairing - scientifically validated
+Basil,Pepper,beneficial,Repels aphids and improves growth,strong,Nightshade family companion
+Basil,Oregano,beneficial,Enhances essential oils in both plants,moderate,Mediterranean herb pairing
+Basil,Parsley,beneficial,Similar water/sun needs; grow well together,moderate,Both prefer moist soil
+Basil,Lettuce,beneficial,Repels aphids from lettuce,moderate,Good spacing companion
+Basil,Purslane,beneficial,Complementary growth habits,traditional,Historical pairing
+Basil,Asparagus,beneficial,Repels asparagus beetles,moderate,Pest management
+Basil,Marigold,beneficial,Combined pest repellent effect,strong,Powerful duo for pest control
+Basil,Chamomile,beneficial,Enhances essential oils,moderate,Attracts beneficials
+Basil,Chives,beneficial,Both enhance each other's oils,moderate,Allium + herb pairing
+Basil,Rosemary,incompatible,Different water needs; basil prefers moist,moderate,Keep separated
+Basil,Fennel,incompatible,Fennel inhibits basil growth,moderate,Allelopathic effect
+Basil,Cucumber,incompatible,May stunt cucumber growth,traditional,Avoid pairing
+Basil,Rue,incompatible,Rue inhibits basil,traditional,Keep apart
+Oregano,Cabbage,beneficial,Repels cabbage moth and aphids,moderate,Brassica protector
+Oregano,Broccoli,beneficial,Repels cabbage pests,moderate,Brassica companion
+Oregano,Brussels Sprouts,beneficial,Deters cabbage pests,moderate,Brassica family
+Oregano,Cauliflower,beneficial,Pest deterrent,moderate,Brassica companion
+Oregano,Kohlrabi,beneficial,Repels pests,moderate,Brassica family
+Oregano,Turnip,beneficial,Pest management,moderate,Root brassica
+Oregano,Strawberry,beneficial,Improves growth and flavor,moderate,Tested pairing
+Oregano,Pepper,beneficial,Repels aphids,moderate,Nightshade companion
+Oregano,Eggplant,beneficial,Aphid deterrent,moderate,Nightshade family
+Oregano,Squash,beneficial,Pest control,moderate,Cucurbit companion
+Oregano,Beans,beneficial,Supports bean health,moderate,Legume companion
+Oregano,Cucumber,beneficial,Repels cucumber beetles,strong,Proven pest management
+Oregano,Basil,beneficial,Enhance each other's oils,moderate,Mediterranean pairing
+Oregano,Rosemary,beneficial,Mediterranean companions,strong,Similar growing conditions
+Oregano,Sage,beneficial,Grow well together,strong,Dry soil herbs
+Oregano,Thyme,beneficial,Similar conditions,strong,Mediterranean duo
+Oregano,Marjoram,beneficial,Close relatives,strong,Same family
+Oregano,Lavender,beneficial,Dry soil companions,moderate,Mediterranean herbs
+Thyme,Cabbage,beneficial,Deters cabbageworm and whiteflies,strong,Proven pest control
+Thyme,Broccoli,beneficial,Cabbage pest deterrent,moderate,Brassica protector
+Thyme,Cauliflower,beneficial,Repels cabbage pests,moderate,Brassica companion
+Thyme,Strawberry,beneficial,Protects from pests,moderate,Ground cover companion
+Thyme,Potato,beneficial,Enhances flavor,moderate,Root crop pairing
+Thyme,Eggplant,beneficial,Good companion,moderate,Nightshade family
+Thyme,Tomato,beneficial,Confuses pests,moderate,Nightshade companion
+Thyme,Rosemary,beneficial,Mediterranean companions,strong,Same conditions
+Thyme,Sage,beneficial,Dry soil herbs,strong,Mediterranean pairing
+Thyme,Oregano,beneficial,Similar needs,strong,Mediterranean duo
+Thyme,Marjoram,beneficial,Related herbs,strong,Mediterranean family
+Thyme,Lavender,beneficial,Drought-tolerant pair,strong,Mediterranean companions
+Thyme,Beans,beneficial,Supports legume health,moderate,Nitrogen fixer companion
+Thyme,Lettuce,beneficial,Pest deterrent,moderate,Leafy green companion
+Thyme,Basil,incompatible,Different moisture needs,moderate,Thyme prefers dry
+Thyme,Cilantro,incompatible,Water requirement mismatch,moderate,Keep separate
+Thyme,Chives,incompatible,Moisture needs differ,moderate,Chives need more water
+Rosemary,Cabbage,beneficial,Repels cabbage fly and moths,strong,Brassica protector
+Rosemary,Broccoli,beneficial,Deters cabbage pests,moderate,Brassica companion
+Rosemary,Cauliflower,beneficial,Pest management,moderate,Brassica family
+Rosemary,Beans,beneficial,Repels bean beetles,moderate,Legume protector
+Rosemary,Carrot,beneficial,Deters carrot fly,strong,Root crop companion
+Rosemary,Sage,beneficial,Complementary aromatics,strong,Best herb pairing
+Rosemary,Thyme,beneficial,Mediterranean duo,strong,Similar conditions
+Rosemary,Oregano,beneficial,Dry soil companions,strong,Mediterranean herbs
+Rosemary,Marjoram,beneficial,Related herbs,strong,Mediterranean family
+Rosemary,Lavender,beneficial,Perfect pairing,strong,Identical conditions
+Rosemary,Garlic,beneficial,Allium companion,moderate,Pest deterrent combo
+Rosemary,Collards,beneficial,Brassica protector,moderate,Leafy green
+Rosemary,Kale,beneficial,Deters pests,moderate,Brassica companion
+Rosemary,Potato,beneficial,Pest management,moderate,Root crop
+Rosemary,Cucumber,incompatible,Water needs differ,moderate,Rosemary too dry for cucumbers
+Rosemary,Basil,incompatible,Moisture requirements clash,moderate,Keep separate
+Sage,Cabbage,beneficial,Deters cabbage loopers and maggots,strong,Brassica protector
+Sage,Broccoli,beneficial,Repels flea beetles,moderate,Brassica companion
+Sage,Cauliflower,beneficial,Cabbage pest deterrent,moderate,Brassica family
+Sage,Carrot,beneficial,Deters carrot fly,moderate,Root crop companion
+Sage,Strawberry,beneficial,Pest management,moderate,Berry companion
+Sage,Tomato,beneficial,Pest confuser,moderate,Nightshade companion
+Sage,Rosemary,beneficial,Best companions,strong,Only herb sage likes
+Sage,Lavender,beneficial,Mediterranean pairing,strong,Similar conditions
+Sage,Thyme,beneficial,Dry soil herbs,strong,Mediterranean duo
+Sage,Marjoram,beneficial,Related herbs,moderate,Mediterranean family
+Sage,Oregano,beneficial,Dry soil companions,moderate,Mediterranean herbs
+Sage,Lettuce,beneficial,Pest deterrent,moderate,Leafy green
+Sage,Beans,beneficial,Legume companion,moderate,Nitrogen fixer pairing
+Sage,Rue,incompatible,Rue stunts sage,traditional,Keep apart
+Sage,Cucumber,incompatible,Stunts cucumber growth,moderate,Avoid pairing
+Sage,Onion,incompatible,Water needs differ,moderate,Sage prefers dry
+Sage,Basil,incompatible,Growth inhibition,traditional,Keep separate
+Parsley,Tomato,beneficial,Attracts beneficial insects,strong,Nightshade companion
+Parsley,Asparagus,beneficial,Repels asparagus beetles,strong,Proven pest control
+Parsley,Carrot,beneficial,Attracts predatory wasps,moderate,Root crop companion
+Parsley,Rose,beneficial,Improves rose health,traditional,Flower companion
+Parsley,Chives,beneficial,Similar needs,moderate,Both like moisture
+Parsley,Basil,beneficial,Grow well together,moderate,Similar conditions
+Parsley,Cilantro,beneficial,Apiaceae family,moderate,Related herbs
+Parsley,Oregano,beneficial,Herb garden pairing,moderate,Complementary
+Parsley,Thyme,beneficial,Mixed herb bed,moderate,Good companions
+Parsley,Rosemary,beneficial,Herb combination,moderate,Different layers
+Parsley,Sage,beneficial,Herb pairing,moderate,Complementary
+Parsley,Marjoram,beneficial,Mediterranean herb,moderate,Good companion
+Parsley,Lavender,beneficial,Herb garden,moderate,Attracts beneficials
+Parsley,Onion,beneficial,Allium pairing,moderate,Pest management
+Parsley,Lettuce,beneficial,Leafy green companion,moderate,Similar needs
+Parsley,Mint,incompatible,Mint overpowers,moderate,Keep mint contained
+Mint,Cabbage,beneficial,Deters cabbage moths,strong,Brassica protector
+Mint,Broccoli,beneficial,Repels aphids and flea beetles,moderate,Brassica companion
+Mint,Tomato,beneficial,Improves growth and flavor,moderate,Nightshade companion
+Mint,Pea,beneficial,Attracts beneficials,moderate,Legume companion
+Mint,Cauliflower,beneficial,Pest deterrent,moderate,Brassica family
+Mint,Kale,beneficial,Flea beetle deterrent,moderate,Leafy brassica
+Mint,Lettuce,beneficial,Repels slugs,moderate,Leafy green protector
+Mint,Eggplant,beneficial,Aphid deterrent,moderate,Nightshade companion
+Mint,Squash,beneficial,Pest management,moderate,Cucurbit companion
+Mint,Basil,beneficial,Can grow together if mint contained,moderate,Keep mint in check
+Mint,Oregano,beneficial,Herb pairing,moderate,Mediterranean connection
+Mint,Cilantro,beneficial,Different layers,moderate,Complementary
+Mint,Parsley,incompatible,Mint overwhelms,moderate,Too aggressive
+Mint,Rosemary,incompatible,Water needs differ,moderate,Mint too wet
+Mint,Sage,incompatible,Moisture mismatch,moderate,Keep separate
+Mint,Other Mint varieties,incompatible,Cross-pollination issues,moderate,Keep varieties separate
+Dill,Cabbage,beneficial,Attracts predatory wasps,strong,Brassica protector
+Dill,Broccoli,beneficial,Beneficial insect attractor,moderate,Brassica companion
+Dill,Lettuce,beneficial,Attracts hoverflies,moderate,Leafy green companion
+Dill,Cucumber,beneficial,Improves growth,moderate,Cucurbit companion
+Dill,Onion,beneficial,Pest management,moderate,Allium pairing
+Dill,Brussels Sprouts,beneficial,Cabbage pest control,moderate,Brassica family
+Dill,Corn,beneficial,Attracts beneficials,moderate,Grain companion
+Dill,Cilantro,beneficial,Apiaceae family,moderate,Related herbs
+Dill,Chives,beneficial,Herb pairing,moderate,Complementary
+Dill,Parsley,beneficial,Apiaceae companions,moderate,Same family
+Dill,Basil,beneficial,Herb garden pairing,moderate,Complementary growth
+Dill,Tomato,incompatible,Can inhibit tomato growth,moderate,Keep apart when tomatoes mature
+Dill,Carrot,incompatible,Attracts carrot fly,moderate,Avoid pairing
+Dill,Fennel,incompatible,Cross-pollination,strong,Keep separated
+Chives,Carrot,beneficial,Repels carrot fly,strong,Proven pest control
+Chives,Tomato,beneficial,Repels aphids,strong,Nightshade protector
+Chives,Rose,beneficial,Prevents black spot,moderate,Flower companion
+Chives,Apple,beneficial,Prevents apple scab,moderate,Fruit tree companion
+Chives,Strawberry,beneficial,Improves flavor,moderate,Berry companion
+Chives,Lettuce,beneficial,Aphid deterrent,moderate,Leafy green
+Chives,Pepper,beneficial,Pest management,moderate,Nightshade family
+Chives,Eggplant,beneficial,Aphid control,moderate,Nightshade companion
+Chives,Broccoli,beneficial,Pest deterrent,moderate,Brassica companion
+Chives,Cabbage,beneficial,Flea beetle control,moderate,Brassica protector
+Chives,Parsley,beneficial,Similar moisture needs,moderate,Herb pairing
+Chives,Basil,beneficial,Enhance each other,moderate,Herb companion
+Chives,Oregano,beneficial,Herb garden pairing,moderate,Complementary
+Chives,Thyme,incompatible,Water needs differ,moderate,Thyme too dry
+Chives,Sage,incompatible,Moisture mismatch,moderate,Keep separate
+Chives,Rosemary,incompatible,Different conditions,moderate,Rosemary too dry
+Chives,Beans,incompatible,Stunts bean growth,moderate,Avoid legumes
+Chives,Pea,incompatible,Inhibits pea growth,moderate,Avoid legumes
+Marigold (French),Tomato,beneficial,Repels whitefly,strong,Greenhouse essential
+Marigold (French),Potato,beneficial,Deters Colorado potato beetle,moderate,Root crop protector
+Marigold (French),Pepper,beneficial,Nematode control,strong,Nightshade companion
+Marigold (French),Eggplant,beneficial,Pest management,moderate,Nightshade family
+Marigold (French),Cucumber,beneficial,Beetle deterrent,moderate,Cucurbit companion
+Marigold (French),Squash,beneficial,Pest repellent,moderate,Cucurbit protector
+Marigold (French),Beans,beneficial,Mexican bean beetle control,moderate,Legume protector
+Marigold (French),Cabbage,beneficial,Cabbage pest deterrent,moderate,Brassica companion
+Marigold (French),Rose,beneficial,Aphid control,moderate,Ornamental protector
+Marigold (French),Carrot,beneficial,Root protection,moderate,Root crop companion
+Marigold (French),Radish,beneficial,Pest management,moderate,Root crop protector
+Marigold (French),Zucchini,beneficial,Squash pest control,moderate,Cucurbit family
+Marigold (French),Broccoli,beneficial,Brassica protector,moderate,Pest deterrent
+Marigold (French),Kale,beneficial,Flea beetle control,moderate,Leafy brassica
+Marigold (African),Tomato,beneficial,Nematode control,strong,Soil pest management
+Marigold (African),Potato,beneficial,Nematode deterrent,moderate,Root crop protector
+Marigold (African),Pepper,beneficial,Soil health,moderate,Nightshade companion
+Marigold (African),Cucumber,beneficial,Attracts pollinators,moderate,Large showy flowers
+Marigold (African),Squash,beneficial,Pollinator attraction,moderate,Cucurbit companion
+Marigold (African),Pumpkin,beneficial,Attracts bees,moderate,Cucurbit family
+Calendula,Bean,beneficial,Attracts beneficials; trap crop for aphids,strong,Legume protector
+Calendula,Tomato,beneficial,Attracts parasitic wasps,strong,Nightshade companion
+Calendula,Potato,beneficial,Pest management,moderate,Root crop companion
+Calendula,Strawberry,beneficial,Attracts pollinators,moderate,Berry companion
+Calendula,Lettuce,beneficial,Aphid trap crop,moderate,Leafy green protector
+Calendula,Onion,beneficial,Good companion,moderate,Allium pairing
+Calendula,Garlic,beneficial,Complementary,moderate,Allium companion
+Calendula,Leek,beneficial,Allium family,moderate,Good pairing
+Calendula,Raspberry,beneficial,Attracts beneficials,moderate,Berry companion
+Calendula,Chicory,beneficial,Good companion,moderate,Leafy crop
+Calendula,Asparagus,beneficial,Attracts pollinators,moderate,Perennial companion
+Calendula,Cucumber,beneficial,Beneficial insect attractor,moderate,Cucurbit companion
+Calendula,Squash,beneficial,Pollinator magnet,moderate,Cucurbit family
+Calendula,Pepper,beneficial,Parasitic wasp attractor,moderate,Nightshade companion
+Calendula,Cabbage,beneficial,Brassica companion,moderate,Pest management
+Calendula,Carrot,beneficial,Hoverfly attractor,moderate,Root crop companion
+Calendula,Cosmos,beneficial,Pollinator garden,moderate,Flower companion
+Calendula,Marigold,beneficial,Complementary flowers,moderate,Pest control duo
+Calendula,Fennel,incompatible,Growth inhibition,moderate,Keep apart
+Calendula,Buckwheat,incompatible,Competition issues,traditional,Avoid pairing
+Nasturtium,Cabbage,beneficial,Trap crop for cabbage worms,strong,Brassica protector
+Nasturtium,Broccoli,beneficial,Attracts caterpillars away,strong,Brassica companion
+Nasturtium,Kale,beneficial,Cabbage pest trap,moderate,Leafy brassica
+Nasturtium,Radish,beneficial,Flea beetle deterrent,moderate,Root crop companion
+Nasturtium,Cucumber,beneficial,Cucumber beetle trap,strong,Cucurbit protector
+Nasturtium,Squash,beneficial,Squash bug deterrent,moderate,Cucurbit companion
+Nasturtium,Pumpkin,beneficial,Pest trap crop,moderate,Cucurbit family
+Nasturtium,Tomato,beneficial,Attracts aphids away,strong,Nightshade protector
+Nasturtium,Apple,beneficial,Codling moth deterrent,moderate,Fruit tree companion
+Nasturtium,Cherry,beneficial,Fruit tree guild,moderate,Understory companion
+Nasturtium,Strawberry,beneficial,Ground cover,moderate,Berry companion
+Nasturtium,Potato,beneficial,Colorado beetle deterrent,moderate,Root crop protector
+Nasturtium,Bean,beneficial,Black fly trap,moderate,Legume protector
+Nasturtium,Rose,beneficial,Aphid trap crop,strong,Ornamental protector
+Nasturtium,Mango,beneficial,Pollinator attraction,moderate,Tropical fruit
+Nasturtium,Pawpaw,beneficial,Ground cover for shade tree,moderate,Understory mulch
+Nasturtium,Pear,beneficial,Fruit tree guild,moderate,Orchard companion
+Nasturtium,Artichoke,beneficial,Ground cover,moderate,Perennial companion
+Borage,Tomato,beneficial,Attracts parasitic wasps; deters hornworms,strong,Nightshade protector
+Borage,Strawberry,beneficial,Improves flavor and vigor,strong,Berry companion
+Borage,Squash,beneficial,Attracts pollinators,moderate,Cucurbit companion
+Borage,Cucumber,beneficial,Bee attractor,moderate,Cucurbit pollination
+Borage,Cabbage,beneficial,Confuses pests,moderate,Brassica companion
+Borage,Beans,beneficial,Attracts bees,moderate,Legume pollinator
+Borage,Pea,beneficial,Pollinator attraction,moderate,Legume companion
+Borage,Zucchini,beneficial,Bee magnet,moderate,Cucurbit family
+Borage,Apple,beneficial,Fruit tree guild; attracts bees,moderate,Orchard companion
+Borage,Pear,beneficial,Pollinator attraction,moderate,Fruit tree guild
+Borage,Cherry,beneficial,Beneficial insect attractor,moderate,Stone fruit companion
+Borage,Plum,beneficial,Fruit tree guild,moderate,Orchard tree
+Borage,Calendula,beneficial,Pollinator garden,moderate,Flower companion
+Borage,Nasturtium,beneficial,Ground cover combo,moderate,Complementary flowers
+Borage,Comfrey,beneficial,Dynamic accumulator pair,strong,Nutrient miners
+Yarrow,Apple,beneficial,Attracts predatory wasps,strong,Fruit tree essential
+Yarrow,Pear,beneficial,Beneficial insects,moderate,Fruit tree guild
+Yarrow,Cherry,beneficial,Pest management,moderate,Stone fruit companion
+Yarrow,Plum,beneficial,Fruit tree guild,moderate,Orchard tree
+Yarrow,Peach,beneficial,Attracts beneficials,moderate,Stone fruit protector
+Yarrow,Tomato,beneficial,Predatory insect attractor,moderate,Nightshade companion
+Yarrow,Cabbage,beneficial,Brassica protector,moderate,Attracts wasps
+Yarrow,Beans,beneficial,Beneficial insects,moderate,Legume companion
+Yarrow,Corn,beneficial,Pest management,moderate,Grain companion
+Yarrow,Comfrey,beneficial,Dynamic accumulator pair,moderate,Nutrient cycling
+Yarrow,Borage,beneficial,Pollinator garden,moderate,Beneficial insect haven
+Cosmos,Tomato,beneficial,Attracts trichogramma wasps,strong,Nightshade protector
+Cosmos,Cabbage,beneficial,Confuses whitefly,moderate,Brassica companion
+Cosmos,Squash,beneficial,Pollinator attraction,moderate,Cucurbit companion
+Cosmos,Pepper,beneficial,Beneficial insects,moderate,Nightshade family
+Cosmos,Calendula,beneficial,Pollinator garden,moderate,Flower companion
+Cosmos,Zinnia,beneficial,Complementary flowers,moderate,Beneficial insect mix
+Zinnia,Tomato,beneficial,Attracts pollinators,moderate,General garden companion
+Zinnia,Squash,beneficial,Bee attractor,moderate,Cucurbit pollination
+Zinnia,Cucumber,beneficial,Pollinator magnet,moderate,Cucurbit companion
+Zinnia,Pepper,beneficial,Beneficial insects,moderate,Nightshade family
+Zinnia,Beans,beneficial,Pollinator attraction,moderate,Legume companion
+Zinnia,Cosmos,beneficial,Mixed flower bed,moderate,Complementary
+Zinnia,Marigold,beneficial,Pest control combo,moderate,Beneficial insect garden
+Sunflower,Corn,beneficial,Increases corn yields,moderate,Grain companion
+Sunflower,Squash,beneficial,Pollinator beacon,strong,Cucurbit companion
+Sunflower,Pumpkin,beneficial,Attracts pollinators,moderate,Cucurbit family
+Sunflower,Cucumber,beneficial,Bee attractor,moderate,Cucurbit pollination
+Sunflower,Bean,beneficial,Living trellis,moderate,Legume support
+Sunflower,Potato,incompatible,Attracts potato pests,moderate,Keep apart
+Lavender,Cabbage,beneficial,Repels cabbage moths,moderate,Brassica protector
+Lavender,Carrot,beneficial,Pest deterrent,moderate,Root crop companion
+Lavender,Fruit Trees,beneficial,Tick and pest reduction,moderate,Orchard companion
+Lavender,Rosemary,beneficial,Perfect pairing,strong,Identical conditions
+Lavender,Thyme,beneficial,Mediterranean duo,strong,Similar needs
+Lavender,Sage,beneficial,Dry soil herbs,strong,Mediterranean pairing
+Lavender,Oregano,beneficial,Mediterranean companions,moderate,Similar conditions
+Lavender,Marjoram,beneficial,Related herbs,moderate,Mediterranean family
+Lavender,Parsley,beneficial,Herb garden,moderate,Attracts beneficials
+Lavender,Citrus,beneficial,Pest deterrent for citrus,moderate,Fruit tree companion
+Chamomile,Cabbage,beneficial,Attracts beneficial insects,moderate,Brassica companion
+Chamomile,Onion,beneficial,Improves growth,moderate,Allium companion
+Chamomile,Cucumber,beneficial,Attracts predatory insects,moderate,Cucurbit protector
+Chamomile,Apple,beneficial,Fruit tree guild,moderate,Orchard companion
+Chamomile,Pear,beneficial,Beneficial insect attractor,moderate,Fruit tree companion
+Chamomile,Basil,beneficial,Enhances essential oils,moderate,Herb pairing
+Chamomile,Oregano,beneficial,Herb garden companion,moderate,Complementary
+Comfrey,Apple,beneficial,Dynamic accumulator; nutrient cycling,strong,Fruit tree essential
+Comfrey,Pear,beneficial,Chop-and-drop mulch,strong,Fruit tree guild
+Comfrey,Cherry,beneficial,Soil fertility,moderate,Stone fruit companion
+Comfrey,Plum,beneficial,Fruit tree guild,moderate,Orchard tree
+Comfrey,Peach,beneficial,Nutrient accumulator,moderate,Stone fruit protector
+Comfrey,Citrus,beneficial,Nitrogen source,moderate,Fruit tree companion
+Comfrey,Tomato,beneficial,Fertilizer tea ingredient,moderate,Nightshade nutrition
+Comfrey,Potato,beneficial,Soil improvement,moderate,Root crop companion
+Comfrey,Asparagus,beneficial,Perennial pairing,moderate,Long-term companion
+Comfrey,Rhubarb,beneficial,Nutrient cycling,moderate,Perennial companion
+Comfrey,Artichoke,beneficial,Deep-rooted perennials,moderate,Complementary
+Comfrey,Borage,beneficial,Dynamic accumulator pair,strong,Nutrient mining duo
+Comfrey,Yarrow,beneficial,Beneficial insect habitat,moderate,Pollinator support
+Garlic,Tomato,beneficial,Repels aphids and spider mites,strong,Nightshade protector
+Garlic,Carrot,beneficial,Repels carrot fly,strong,Root crop essential
+Garlic,Rose,beneficial,Prevents black spot and aphids,strong,Ornamental protector
+Garlic,Cabbage,beneficial,Deters cabbage pests,moderate,Brassica companion
+Garlic,Lettuce,beneficial,Aphid control,moderate,Leafy green protector
+Garlic,Beet,beneficial,Good companion,moderate,Root crop pairing
+Garlic,Strawberry,beneficial,Pest deterrent,moderate,Berry protector
+Garlic,Fruit Trees,beneficial,Repels pests from trees,moderate,Orchard companion
+Garlic,Pepper,beneficial,Aphid control,moderate,Nightshade family
+Garlic,Eggplant,beneficial,Japanese beetle deterrent,moderate,Nightshade companion
+Garlic,Spinach,beneficial,Pest management,moderate,Leafy green
+Garlic,Potato,beneficial,Blight resistance,moderate,Root crop companion
+Garlic,Bean,incompatible,Stunts bean growth,moderate,Avoid legumes
+Garlic,Pea,incompatible,Inhibits pea growth,moderate,Avoid legumes
+Garlic,Asparagus,incompatible,Growth inhibition,moderate,Keep separate
+Onion,Carrot,beneficial,Repels carrot fly,strong,Classic pairing
+Onion,Beet,beneficial,Good companion,moderate,Root crop pairing
+Onion,Cabbage,beneficial,Pest deterrent,moderate,Brassica companion
+Onion,Lettuce,beneficial,Space efficient,moderate,Leafy green companion
+Onion,Strawberry,beneficial,Pest management,moderate,Berry protector
+Onion,Tomato,beneficial,Repels aphids,moderate,Nightshade companion
+Onion,Pepper,beneficial,Pest control,moderate,Nightshade family
+Onion,Spinach,beneficial,Leafy green companion,moderate,Complementary
+Onion,Calendula,beneficial,Good pairing,moderate,Flower companion
+Onion,Bean,incompatible,Stunts bean growth,strong,Avoid legumes
+Onion,Pea,incompatible,Inhibits pea growth,strong,Avoid legumes
+Onion,Asparagus,incompatible,Growth inhibition,moderate,Keep separate
+Onion,Sage,incompatible,Water needs differ,moderate,Sage too dry
+Strawberry,Borage,beneficial,Improves flavor and vigor,strong,Berry essential
+Strawberry,Thyme,beneficial,Pest deterrent,moderate,Herb companion
+Strawberry,Bean,beneficial,Nitrogen fixing,moderate,Legume companion
+Strawberry,Lettuce,beneficial,Space efficient,moderate,Leafy green pairing
+Strawberry,Spinach,beneficial,Understory companion,moderate,Leafy green
+Strawberry,Onion,beneficial,Pest management,moderate,Allium protector
+Strawberry,Garlic,beneficial,Pest deterrent,moderate,Allium companion
+Strawberry,Chives,beneficial,Improves flavor,moderate,Allium pairing
+Strawberry,Nasturtium,beneficial,Ground cover,moderate,Flower companion
+Strawberry,Pea,beneficial,Nitrogen fixing,moderate,Legume companion
+Strawberry,Apple,beneficial,Fruit tree understory,moderate,Orchard ground cover
+Strawberry,Caraway,beneficial,Attracts beneficials,traditional,Herb companion
+Strawberry,Cabbage,incompatible,Growth inhibition,moderate,Avoid brassicas
+Strawberry,Brussels Sprouts,incompatible,Stunts strawberry growth,moderate,Avoid brassicas
+Strawberry,Kohlrabi,incompatible,Growth problems,moderate,Avoid brassicas
+Asparagus,Tomato,beneficial,Repels asparagus beetles,strong,Nightshade protector
+Asparagus,Parsley,beneficial,Attracts beneficials,moderate,Herb companion
+Asparagus,Basil,beneficial,Repels asparagus beetles,moderate,Herb protector
+Asparagus,Nasturtium,beneficial,Beetle deterrent,moderate,Flower companion
+Asparagus,Calendula,beneficial,Attracts pollinators,moderate,Flower companion
+Asparagus,Marigold,beneficial,Pest management,moderate,Flower protector
+Asparagus,Comfrey,beneficial,Nutrient cycling,moderate,Perennial pairing
+Asparagus,Dill,beneficial,Attracts predatory wasps,moderate,Herb companion
+Asparagus,Cilantro,beneficial,Beneficial insects,moderate,Herb pairing
+Asparagus,Onion,incompatible,Stunts asparagus growth,moderate,Avoid alliums
+Asparagus,Garlic,incompatible,Growth inhibition,moderate,Avoid alliums
+Asparagus,Potato,incompatible,Spreads blight,moderate,Keep apart
+Rhubarb,Bean,beneficial,Nitrogen fixing nearby,moderate,Legume companion
+Rhubarb,Cabbage,beneficial,Good pairing,moderate,Brassica companion
+Rhubarb,Kale,beneficial,Brassica companion,moderate,Leafy green
+Rhubarb,Garlic,beneficial,Pest deterrent,moderate,Allium companion
+Rhubarb,Onion,beneficial,Pest management,moderate,Allium pairing
+Rhubarb,Comfrey,beneficial,Nutrient cycling,moderate,Perennial duo
+Rhubarb,Apple,beneficial,Fruit tree companion,moderate,Orchard pairing
+White Clover,Apple,beneficial,Nitrogen fixing; living mulch,strong,Fruit tree guild essential
+White Clover,Pear,beneficial,Nitrogen fixing ground cover,strong,Orchard ground cover
+White Clover,Cherry,beneficial,Soil fertility,moderate,Stone fruit companion
+White Clover,Plum,beneficial,Fruit tree guild,moderate,Orchard ground cover
+White Clover,Peach,beneficial,Living mulch,moderate,Stone fruit understory
+White Clover,Strawberry,beneficial,Nitrogen source,moderate,Berry companion
+White Clover,Cabbage,beneficial,Nitrogen provider,moderate,Brassica companion
+White Clover,Broccoli,beneficial,Soil fertility,moderate,Brassica support
+Alfalfa,Apple,beneficial,Deep-rooted nitrogen fixer,moderate,Fruit tree guild
+Alfalfa,Pear,beneficial,Soil improvement,moderate,Orchard companion
+Alfalfa,Cherry,beneficial,Nitrogen fixing,moderate,Stone fruit guild
+Vetch,Apple,beneficial,Nitrogen fixing cover crop,moderate,Fruit tree guild
+Vetch,Pear,beneficial,Soil improvement,moderate,Orchard companion
+Vetch,Plum,beneficial,Cover crop,moderate,Stone fruit guild
+Horseradish,Apple,beneficial,Prevents fungal diseases,moderate,Fruit tree protector
+Horseradish,Potato,beneficial,Increases disease resistance,strong,Root crop essential
+Horseradish,Cherry,beneficial,Fungal disease prevention,moderate,Stone fruit protector
+Daffodil,Apple,beneficial,Vole deterrent; early pollinator attraction,strong,Fruit tree guild essential
+Daffodil,Pear,beneficial,Rodent deterrent,moderate,Orchard protector
+Daffodil,Cherry,beneficial,Early pollinator source,moderate,Stone fruit companion
+Daffodil,Plum,beneficial,Fruit tree guild,moderate,Orchard companion
+Daffodil,Peach,beneficial,Vole protection,moderate,Stone fruit guild
+Bee Balm,Apple,beneficial,Attracts pollinators,moderate,Fruit tree guild
+Bee Balm,Tomato,beneficial,Pollinator attraction,moderate,Nightshade companion
+Bee Balm,Squash,beneficial,Bee magnet,moderate,Cucurbit pollination
+Alyssum,Apple,beneficial,Attracts aphid-eating hoverflies,moderate,Fruit tree guild
+Alyssum,Rosemary,beneficial,Attracts beneficials,moderate,Herb companion
+Alyssum,Cabbage,beneficial,Hoverfly attractor,moderate,Brassica protector
+Buckwheat,Apple,beneficial,Pollinator attraction,moderate,Fruit tree guild
+Buckwheat,Cabbage,beneficial,Beneficial insects,moderate,Brassica companion
+Fennel,Most Plants,incompatible,Allelopathic; inhibits most plants,strong,Plant in isolation
+Rue,Basil,incompatible,Inhibits basil growth,traditional,Keep apart
+Rue,Sage,incompatible,Stunts sage,traditional,Avoid pairing
+Rue,Cabbage,incompatible,Growth problems,traditional,Keep separate
+Wormwood,Sage,incompatible,Harms sage,traditional,Avoid pairing
+Wormwood,Most Vegetables,incompatible,Allelopathic effects,moderate,Plant away from vegetables

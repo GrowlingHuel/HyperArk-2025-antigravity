@@ -1,0 +1,57 @@
+Create or update HyperArk home page to work with dual-window layout.
+
+1. CREATE lib/green_man_tavern_web/live/hyper_ark_live.ex:
+
+(Start of code)
+```
+defmodule GreenManTavernWeb.HyperArkLive do
+  use GreenManTavernWeb, :live_view
+  
+  def mount(_params, _session, socket) do
+    socket =
+      socket
+      |> assign(:right_window_title, "HyperArk")
+      |> assign(:left_window_title, "Tavern")
+      |> assign_left_window_content()
+    
+    {:ok, socket}
+  end
+  
+  defp assign_left_window_content(socket) do
+    content = ~H"""
+    <div class="tavern-scene">
+      <img src="/images/the_tavern.png" alt="Green Man Tavern" class="tavern-image" />
+    </div>
+    
+    <div class="quick-stats">
+      <h2 class="stats-title">Your Journey</h2>
+      <div class="stat-item">
+        <span class="stat-label">Level:</span>
+        <span class="stat-value">1</span>
+      </div>
+    </div>
+    """
+    
+    assign(socket, :left_window_content, content)
+  end
+end
+```
+
+(End of code)
+
+2. CREATE lib/green_man_tavern_web/live/hyper_ark_live.html.heex:
+
+(Start of template)
+```
+<div class="hyper-ark-dashboard">
+  <div class="welcome-section">
+    <h1 class="welcome-title">Welcome to the Green Man Tavern</h1>
+    <p class="welcome-text">Your journey in permaculture begins here.</p>
+  </div>
+</div>
+(End of template)
+
+UPDATE router.ex to use HyperArkLive for home route.
+
+TESTING: Navigate to home, verify tavern plus stats in left, welcome in right.
+Follow HyperCard aesthetic.

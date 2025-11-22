@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <.live_title default="GreenManTavern" suffix=" · Phoenix Framework">
+      {assigns[:page_title]}
+    </.live_title>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
+    </script>
+    <script>
+      (() => {
+        const setTheme = (theme) => {
+          if (theme === "system") {
+            localStorage.removeItem("phx:theme");
+            document.documentElement.removeAttribute("data-theme");
+          } else {
+            localStorage.setItem("phx:theme", theme);
+            document.documentElement.setAttribute("data-theme", theme);
+          }
+        };
+        if (!document.documentElement.hasAttribute("data-theme")) {
+          setTheme(localStorage.getItem("phx:theme") || "system");
+        }
+        window.addEventListener("storage", (e) => e.key === "phx:theme" && setTheme(e.newValue || "system"));
+        
+        window.addEventListener("phx:set-theme", (e) => setTheme(e.target.dataset.phxTheme));
+        
+        // Characters dropdown functionality
+        document.addEventListener("click", function(event) {
+          const dropdown = document.getElementById("characters-dropdown");
+          const dropdownContainer = event.target.closest(".dropdown-container");
+          
+          if (dropdownContainer) {
+            // Clicked inside dropdown container
+            if (event.target.classList.contains("dropdown-button")) {
+              // Toggle dropdown
+              dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
+            }
+          } else {
+            // Clicked outside dropdown - close it
+            if (dropdown) {
+              dropdown.style.display = "none";
+            }
+          }
+        });
+
+        // Characters dropdown functions
+        window.toggleCharactersDropdown = function() {
+          const menu = document.getElementById('characters-dropdown-menu');
+          if (menu) {
+            const isVisible = menu.style.display === 'block';
+            menu.style.display = isVisible ? 'none' : 'block';
+          }
+        };
+        
+        window.closeCharactersDropdown = function() {
+          const menu = document.getElementById('characters-dropdown-menu');
+          if (menu) {
+            menu.style.display = 'none';
+          }
+        };
+        
+        // Close dropdown when clicking outside
+        window.addEventListener('click', function(event) {
+          const menu = document.getElementById('characters-dropdown-menu');
+          const btn = document.getElementById('characters-dropdown-btn');
+          if (menu && btn && !btn.contains(event.target) && !menu.contains(event.target)) {
+            menu.style.display = 'none';
+          }
+        });
+        
+        // Close dropdown after character selection event
+        document.addEventListener('phx:click', function(event) {
+          const target = event.target;
+          if (target && target.closest('#characters-dropdown-menu')) {
+            setTimeout(function() {
+              window.closeCharactersDropdown();
+            }, 100);
+          }
+        });
+
+        // Character selection function - pushes event to DualPanelLive (kept for compatibility)
+        window.selectCharacterFromDropdown = function(characterName) {
+          console.log("Character selected from dropdown:", characterName);
+          
+          if (!characterName) return;
+          
+          // Push event to DualPanelLive
+          const mainEl = document.querySelector('[data-phx-main]');
+          if (mainEl) {
+            const pushEvent = (event, payload) => {
+              window.liveSocket.execJS(mainEl, 
+                `[["push",{"event":"${event}","value":${JSON.stringify(payload)}}]]`
+              );
+            };
+            
+            pushEvent('select_character', { character_slug: characterName });
+          }
+          
+          // Close dropdown after selection
+          window.closeCharactersDropdown();
+        };
+
+        // Reset characters dropdown when Tavern is clicked
+        document.addEventListener("click", function(event) {
+          // Check if the clicked element is the Tavern link or inside it
+          const tavernLink = event.target.closest('a[phx-value-page="hyperark"]');
+          if (tavernLink || (event.target.textContent && event.target.textContent.trim() === "Tavern")) {
+            // Close dropdown if open
+            window.closeCharactersDropdown();
+          }
+        });
+          // Replace the existing chat JavaScript with this updated version
+        // This handles BOTH user messages and character responses
+
+        // Listen for new chat messages from LiveView
+        window.addEventListener("phx:new-message", (e) => {
+          const chatContainer = document.getElementById("chat-messages");
+          if (!chatContainer) return;
+          
+          const { message } = e.detail;
+          
+          // Remove placeholder if it exists
+          const placeholder = chatContainer.querySelector('p[style*="font-style: italic"]');
+          if (placeholder) placeholder.remove();
+          
+          const messageDiv = document.createElement("div");
+          messageDiv.id = `message-${message.id}`;
+          
+        if (message.type === "user") {
+          // User message styling (right aligned, greyscale)
+          messageDiv.innerHTML = `
+            <div style="margin-bottom: 8px; padding: 4px; text-align: right;">
+              <div style="display: inline-block; max-width: 90%; text-align: left;">
+                <div style="font-weight: bold; font-size: 13px; color: #666; margin-bottom: 2px; font-family: Georgia, 'Times New Roman', serif; line-height: 1.15;">You</div>
+                <div style="color: #333; border: 1px solid #999; background: #FFF; padding: 4px; white-space: pre-wrap; font-size: 13px; font-family: Georgia, 'Times New Roman', serif; line-height: 1.15;">${escapeHtml(message.content)}</div>
+              </div>
+            </div>
+          `;
+        } else {
+          // Character message styling (left aligned, greyscale)
+          messageDiv.innerHTML = `
+            <div style="margin-bottom: 8px; padding: 4px; text-align: left;">
+              <div style="display: inline-block; max-width: 90%; text-align: left;">
+                <div style="font-weight: bold; font-size: 13px; color: #666; margin-bottom: 2px; font-family: Georgia, 'Times New Roman', serif; line-height: 1.15;">${escapeHtml(message.character_name)}</div>
+                <div style="color: #333; border: 1px solid #999; background: #FFF; padding: 4px; white-space: pre-wrap; font-size: 13px; font-family: Georgia, 'Times New Roman', serif; line-height: 1.15;">${escapeHtml(message.content)}</div>
+              </div>
+            </div>
+          `;
+        }
+          
+          chatContainer.appendChild(messageDiv);
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+        });
+
+        function escapeHtml(text) {
+          const div = document.createElement('div');
+          div.textContent = text;
+          return div.innerHTML;
+        }
+      })();
+    </script>
+  </head>
+  <body style="background: #CCCCCC !important; margin: 0 !important; padding: 0 !important; overflow: hidden !important;">
+    <!-- Banner menu at top -->
+    <div class="banner" style="height: 35px !important; position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; z-index: 1000 !important;">
+      <.banner_menu
+        current_character={assigns[:character]}
+        current_user={assigns[:current_user]}
+      />
+    </div>
+
+    <!-- Content area - DualPanelLive handles all panel structure -->
+    {@inner_content}
+</body>
+</html>

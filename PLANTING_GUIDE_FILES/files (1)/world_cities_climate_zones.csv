@@ -1,0 +1,165 @@
+city_name,country,state_province_territory,latitude,longitude,koppen_code,hemisphere,notes
+Canberra,Australia,Australian Capital Territory,-35.2809,149.1300,Cfb,Southern,National capital
+Sydney,Australia,New South Wales,-33.8688,151.2093,Cfa,Southern,State capital
+Melbourne,Australia,Victoria,-37.8136,144.9631,Cfb,Southern,State capital
+Brisbane,Australia,Queensland,-27.4698,153.0251,Cfa,Southern,State capital
+Perth,Australia,Western Australia,-31.9505,115.8605,Csa,Southern,State capital
+Adelaide,Australia,South Australia,-34.9285,138.6007,Csa,Southern,State capital
+Hobart,Australia,Tasmania,-42.8821,147.3272,Cfb,Southern,State capital
+Darwin,Australia,Northern Territory,-12.4634,130.8456,Aw,Southern,Territory capital
+Buenos Aires,Argentina,Buenos Aires,-34.6037,-58.3816,Cfa,Southern,National capital
+Córdoba,Argentina,Córdoba,-31.4201,-64.1888,Cfa,Southern,Provincial capital
+Rosario,Argentina,Santa Fe,-32.9442,-60.6505,Cfa,Southern,Major city
+Mendoza,Argentina,Mendoza,-32.8895,-68.8458,BWk,Southern,Provincial capital
+Vienna,Austria,Vienna,48.2082,16.3738,Cfb,Northern,National capital
+Brussels,Belgium,Brussels,50.8503,4.3517,Cfb,Northern,National capital
+Brasília,Brazil,Federal District,-15.8267,-47.9218,Aw,Southern,National capital
+São Paulo,Brazil,São Paulo,-23.5505,-46.6333,Cfa,Southern,State capital
+Rio de Janeiro,Brazil,Rio de Janeiro,-22.9068,-43.1729,Aw,Southern,State capital
+Salvador,Brazil,Bahia,-12.9714,-38.5014,Af,Southern,State capital
+Manaus,Brazil,Amazonas,-3.1190,-60.0217,Af,Southern,State capital
+Ottawa,Canada,Ontario,45.4215,-75.6972,Dfb,Northern,National capital
+Toronto,Canada,Ontario,43.6532,-79.3832,Dfa,Northern,Provincial capital
+Montreal,Canada,Quebec,45.5017,-73.5673,Dfb,Northern,Major city
+Quebec City,Canada,Quebec,46.8139,-71.2080,Dfb,Northern,Provincial capital
+Vancouver,Canada,British Columbia,49.2827,-123.1207,Cfb,Northern,Major city
+Victoria,Canada,British Columbia,48.4284,-123.3656,Cfb,Northern,Provincial capital
+Calgary,Canada,Alberta,51.0447,-114.0719,Dfb,Northern,Major city
+Edmonton,Canada,Alberta,53.5461,-113.4938,Dfb,Northern,Provincial capital
+Winnipeg,Canada,Manitoba,49.8951,-97.1384,Dfb,Northern,Provincial capital
+Regina,Canada,Saskatchewan,50.4452,-104.6189,Dfb,Northern,Provincial capital
+Halifax,Canada,Nova Scotia,44.6488,-63.5752,Dfb,Northern,Provincial capital
+St. John's,Canada,Newfoundland and Labrador,47.5615,-52.7126,Dfc,Northern,Provincial capital
+Charlottetown,Canada,Prince Edward Island,46.2382,-63.1311,Dfb,Northern,Provincial capital
+Fredericton,Canada,New Brunswick,45.9636,-66.6431,Dfb,Northern,Provincial capital
+Whitehorse,Canada,Yukon,60.7212,-135.0568,Dfc,Northern,Territorial capital
+Yellowknife,Canada,Northwest Territories,62.4540,-114.3718,Dfc,Northern,Territorial capital
+Iqaluit,Canada,Nunavut,63.7467,-68.5170,ET,Northern,Territorial capital
+Santiago,Chile,Santiago Region,-33.4489,-70.6693,Csb,Southern,National capital
+Valparaíso,Chile,Valparaíso,-33.0472,-71.6127,Csb,Southern,Regional capital
+Beijing,China,Beijing,39.9042,116.4074,Dwa,Northern,National capital
+Shanghai,China,Shanghai,31.2304,121.4737,Cfa,Northern,Provincial-level capital
+Guangzhou,China,Guangdong,23.1291,113.2644,Cfa,Northern,Provincial capital
+Chengdu,China,Sichuan,30.5728,104.0668,Cfa,Northern,Provincial capital
+Wuhan,China,Hubei,30.5928,114.3055,Cfa,Northern,Provincial capital
+Xi'an,China,Shaanxi,34.3416,108.9398,Cwa,Northern,Provincial capital
+Bogotá,Colombia,Cundinamarca,4.7110,-74.0721,Cfb,Northern,National capital
+Cairo,Egypt,Cairo,30.0444,31.2357,BWh,Northern,National capital
+Paris,France,Île-de-France,48.8566,2.3522,Cfb,Northern,National capital
+Lyon,France,Auvergne-Rhône-Alpes,45.7640,4.8357,Cfb,Northern,Regional capital
+Marseille,France,Provence-Alpes-Côte d'Azur,43.2965,5.3698,Csa,Northern,Regional capital
+Berlin,Germany,Berlin,52.5200,13.4050,Cfb,Northern,National capital
+Munich,Germany,Bavaria,48.1351,11.5820,Cfb,Northern,State capital
+Hamburg,Germany,Hamburg,53.5511,9.9937,Cfb,Northern,State capital
+Frankfurt,Germany,Hesse,50.1109,8.6821,Cfb,Northern,Major city
+Athens,Greece,Attica,37.9838,23.7275,Csa,Northern,National capital
+New Delhi,India,Delhi,28.6139,77.2090,Cwa,Northern,National capital
+Mumbai,India,Maharashtra,19.0760,72.8777,Aw,Northern,State capital
+Kolkata,India,West Bengal,22.5726,88.3639,Aw,Northern,State capital
+Chennai,India,Tamil Nadu,13.0827,80.2707,Aw,Northern,State capital
+Bangalore,India,Karnataka,12.9716,77.5946,Aw,Northern,State capital
+Dublin,Ireland,Leinster,53.3498,-6.2603,Cfb,Northern,National capital
+Rome,Italy,Lazio,41.9028,12.4964,Csa,Northern,National capital
+Milan,Italy,Lombardy,45.4642,9.1900,Cfa,Northern,Regional capital
+Naples,Italy,Campania,40.8518,14.2681,Csa,Northern,Regional capital
+Tokyo,Japan,Tokyo,35.6762,139.6503,Cfa,Northern,National capital
+Osaka,Japan,Osaka,34.6937,135.5023,Cfa,Northern,Prefectural capital
+Sapporo,Japan,Hokkaido,43.0642,141.3469,Dfb,Northern,Prefectural capital
+Nairobi,Kenya,Nairobi,-1.2921,36.8219,Cfb,Southern,National capital
+Mexico City,Mexico,Mexico City,19.4326,-99.1332,Cwb,Northern,National capital
+Amsterdam,Netherlands,North Holland,52.3676,4.9041,Cfb,Northern,National capital
+Auckland,New Zealand,Auckland,-36.8485,174.7633,Cfb,Southern,Major city
+Wellington,New Zealand,Wellington,-41.2865,174.7762,Cfb,Southern,National capital
+Christchurch,New Zealand,Canterbury,-43.5321,172.6362,Cfb,Southern,Regional center
+Oslo,Norway,Oslo,59.9139,10.7522,Dfb,Northern,National capital
+Lima,Peru,Lima,-12.0464,-77.0428,BWh,Southern,National capital
+Manila,Philippines,Metro Manila,14.5995,120.9842,Aw,Northern,National capital
+Warsaw,Poland,Masovian,52.2297,21.0122,Dfb,Northern,National capital
+Lisbon,Portugal,Lisbon,38.7223,-9.1393,Csa,Northern,National capital
+Moscow,Russia,Moscow,55.7558,37.6173,Dfb,Northern,National capital
+Saint Petersburg,Russia,Saint Petersburg,59.9311,30.3609,Dfb,Northern,Federal city
+Novosibirsk,Russia,Novosibirsk Oblast,55.0084,82.9357,Dfb,Northern,Regional capital
+Riyadh,Saudi Arabia,Riyadh,24.7136,46.6753,BWh,Northern,National capital
+Singapore,Singapore,Singapore,1.3521,103.8198,Af,Northern,City-state
+Johannesburg,South Africa,Gauteng,-26.2041,28.0473,Cwb,Southern,Provincial capital
+Cape Town,South Africa,Western Cape,-33.9249,18.4241,Csb,Southern,Provincial capital
+Pretoria,South Africa,Gauteng,-25.7479,28.2293,Cwb,Southern,Administrative capital
+Seoul,South Korea,Seoul,37.5665,126.9780,Dwa,Northern,National capital
+Madrid,Spain,Madrid,40.4168,-3.7038,Csa,Northern,National capital
+Barcelona,Spain,Catalonia,41.3851,2.1734,Csa,Northern,Regional capital
+Seville,Spain,Andalusia,37.3891,-5.9845,Csa,Northern,Regional capital
+Stockholm,Sweden,Stockholm,59.3293,18.0686,Dfb,Northern,National capital
+Bern,Switzerland,Bern,46.9480,7.4474,Cfb,Northern,National capital
+Zurich,Switzerland,Zurich,47.3769,8.5417,Cfb,Northern,Cantonal capital
+Bangkok,Thailand,Bangkok,13.7563,100.5018,Aw,Northern,National capital
+Istanbul,Turkey,Istanbul,41.0082,28.9784,Csa,Northern,Major city
+Ankara,Turkey,Ankara,39.9334,32.8597,Csa,Northern,National capital
+London,United Kingdom,England,51.5074,-0.1278,Cfb,Northern,National capital
+Edinburgh,United Kingdom,Scotland,55.9533,-3.1883,Cfb,Northern,Capital of Scotland
+Cardiff,United Kingdom,Wales,51.4816,-3.1791,Cfb,Northern,Capital of Wales
+Belfast,United Kingdom,Northern Ireland,54.5973,-5.9301,Cfb,Northern,Capital of Northern Ireland
+Manchester,United Kingdom,England,53.4808,-2.2426,Cfb,Northern,Major city
+Washington DC,United States,District of Columbia,38.9072,-77.0369,Cfa,Northern,National capital
+Montgomery,United States,Alabama,32.3792,-86.3077,Cfa,Northern,State capital
+Juneau,United States,Alaska,58.3019,-134.4197,Cfb,Northern,State capital
+Phoenix,United States,Arizona,33.4484,-112.0740,BWh,Northern,State capital
+Little Rock,United States,Arkansas,34.7465,-92.2896,Cfa,Northern,State capital
+Sacramento,United States,California,38.5816,-121.4944,Csa,Northern,State capital
+Los Angeles,United States,California,34.0522,-118.2437,Csa,Northern,Major city
+San Francisco,United States,California,37.7749,-122.4194,Csb,Northern,Major city
+Denver,United States,Colorado,39.7392,-104.9903,BSk,Northern,State capital
+Hartford,United States,Connecticut,41.7658,-72.6734,Dfa,Northern,State capital
+Dover,United States,Delaware,39.1582,-75.5244,Cfa,Northern,State capital
+Tallahassee,United States,Florida,30.4383,-84.2807,Cfa,Northern,State capital
+Miami,United States,Florida,25.7617,-80.1918,Aw,Northern,Major city
+Atlanta,United States,Georgia,33.7490,-84.3880,Cfa,Northern,State capital
+Honolulu,United States,Hawaii,21.3099,-157.8581,Aw,Northern,State capital
+Boise,United States,Idaho,43.6150,-116.2023,BSk,Northern,State capital
+Springfield,United States,Illinois,39.7817,-89.6501,Dfa,Northern,State capital
+Chicago,United States,Illinois,41.8781,-87.6298,Dfa,Northern,Major city
+Indianapolis,United States,Indiana,39.7684,-86.1581,Dfa,Northern,State capital
+Des Moines,United States,Iowa,41.5868,-93.6250,Dfa,Northern,State capital
+Topeka,United States,Kansas,39.0473,-95.6752,Dfa,Northern,State capital
+Frankfort,United States,Kentucky,38.2009,-84.8733,Cfa,Northern,State capital
+Baton Rouge,United States,Louisiana,30.4515,-91.1871,Cfa,Northern,State capital
+Augusta,United States,Maine,44.3106,-69.7795,Dfb,Northern,State capital
+Annapolis,United States,Maryland,38.9784,-76.4922,Cfa,Northern,State capital
+Boston,United States,Massachusetts,42.3601,-71.0589,Dfa,Northern,State capital
+Lansing,United States,Michigan,42.7325,-84.5555,Dfa,Northern,State capital
+Saint Paul,United States,Minnesota,44.9537,-93.0900,Dfa,Northern,State capital
+Jackson,United States,Mississippi,32.2988,-90.1848,Cfa,Northern,State capital
+Jefferson City,United States,Missouri,38.5767,-92.1735,Dfa,Northern,State capital
+Helena,United States,Montana,46.5891,-112.0391,Dfb,Northern,State capital
+Lincoln,United States,Nebraska,40.8136,-96.7026,Dfa,Northern,State capital
+Carson City,United States,Nevada,39.1638,-119.7674,BSk,Northern,State capital
+Concord,United States,New Hampshire,43.2081,-71.5376,Dfb,Northern,State capital
+Trenton,United States,New Jersey,40.2171,-74.7429,Cfa,Northern,State capital
+Santa Fe,United States,New Mexico,35.6870,-105.9378,BSk,Northern,State capital
+Albany,United States,New York,42.6526,-73.7562,Dfa,Northern,State capital
+New York City,United States,New York,40.7128,-74.0060,Cfa,Northern,Major city
+Raleigh,United States,North Carolina,35.7796,-78.6382,Cfa,Northern,State capital
+Bismarck,United States,North Dakota,46.8083,-100.7837,Dfb,Northern,State capital
+Columbus,United States,Ohio,39.9612,-82.9988,Dfa,Northern,State capital
+Oklahoma City,United States,Oklahoma,35.4676,-97.5164,Cfa,Northern,State capital
+Salem,United States,Oregon,44.9429,-123.0351,Csb,Northern,State capital
+Portland,United States,Oregon,45.5152,-122.6784,Csb,Northern,Major city
+Harrisburg,United States,Pennsylvania,40.2732,-76.8867,Dfa,Northern,State capital
+Philadelphia,United States,Pennsylvania,39.9526,-75.1652,Cfa,Northern,Major city
+Providence,United States,Rhode Island,41.8240,-71.4128,Dfa,Northern,State capital
+Columbia,United States,South Carolina,34.0007,-81.0348,Cfa,Northern,State capital
+Pierre,United States,South Dakota,44.3683,-100.3361,Dfa,Northern,State capital
+Nashville,United States,Tennessee,36.1627,-86.7816,Cfa,Northern,State capital
+Austin,United States,Texas,30.2672,-97.7431,Cfa,Northern,State capital
+Houston,United States,Texas,29.7604,-95.3698,Cfa,Northern,Major city
+Dallas,United States,Texas,32.7767,-96.7970,Cfa,Northern,Major city
+Salt Lake City,United States,Utah,40.7608,-111.8910,BSk,Northern,State capital
+Montpelier,United States,Vermont,44.2601,-72.5754,Dfb,Northern,State capital
+Richmond,United States,Virginia,37.5407,-77.4360,Cfa,Northern,State capital
+Olympia,United States,Washington,47.0379,-122.9007,Csb,Northern,State capital
+Seattle,United States,Washington,47.6062,-122.3321,Cfb,Northern,Major city
+Charleston,United States,West Virginia,38.3498,-81.6326,Cfa,Northern,State capital
+Madison,United States,Wisconsin,43.0731,-89.4012,Dfa,Northern,State capital
+Cheyenne,United States,Wyoming,41.1400,-104.8202,BSk,Northern,State capital
+Caracas,Venezuela,Capital District,10.4806,-66.9036,Aw,Northern,National capital
+Hanoi,Vietnam,Hanoi,21.0285,105.8542,Cwa,Northern,National capital
+Ho Chi Minh City,Vietnam,Ho Chi Minh,10.8231,106.6297,Aw,Northern,Major city

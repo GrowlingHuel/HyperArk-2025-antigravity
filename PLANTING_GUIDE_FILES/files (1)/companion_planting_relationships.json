@@ -1,0 +1,1685 @@
+[
+  {
+    "plant_a": "Tomato",
+    "plant_b": "Basil",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence and flavor enhancement",
+    "notes": "Basil repels aphids and whiteflies from tomatoes; traditional pairing"
+  },
+  {
+    "plant_a": "Tomato",
+    "plant_b": "Carrots",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Root/foliage synergy",
+    "notes": "Carrots break up soil for tomato roots; different nutrient needs"
+  },
+  {
+    "plant_a": "Tomato",
+    "plant_b": "Marigold",
+    "relationship_type": "good",
+    "evidence_level": "scientific",
+    "mechanism": "Pest deterrence",
+    "notes": "Marigolds produce thiopenes that deter nematodes and aphids"
+  },
+  {
+    "plant_a": "Tomato",
+    "plant_b": "Nasturtium",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Trap crop",
+    "notes": "Nasturtiums attract aphids away from tomatoes"
+  },
+  {
+    "plant_a": "Tomato",
+    "plant_b": "Parsley",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Companion benefit",
+    "notes": "Traditional pairing with anecdotal support"
+  },
+  {
+    "plant_a": "Tomato",
+    "plant_b": "Onion",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Onion family deters spider mites and aphids"
+  },
+  {
+    "plant_a": "Tomato",
+    "plant_b": "Garlic",
+    "relationship_type": "good",
+    "evidence_level": "scientific",
+    "mechanism": "Pest and disease deterrence",
+    "notes": "Garlic compounds inhibit fungal diseases"
+  },
+  {
+    "plant_a": "Tomato",
+    "plant_b": "Chives",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Allium family repels aphids"
+  },
+  {
+    "plant_a": "Tomato",
+    "plant_b": "Asparagus",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Mutual benefit",
+    "notes": "Asparagus beetles reduced near tomatoes; tomatoes may deter asparagus beetles"
+  },
+  {
+    "plant_a": "Tomato",
+    "plant_b": "Borage",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence and pollination",
+    "notes": "Attracts predatory insects and pollinators"
+  },
+  {
+    "plant_a": "Tomato",
+    "plant_b": "Lettuce",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Space and shade utilization",
+    "notes": "Lettuce benefits from tomato shade in hot weather"
+  },
+  {
+    "plant_a": "Tomato",
+    "plant_b": "Brassicas",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Nutrient competition",
+    "notes": "Both heavy feeders competing for same nutrients"
+  },
+  {
+    "plant_a": "Tomato",
+    "plant_b": "Fennel",
+    "relationship_type": "bad",
+    "evidence_level": "scientific",
+    "mechanism": "Allelopathy",
+    "notes": "Fennel produces compounds inhibiting growth of most plants"
+  },
+  {
+    "plant_a": "Tomato",
+    "plant_b": "Potato",
+    "relationship_type": "bad",
+    "evidence_level": "scientific",
+    "mechanism": "Disease susceptibility",
+    "notes": "Share same diseases (blight",
+    "null": [
+      " wilt); should not follow each other"
+    ]
+  },
+  {
+    "plant_a": "Tomato",
+    "plant_b": "Dill (mature)",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Growth inhibition",
+    "notes": "Mature dill may stunt tomato growth"
+  },
+  {
+    "plant_a": "Tomato",
+    "plant_b": "Walnut",
+    "relationship_type": "bad",
+    "evidence_level": "scientific",
+    "mechanism": "Allelopathy",
+    "notes": "Walnut juglone highly toxic to tomatoes"
+  },
+  {
+    "plant_a": "Basil",
+    "plant_b": "Capsicum",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Same benefits as basil-tomato pairing"
+  },
+  {
+    "plant_a": "Basil",
+    "plant_b": "Oregano",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Aromatic companion",
+    "notes": "May enhance each other's flavors"
+  },
+  {
+    "plant_a": "Basil",
+    "plant_b": "Rue",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Allelopathy",
+    "notes": "Rue inhibits basil growth"
+  },
+  {
+    "plant_a": "Beans (all)",
+    "plant_b": "Corn",
+    "relationship_type": "good",
+    "evidence_level": "scientific",
+    "mechanism": "Three Sisters companion",
+    "notes": "Beans fix nitrogen for corn; corn provides trellis"
+  },
+  {
+    "plant_a": "Beans (all)",
+    "plant_b": "Squash",
+    "relationship_type": "good",
+    "evidence_level": "scientific",
+    "mechanism": "Three Sisters companion",
+    "notes": "Squash shades soil reducing evaporation and weeds"
+  },
+  {
+    "plant_a": "Beans (all)",
+    "plant_b": "Carrots",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Nitrogen benefit",
+    "notes": "Beans provide nitrogen for carrots"
+  },
+  {
+    "plant_a": "Beans (all)",
+    "plant_b": "Cucumber",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Nitrogen benefit",
+    "notes": "Beans provide nitrogen; cucumbers provide ground cover"
+  },
+  {
+    "plant_a": "Beans (all)",
+    "plant_b": "Potato",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Nitrogen benefit",
+    "notes": "Beans provide nitrogen for potatoes"
+  },
+  {
+    "plant_a": "Beans (all)",
+    "plant_b": "Radish",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Pest deterrence",
+    "notes": "Radishes may deter bean beetles"
+  },
+  {
+    "plant_a": "Beans (all)",
+    "plant_b": "Brassicas",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Nitrogen benefit",
+    "notes": "Beans provide nitrogen for heavy-feeding brassicas"
+  },
+  {
+    "plant_a": "Beans (all)",
+    "plant_b": "Beets",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Compatible growth",
+    "notes": "Different rooting depths and nutrient needs"
+  },
+  {
+    "plant_a": "Beans (all)",
+    "plant_b": "Strawberry",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Nitrogen benefit",
+    "notes": "Beans improve strawberry growth"
+  },
+  {
+    "plant_a": "Beans (all)",
+    "plant_b": "Onion",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Growth inhibition",
+    "notes": "Alliums inhibit bean growth"
+  },
+  {
+    "plant_a": "Beans (all)",
+    "plant_b": "Garlic",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Growth inhibition",
+    "notes": "Alliums inhibit bean growth"
+  },
+  {
+    "plant_a": "Beans (all)",
+    "plant_b": "Fennel",
+    "relationship_type": "bad",
+    "evidence_level": "scientific",
+    "mechanism": "Allelopathy",
+    "notes": "Fennel inhibits most plants"
+  },
+  {
+    "plant_a": "Beans (all)",
+    "plant_b": "Sunflower",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Allelopathy",
+    "notes": "Sunflowers may inhibit bean growth"
+  },
+  {
+    "plant_a": "Carrots",
+    "plant_b": "Onion",
+    "relationship_type": "good",
+    "evidence_level": "scientific",
+    "mechanism": "Pest deterrence",
+    "notes": "Onions deter carrot rust fly"
+  },
+  {
+    "plant_a": "Carrots",
+    "plant_b": "Leek",
+    "relationship_type": "good",
+    "evidence_level": "scientific",
+    "mechanism": "Pest deterrence",
+    "notes": "Leeks deter carrot rust fly"
+  },
+  {
+    "plant_a": "Carrots",
+    "plant_b": "Rosemary",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Strong scent confuses carrot fly"
+  },
+  {
+    "plant_a": "Carrots",
+    "plant_b": "Sage",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Strong scent confuses carrot fly"
+  },
+  {
+    "plant_a": "Carrots",
+    "plant_b": "Radish",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Soil breaking",
+    "notes": "Radishes break up soil for carrots"
+  },
+  {
+    "plant_a": "Carrots",
+    "plant_b": "Lettuce",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Space utilization",
+    "notes": "Compatible spacing and growth rates"
+  },
+  {
+    "plant_a": "Carrots",
+    "plant_b": "Peas",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Nitrogen benefit",
+    "notes": "Peas provide nitrogen for carrots"
+  },
+  {
+    "plant_a": "Carrots",
+    "plant_b": "Chives",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Allium scent deters pests"
+  },
+  {
+    "plant_a": "Carrots",
+    "plant_b": "Dill",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Growth inhibition",
+    "notes": "Dill stunts carrot growth"
+  },
+  {
+    "plant_a": "Carrots",
+    "plant_b": "Parsnip",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Disease sharing",
+    "notes": "Share similar pests and diseases"
+  },
+  {
+    "plant_a": "Cucumber",
+    "plant_b": "Beans",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Nitrogen benefit",
+    "notes": "Beans provide nitrogen"
+  },
+  {
+    "plant_a": "Cucumber",
+    "plant_b": "Peas",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Nitrogen benefit",
+    "notes": "Peas provide nitrogen"
+  },
+  {
+    "plant_a": "Cucumber",
+    "plant_b": "Corn",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Trellis and companion",
+    "notes": "Corn provides support; compatible growth"
+  },
+  {
+    "plant_a": "Cucumber",
+    "plant_b": "Radish",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Pest deterrence",
+    "notes": "Radishes may deter cucumber beetles"
+  },
+  {
+    "plant_a": "Cucumber",
+    "plant_b": "Nasturtium",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Trap crop",
+    "notes": "Attracts aphids away from cucumbers"
+  },
+  {
+    "plant_a": "Cucumber",
+    "plant_b": "Sunflower",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Trellis support",
+    "notes": "Sunflowers can support vining cucumbers"
+  },
+  {
+    "plant_a": "Cucumber",
+    "plant_b": "Marigold",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Deters beetles and aphids"
+  },
+  {
+    "plant_a": "Cucumber",
+    "plant_b": "Dill",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Pollination",
+    "notes": "Attracts beneficial insects"
+  },
+  {
+    "plant_a": "Cucumber",
+    "plant_b": "Potato",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Disease susceptibility",
+    "notes": "Share some diseases"
+  },
+  {
+    "plant_a": "Cucumber",
+    "plant_b": "Aromatic herbs (strong)",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Growth inhibition",
+    "notes": "Sage and rosemary may inhibit cucumber growth"
+  },
+  {
+    "plant_a": "Cucumber",
+    "plant_b": "Melon",
+    "relationship_type": "bad",
+    "evidence_level": "scientific",
+    "mechanism": "Disease sharing",
+    "notes": "Cross-contamination of diseases and pests"
+  },
+  {
+    "plant_a": "Lettuce",
+    "plant_b": "Carrots",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Space and timing",
+    "notes": "Different growth rates allow successive harvest"
+  },
+  {
+    "plant_a": "Lettuce",
+    "plant_b": "Radish",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Marker and spacing",
+    "notes": "Radishes mark slow-germinating lettuce"
+  },
+  {
+    "plant_a": "Lettuce",
+    "plant_b": "Strawberry",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Ground cover",
+    "notes": "Compatible low-growers"
+  },
+  {
+    "plant_a": "Lettuce",
+    "plant_b": "Chives",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Chives deter aphids"
+  },
+  {
+    "plant_a": "Lettuce",
+    "plant_b": "Garlic",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Garlic deters aphids and slugs"
+  },
+  {
+    "plant_a": "Lettuce",
+    "plant_b": "Onion",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Space utilization",
+    "notes": "Compatible growth habits"
+  },
+  {
+    "plant_a": "Lettuce",
+    "plant_b": "Mint",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Pest deterrence",
+    "notes": "Mint may deter slugs"
+  },
+  {
+    "plant_a": "Lettuce",
+    "plant_b": "Brassicas",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Spacing conflict",
+    "notes": "Both prefer similar spacing and conditions"
+  },
+  {
+    "plant_a": "Lettuce",
+    "plant_b": "Parsley",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Competition",
+    "notes": "Compete for similar resources"
+  },
+  {
+    "plant_a": "Onion",
+    "plant_b": "Carrots",
+    "relationship_type": "good",
+    "evidence_level": "scientific",
+    "mechanism": "Pest deterrence",
+    "notes": "Mutual pest deterrence (carrot fly/onion fly)"
+  },
+  {
+    "plant_a": "Onion",
+    "plant_b": "Beets",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Compatible growth",
+    "notes": "Different rooting depths"
+  },
+  {
+    "plant_a": "Onion",
+    "plant_b": "Lettuce",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Space utilization",
+    "notes": "Compatible spacing"
+  },
+  {
+    "plant_a": "Onion",
+    "plant_b": "Brassicas",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Deters cabbage moths and aphids"
+  },
+  {
+    "plant_a": "Onion",
+    "plant_b": "Strawberry",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Disease deterrence",
+    "notes": "Deters fungal diseases"
+  },
+  {
+    "plant_a": "Onion",
+    "plant_b": "Tomato",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Deters aphids and spider mites"
+  },
+  {
+    "plant_a": "Onion",
+    "plant_b": "Chamomile",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Flavor enhancement",
+    "notes": "May improve onion flavor and health"
+  },
+  {
+    "plant_a": "Onion",
+    "plant_b": "Beans",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Growth inhibition",
+    "notes": "Inhibits bean growth"
+  },
+  {
+    "plant_a": "Onion",
+    "plant_b": "Peas",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Growth inhibition",
+    "notes": "Inhibits pea growth"
+  },
+  {
+    "plant_a": "Onion",
+    "plant_b": "Sage",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Growth inhibition",
+    "notes": "Mutual growth inhibition"
+  },
+  {
+    "plant_a": "Garlic",
+    "plant_b": "Roses",
+    "relationship_type": "good",
+    "evidence_level": "scientific",
+    "mechanism": "Pest and disease deterrence",
+    "notes": "Deters aphids and black spot"
+  },
+  {
+    "plant_a": "Garlic",
+    "plant_b": "Tomato",
+    "relationship_type": "good",
+    "evidence_level": "scientific",
+    "mechanism": "Disease deterrence",
+    "notes": "Antifungal properties protect tomatoes"
+  },
+  {
+    "plant_a": "Garlic",
+    "plant_b": "Brassicas",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Deters cabbage moths"
+  },
+  {
+    "plant_a": "Garlic",
+    "plant_b": "Beets",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Compatible growth",
+    "notes": "Different nutrient needs"
+  },
+  {
+    "plant_a": "Garlic",
+    "plant_b": "Carrots",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Deters carrot fly"
+  },
+  {
+    "plant_a": "Garlic",
+    "plant_b": "Lettuce",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Deters aphids"
+  },
+  {
+    "plant_a": "Garlic",
+    "plant_b": "Strawberry",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Disease deterrence",
+    "notes": "Antifungal protection"
+  },
+  {
+    "plant_a": "Garlic",
+    "plant_b": "Beans",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Growth inhibition",
+    "notes": "Inhibits bean growth"
+  },
+  {
+    "plant_a": "Garlic",
+    "plant_b": "Peas",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Growth inhibition",
+    "notes": "Inhibits pea growth"
+  },
+  {
+    "plant_a": "Garlic",
+    "plant_b": "Asparagus",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Growth inhibition",
+    "notes": "May stunt asparagus"
+  },
+  {
+    "plant_a": "Peas",
+    "plant_b": "Carrots",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Nitrogen benefit",
+    "notes": "Peas provide nitrogen"
+  },
+  {
+    "plant_a": "Peas",
+    "plant_b": "Turnip",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Nitrogen benefit",
+    "notes": "Peas provide nitrogen"
+  },
+  {
+    "plant_a": "Peas",
+    "plant_b": "Radish",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Nitrogen benefit",
+    "notes": "Peas provide nitrogen"
+  },
+  {
+    "plant_a": "Peas",
+    "plant_b": "Corn",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Trellis and nitrogen",
+    "notes": "Corn provides support"
+  },
+  {
+    "plant_a": "Peas",
+    "plant_b": "Beans",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Legume companions",
+    "notes": "Compatible nitrogen fixers"
+  },
+  {
+    "plant_a": "Peas",
+    "plant_b": "Cucumber",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Nitrogen and space",
+    "notes": "Peas provide nitrogen; compatible growth"
+  },
+  {
+    "plant_a": "Peas",
+    "plant_b": "Mint",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Pest deterrence",
+    "notes": "Mint may deter pea moths"
+  },
+  {
+    "plant_a": "Peas",
+    "plant_b": "Onion",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Growth inhibition",
+    "notes": "Alliums inhibit pea growth"
+  },
+  {
+    "plant_a": "Peas",
+    "plant_b": "Garlic",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Growth inhibition",
+    "notes": "Alliums inhibit pea growth"
+  },
+  {
+    "plant_a": "Squash",
+    "plant_b": "Corn",
+    "relationship_type": "good",
+    "evidence_level": "scientific",
+    "mechanism": "Three Sisters companion",
+    "notes": "Ground cover reduces weeds and moisture loss"
+  },
+  {
+    "plant_a": "Squash",
+    "plant_b": "Beans",
+    "relationship_type": "good",
+    "evidence_level": "scientific",
+    "mechanism": "Three Sisters companion",
+    "notes": "Compatible growth and nutrient cycling"
+  },
+  {
+    "plant_a": "Squash",
+    "plant_b": "Marigold",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Deters squash bugs and beetles"
+  },
+  {
+    "plant_a": "Squash",
+    "plant_b": "Nasturtium",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Trap crop",
+    "notes": "Attracts squash bugs away from plants"
+  },
+  {
+    "plant_a": "Squash",
+    "plant_b": "Radish",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Pest deterrence",
+    "notes": "May deter squash borers"
+  },
+  {
+    "plant_a": "Squash",
+    "plant_b": "Borage",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pollination and pest deterrence",
+    "notes": "Attracts pollinators and deters worms"
+  },
+  {
+    "plant_a": "Squash",
+    "plant_b": "Potato",
+    "relationship_type": "bad",
+    "evidence_level": "scientific",
+    "mechanism": "Disease sharing",
+    "notes": "Share some diseases and pests"
+  },
+  {
+    "plant_a": "Brassicas",
+    "plant_b": "Beans",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Nitrogen benefit",
+    "notes": "Beans provide nitrogen for heavy feeders"
+  },
+  {
+    "plant_a": "Brassicas",
+    "plant_b": "Beets",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Compatible growth",
+    "notes": "Different nutrient needs"
+  },
+  {
+    "plant_a": "Brassicas",
+    "plant_b": "Celery",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Celery deters cabbage moths"
+  },
+  {
+    "plant_a": "Brassicas",
+    "plant_b": "Chamomile",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Health and flavor",
+    "notes": "May improve growth and flavor"
+  },
+  {
+    "plant_a": "Brassicas",
+    "plant_b": "Dill",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest control",
+    "notes": "Attracts beneficial wasps that prey on caterpillars"
+  },
+  {
+    "plant_a": "Brassicas",
+    "plant_b": "Mint",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Deters flea beetles and cabbage moths"
+  },
+  {
+    "plant_a": "Brassicas",
+    "plant_b": "Onion",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Deters cabbage moths and aphids"
+  },
+  {
+    "plant_a": "Brassicas",
+    "plant_b": "Garlic",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Deters cabbage moths and aphids"
+  },
+  {
+    "plant_a": "Brassicas",
+    "plant_b": "Nasturtium",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Trap crop",
+    "notes": "Attracts aphids away from brassicas"
+  },
+  {
+    "plant_a": "Brassicas",
+    "plant_b": "Rosemary",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Strong scent confuses cabbage moths"
+  },
+  {
+    "plant_a": "Brassicas",
+    "plant_b": "Sage",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Deters cabbage moths"
+  },
+  {
+    "plant_a": "Brassicas",
+    "plant_b": "Thyme",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Deters cabbage worms"
+  },
+  {
+    "plant_a": "Brassicas",
+    "plant_b": "Tomato",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Nutrient competition",
+    "notes": "Both heavy feeders"
+  },
+  {
+    "plant_a": "Brassicas",
+    "plant_b": "Strawberry",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Growth inhibition",
+    "notes": "May inhibit each other"
+  },
+  {
+    "plant_a": "Brassicas",
+    "plant_b": "Rue",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Allelopathy",
+    "notes": "Rue may inhibit brassica growth"
+  },
+  {
+    "plant_a": "Potato",
+    "plant_b": "Beans",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Nitrogen and pest deterrence",
+    "notes": "Beans provide nitrogen; deter Colorado beetles"
+  },
+  {
+    "plant_a": "Potato",
+    "plant_b": "Corn",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Compatible growth",
+    "notes": "Different rooting depths"
+  },
+  {
+    "plant_a": "Potato",
+    "plant_b": "Peas",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Nitrogen benefit",
+    "notes": "Peas provide nitrogen"
+  },
+  {
+    "plant_a": "Potato",
+    "plant_b": "Marigold",
+    "relationship_type": "good",
+    "evidence_level": "scientific",
+    "mechanism": "Pest deterrence",
+    "notes": "Deters Colorado beetles and nematodes"
+  },
+  {
+    "plant_a": "Potato",
+    "plant_b": "Horseradish",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Disease resistance",
+    "notes": "May improve disease resistance"
+  },
+  {
+    "plant_a": "Potato",
+    "plant_b": "Nasturtium",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Trap crop",
+    "notes": "May attract pests away"
+  },
+  {
+    "plant_a": "Potato",
+    "plant_b": "Tomato",
+    "relationship_type": "bad",
+    "evidence_level": "scientific",
+    "mechanism": "Disease sharing",
+    "notes": "Share blight and other diseases"
+  },
+  {
+    "plant_a": "Potato",
+    "plant_b": "Cucumber",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Disease susceptibility",
+    "notes": "Share some diseases"
+  },
+  {
+    "plant_a": "Potato",
+    "plant_b": "Squash",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Disease sharing",
+    "notes": "May share diseases"
+  },
+  {
+    "plant_a": "Potato",
+    "plant_b": "Sunflower",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Growth inhibition",
+    "notes": "May compete for nutrients"
+  },
+  {
+    "plant_a": "Potato",
+    "plant_b": "Raspberry",
+    "relationship_type": "bad",
+    "evidence_level": "scientific",
+    "mechanism": "Disease vector",
+    "notes": "Both susceptible to verticillium wilt"
+  },
+  {
+    "plant_a": "Capsicum",
+    "plant_b": "Basil",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence and flavor",
+    "notes": "Basil repels aphids and may improve flavor"
+  },
+  {
+    "plant_a": "Capsicum",
+    "plant_b": "Onion",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Onions deter aphids"
+  },
+  {
+    "plant_a": "Capsicum",
+    "plant_b": "Carrots",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Space utilization",
+    "notes": "Compatible growth"
+  },
+  {
+    "plant_a": "Capsicum",
+    "plant_b": "Parsley",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Beneficial insects",
+    "notes": "Attracts predatory insects"
+  },
+  {
+    "plant_a": "Capsicum",
+    "plant_b": "Oregano",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Pest deterrence",
+    "notes": "May deter pests"
+  },
+  {
+    "plant_a": "Capsicum",
+    "plant_b": "Fennel",
+    "relationship_type": "bad",
+    "evidence_level": "scientific",
+    "mechanism": "Allelopathy",
+    "notes": "Fennel inhibits most plants"
+  },
+  {
+    "plant_a": "Capsicum",
+    "plant_b": "Brassicas",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Disease sharing",
+    "notes": "May share some diseases"
+  },
+  {
+    "plant_a": "Corn",
+    "plant_b": "Beans",
+    "relationship_type": "good",
+    "evidence_level": "scientific",
+    "mechanism": "Three Sisters - nitrogen and support",
+    "notes": "Beans fix nitrogen; corn provides trellis"
+  },
+  {
+    "plant_a": "Corn",
+    "plant_b": "Squash",
+    "relationship_type": "good",
+    "evidence_level": "scientific",
+    "mechanism": "Three Sisters - ground cover",
+    "notes": "Squash suppresses weeds and retains moisture"
+  },
+  {
+    "plant_a": "Corn",
+    "plant_b": "Cucumber",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Trellis and nitrogen",
+    "notes": "Compatible growth; beans nearby benefit both"
+  },
+  {
+    "plant_a": "Corn",
+    "plant_b": "Peas",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Nitrogen and support",
+    "notes": "Peas fix nitrogen; corn provides support"
+  },
+  {
+    "plant_a": "Corn",
+    "plant_b": "Potato",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Compatible growth",
+    "notes": "Different rooting patterns"
+  },
+  {
+    "plant_a": "Corn",
+    "plant_b": "Sunflower",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Beneficial insects",
+    "notes": "Both attract pollinators"
+  },
+  {
+    "plant_a": "Corn",
+    "plant_b": "Tomato",
+    "relationship_type": "bad",
+    "evidence_level": "scientific",
+    "mechanism": "Pest sharing",
+    "notes": "Share corn earworm/tomato fruitworm"
+  },
+  {
+    "plant_a": "Strawberry",
+    "plant_b": "Beans",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Nitrogen benefit",
+    "notes": "Beans provide nitrogen"
+  },
+  {
+    "plant_a": "Strawberry",
+    "plant_b": "Borage",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pollination and health",
+    "notes": "Attracts pollinators; improves growth"
+  },
+  {
+    "plant_a": "Strawberry",
+    "plant_b": "Chives",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Deters aphids"
+  },
+  {
+    "plant_a": "Strawberry",
+    "plant_b": "Garlic",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Disease deterrence",
+    "notes": "Antifungal protection"
+  },
+  {
+    "plant_a": "Strawberry",
+    "plant_b": "Lettuce",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Space utilization",
+    "notes": "Compatible low-growers"
+  },
+  {
+    "plant_a": "Strawberry",
+    "plant_b": "Onion",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Deters pests and diseases"
+  },
+  {
+    "plant_a": "Strawberry",
+    "plant_b": "Sage",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Pest deterrence",
+    "notes": "May deter pests"
+  },
+  {
+    "plant_a": "Strawberry",
+    "plant_b": "Spinach",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Compatible growth",
+    "notes": "Similar growing conditions"
+  },
+  {
+    "plant_a": "Strawberry",
+    "plant_b": "Thyme",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Deters slugs and worms"
+  },
+  {
+    "plant_a": "Strawberry",
+    "plant_b": "Brassicas",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Growth inhibition",
+    "notes": "May inhibit each other"
+  },
+  {
+    "plant_a": "Marigold",
+    "plant_b": "Tomato",
+    "relationship_type": "good",
+    "evidence_level": "scientific",
+    "mechanism": "Nematode deterrence",
+    "notes": "Root exudates kill nematodes"
+  },
+  {
+    "plant_a": "Marigold",
+    "plant_b": "Cucumber",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Beetle deterrence",
+    "notes": "Deters cucumber beetles"
+  },
+  {
+    "plant_a": "Marigold",
+    "plant_b": "Squash",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Bug deterrence",
+    "notes": "Deters squash bugs"
+  },
+  {
+    "plant_a": "Marigold",
+    "plant_b": "Potato",
+    "relationship_type": "good",
+    "evidence_level": "scientific",
+    "mechanism": "Beetle deterrence",
+    "notes": "Deters Colorado potato beetles"
+  },
+  {
+    "plant_a": "Marigold",
+    "plant_b": "Beans",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Beetle deterrence",
+    "notes": "Deters Mexican bean beetles"
+  },
+  {
+    "plant_a": "Marigold",
+    "plant_b": "Cabbage",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Pest deterrence",
+    "notes": "May deter cabbage moths"
+  },
+  {
+    "plant_a": "Nasturtium",
+    "plant_b": "Tomato",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Aphid trap crop",
+    "notes": "Attracts aphids away from tomatoes"
+  },
+  {
+    "plant_a": "Nasturtium",
+    "plant_b": "Cucumber",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest trap crop",
+    "notes": "Attracts aphids and beetles away"
+  },
+  {
+    "plant_a": "Nasturtium",
+    "plant_b": "Squash",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest trap crop",
+    "notes": "Attracts squash bugs away"
+  },
+  {
+    "plant_a": "Nasturtium",
+    "plant_b": "Brassicas",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Aphid trap crop",
+    "notes": "Attracts aphids away"
+  },
+  {
+    "plant_a": "Nasturtium",
+    "plant_b": "Apple trees",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Deters woolly aphids"
+  },
+  {
+    "plant_a": "Borage",
+    "plant_b": "Tomato",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence and pollination",
+    "notes": "Deters hornworms; attracts pollinators"
+  },
+  {
+    "plant_a": "Borage",
+    "plant_b": "Squash",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pollination",
+    "notes": "Excellent pollinator attractor"
+  },
+  {
+    "plant_a": "Borage",
+    "plant_b": "Strawberry",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pollination and health",
+    "notes": "Improves growth and fruit production"
+  },
+  {
+    "plant_a": "Parsley",
+    "plant_b": "Tomato",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Beneficial insects",
+    "notes": "Attracts predatory insects"
+  },
+  {
+    "plant_a": "Parsley",
+    "plant_b": "Asparagus",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Compatible growth",
+    "notes": "Parsley thrives near asparagus"
+  },
+  {
+    "plant_a": "Parsley",
+    "plant_b": "Carrot",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Beneficial insects",
+    "notes": "Attracts predatory wasps"
+  },
+  {
+    "plant_a": "Parsley",
+    "plant_b": "Lettuce",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Competition",
+    "notes": "Compete for similar resources"
+  },
+  {
+    "plant_a": "Dill",
+    "plant_b": "Cabbage",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest control",
+    "notes": "Attracts beneficial wasps"
+  },
+  {
+    "plant_a": "Dill",
+    "plant_b": "Cucumber",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Beneficial insects",
+    "notes": "Attracts pollinators"
+  },
+  {
+    "plant_a": "Dill",
+    "plant_b": "Lettuce",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Beneficial insects",
+    "notes": "Attracts predatory insects"
+  },
+  {
+    "plant_a": "Dill",
+    "plant_b": "Onion",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Beneficial insects",
+    "notes": "Attracts predatory insects"
+  },
+  {
+    "plant_a": "Dill",
+    "plant_b": "Carrot",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Growth inhibition",
+    "notes": "Stunts carrot growth"
+  },
+  {
+    "plant_a": "Dill",
+    "plant_b": "Tomato (mature)",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Growth inhibition",
+    "notes": "Mature dill stunts tomatoes"
+  },
+  {
+    "plant_a": "Fennel",
+    "plant_b": "Most plants",
+    "relationship_type": "bad",
+    "evidence_level": "scientific",
+    "mechanism": "Allelopathy",
+    "notes": "Produces compounds inhibiting most plants; grow in isolation"
+  },
+  {
+    "plant_a": "Mint",
+    "plant_b": "Brassicas",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Deters flea beetles and cabbage moths"
+  },
+  {
+    "plant_a": "Mint",
+    "plant_b": "Tomato",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Pest deterrence",
+    "notes": "May deter aphids"
+  },
+  {
+    "plant_a": "Mint",
+    "plant_b": "Peas",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Pest deterrence",
+    "notes": "May deter pea moths"
+  },
+  {
+    "plant_a": "Mint",
+    "plant_b": "Most plants",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Aggressive spreading",
+    "notes": "Invasive roots compete with most plants"
+  },
+  {
+    "plant_a": "Rosemary",
+    "plant_b": "Brassicas",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Strong scent confuses cabbage moths"
+  },
+  {
+    "plant_a": "Rosemary",
+    "plant_b": "Beans",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Pest deterrence",
+    "notes": "May deter bean beetles"
+  },
+  {
+    "plant_a": "Rosemary",
+    "plant_b": "Carrots",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Deters carrot flies"
+  },
+  {
+    "plant_a": "Sage",
+    "plant_b": "Brassicas",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Deters cabbage moths"
+  },
+  {
+    "plant_a": "Sage",
+    "plant_b": "Carrots",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Deters carrot flies"
+  },
+  {
+    "plant_a": "Sage",
+    "plant_b": "Strawberry",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Pest deterrence",
+    "notes": "May deter pests"
+  },
+  {
+    "plant_a": "Sage",
+    "plant_b": "Onion",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Growth inhibition",
+    "notes": "Mutual growth inhibition"
+  },
+  {
+    "plant_a": "Sage",
+    "plant_b": "Cucumber",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Growth inhibition",
+    "notes": "May inhibit cucumber growth"
+  },
+  {
+    "plant_a": "Thyme",
+    "plant_b": "Brassicas",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Deters cabbage worms"
+  },
+  {
+    "plant_a": "Thyme",
+    "plant_b": "Strawberry",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Deters slugs and worms"
+  },
+  {
+    "plant_a": "Thyme",
+    "plant_b": "Tomato",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Pest deterrence",
+    "notes": "May deter whiteflies"
+  },
+  {
+    "plant_a": "Chives",
+    "plant_b": "Carrots",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Deters carrot flies"
+  },
+  {
+    "plant_a": "Chives",
+    "plant_b": "Tomato",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pest deterrence",
+    "notes": "Deters aphids"
+  },
+  {
+    "plant_a": "Chives",
+    "plant_b": "Roses",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Disease deterrence",
+    "notes": "Deters black spot and aphids"
+  },
+  {
+    "plant_a": "Oregano",
+    "plant_b": "Brassicas",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Pest deterrence",
+    "notes": "May deter pests"
+  },
+  {
+    "plant_a": "Oregano",
+    "plant_b": "Cucumber",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Beneficial insects",
+    "notes": "Attracts pollinators"
+  },
+  {
+    "plant_a": "Lavender",
+    "plant_b": "Most plants",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Pollinator attraction",
+    "notes": "Attracts bees and beneficial insects"
+  },
+  {
+    "plant_a": "Chamomile",
+    "plant_b": "Brassicas",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Health improvement",
+    "notes": "May improve health and flavor"
+  },
+  {
+    "plant_a": "Chamomile",
+    "plant_b": "Onion",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Health improvement",
+    "notes": "May improve growth"
+  },
+  {
+    "plant_a": "Sunflower",
+    "plant_b": "Corn",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Beneficial insects",
+    "notes": "Both attract pollinators"
+  },
+  {
+    "plant_a": "Sunflower",
+    "plant_b": "Cucumber",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Trellis support",
+    "notes": "Can support vining cucumbers"
+  },
+  {
+    "plant_a": "Sunflower",
+    "plant_b": "Beans",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Allelopathy",
+    "notes": "May inhibit bean growth"
+  },
+  {
+    "plant_a": "Sunflower",
+    "plant_b": "Potato",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Competition",
+    "notes": "Compete for nutrients"
+  },
+  {
+    "plant_a": "Radish",
+    "plant_b": "Most plants",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Soil breaking and pest deterrence",
+    "notes": "Breaks up soil; deters many pests"
+  },
+  {
+    "plant_a": "Asparagus",
+    "plant_b": "Tomato",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Pest deterrence",
+    "notes": "Mutual pest deterrence"
+  },
+  {
+    "plant_a": "Asparagus",
+    "plant_b": "Parsley",
+    "relationship_type": "good",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Compatible growth",
+    "notes": "Parsley thrives near asparagus"
+  },
+  {
+    "plant_a": "Asparagus",
+    "plant_b": "Basil",
+    "relationship_type": "good",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Pest deterrence",
+    "notes": "May deter asparagus beetles"
+  },
+  {
+    "plant_a": "Asparagus",
+    "plant_b": "Garlic",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Growth inhibition",
+    "notes": "May stunt asparagus"
+  },
+  {
+    "plant_a": "Asparagus",
+    "plant_b": "Onion",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Growth inhibition",
+    "notes": "May compete for resources"
+  },
+  {
+    "plant_a": "Walnut tree",
+    "plant_b": "Most plants",
+    "relationship_type": "bad",
+    "evidence_level": "scientific",
+    "mechanism": "Juglone toxicity",
+    "notes": "Produces toxic juglone affecting most plants"
+  },
+  {
+    "plant_a": "Rue",
+    "plant_b": "Basil",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_strong",
+    "mechanism": "Allelopathy",
+    "notes": "Inhibits basil growth"
+  },
+  {
+    "plant_a": "Rue",
+    "plant_b": "Brassicas",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Allelopathy",
+    "notes": "May inhibit growth"
+  },
+  {
+    "plant_a": "Rue",
+    "plant_b": "Sage",
+    "relationship_type": "bad",
+    "evidence_level": "traditional_weak",
+    "mechanism": "Allelopathy",
+    "notes": "May inhibit growth"
+  }
+]

@@ -1,0 +1,25 @@
+                                          Table "public.journal_entries"
+   Column    |              Type              | Collation | Nullable |                   Default                   
+-------------+--------------------------------+-----------+----------+---------------------------------------------
+ id          | bigint                         |           | not null | nextval('journal_entries_id_seq'::regclass)
+ user_id     | bigint                         |           | not null | 
+ entry_date  | character varying(255)         |           | not null | 
+ day_number  | integer                        |           | not null | 
+ title       | character varying(255)         |           |          | 
+ body        | text                           |           | not null | 
+ source_type | character varying(255)         |           | not null | 
+ source_id   | integer                        |           |          | 
+ inserted_at | timestamp(0) without time zone |           | not null | 
+ updated_at  | timestamp(0) without time zone |           | not null | 
+ hidden      | boolean                        |           | not null | false
+Indexes:
+    "journal_entries_pkey" PRIMARY KEY, btree (id)
+    "journal_entries_day_number_index" btree (day_number)
+    "journal_entries_source_type_index" btree (source_type)
+    "journal_entries_user_id_day_number_index" btree (user_id, day_number)
+    "journal_entries_user_id_index" btree (user_id)
+Foreign-key constraints:
+    "journal_entries_user_id_fkey" FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+Referenced by:
+    TABLE "conversation_history" CONSTRAINT "conversation_history_journal_entry_id_fkey" FOREIGN KEY (journal_entry_id) REFERENCES journal_entries(id) ON DELETE SET NULL
+

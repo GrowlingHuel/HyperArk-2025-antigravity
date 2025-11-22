@@ -1,0 +1,2314 @@
+📋 Prompt 1: Fix Character Page - Correct Title and Dropdown Highlighting
+Fix the character page to correctly display the selected character name in the left window title bar and highlight the correct character in the dropdown menu.
+
+PROBLEM:
+When navigating to /characters/robot:
+- Left window shows "Tavern - The Student" (WRONG - should say "Tavern - The Robot")
+- Characters dropdown highlights "The Student" (WRONG - should highlight "The Robot")
+- Character content below tavern is correct (The Robot is displaying)
+
+SOLUTION:
+
+1. MODIFY lib/green_man_tavern_web/live/character_live.ex:
+
+Update mount/3 to read the :character param and set titles correctly:
+```elixir
+def mount(%{"character" => character_slug}, _session, socket) do
+  # Load character from database based on slug
+  character = case character_slug do
+    "student" -> Characters.get_character_by_name("The Student")
+    "grandmother" -> Characters.get_character_by_name("The Grandmother")
+    "farmer" -> Characters.get_character_by_name("The Farmer")
+    "robot" -> Characters.get_character_by_name("The Robot")
+    "alchemist" -> Characters.get_character_by_name("The Alchemist")
+    "survivalist" -> Characters.get_character_by_name("The Survivalist")
+    "hobo" -> Characters.get_character_by_name("The Hobo")
+    _ -> nil
+  end
+  
+  if character do
+    socket =
+      socket
+      |> assign(:character, character)
+      |> assign(:character_slug, character_slug)
+      |> assign(:left_window_title, "Tavern - #{character.name}")
+      |> assign(:right_window_title, "Interaction Results")
+      |> assign_left_window_content(character)
+    
+    {:ok, socket}
+  else
+    {:ok, 
+      socket
+      |> put_flash(:error, "Character not found")
+      |> redirect(to: ~p"/")}
+  end
+end
+
+defp assign_left_window_content(socket, character) do
+  content = ~H"""
+  <!-- Tavern Scene (scrollable with content below) -->
+  <div class="tavern-scene">
+    <img src="/images/the_tavern.png" alt="Green Man Tavern" class="tavern-image" />
+  </div>
+  
+  <!-- Character Info Below Tavern -->
+  <div class="character-info">
+    <h2 class="character-name"><%= @character.name %></h2>
+    <p class="character-archetype"><%= @character.archetype %></p>
+    
+    <div class="character-section">
+      <h3>Focus Area:</h3>
+      <p><%= @character.focus_area %></p>
+    </div>
+    
+    <div class="character-section">
+      <h3>Description:</h3>
+      <p><%= @character.description %></p>
+    </div>
+    
+    <div class="character-section">
+      <h3>Personality Traits:</h3>
+      <ul>
+        <%= for trait <- @character.personality_traits do %>
+          <li><%= trait %></li>
+        <% end %>
+      </ul>
+    </div>
+    
+    <div class="character-section">
+      <h3>Trust Level:</h3>
+      <p class="trust-level">Available to interact</p>
+      <p class="trust-hint">Build trust by engaging fully.</p>
+    </div>
+    
+    <div class="character-section">
+      <h3>Chat with <%= @character.name %></h3>
+      <p class="chat-hint">Use the right window to interact</p>
+    </div>
+  </div>
+  """
+  
+  assign(socket, :left_window_content, content)
+end
+```
+
+2. ADD Characters.get_character_by_name/1 if it doesn't exist:
+
+In lib/green_man_tavern/characters.ex:
+```elixir
+def get_character_by_name(name) do
+  Character
+  |> where([c], c.name == ^name)
+  |> Repo.one()
+end
+```
+
+3. UPDATE app.html.heex banner dropdown to highlight active character:
+```heex
+<div class="banner-dropdown">
+  <button class="banner-link">Characters ▾</button>
+  <div class="dropdown-content">
+    <.link 
+      navigate={~p"/characters/student"} 
+      class={["dropdown-link", if(assigns[:character_slug] == "student", do: "active", else: "")]}
+    >
+      The Student
+    </.link>
+    <.link 
+      navigate={~p"/characters/grandmother"} 
+      class={["dropdown-link", if(assigns[:character_slug] == "grandmother", do: "active", else: "")]}
+    >
+      The Grandmother
+    </.link>
+    <.link 
+      navigate={~p"/characters/farmer"} 
+      class={["dropdown-link", if(assigns[:character_slug] == "farmer", do: "active", else: "")]}
+    >
+      The Farmer
+    </.link>
+    <.link 
+      navigate={~p"/characters/robot"} 
+      class={["dropdown-link", if(assigns[:character_slug] == "robot", do: "active", else: "")]}
+    >
+      The Robot
+    </.link>
+    <.link 
+      navigate={~p"/characters/alchemist"} 
+      class={["dropdown-link", if(assigns[:character_slug] == "alchemist", do: "active", else: "")]}
+    >
+      The Alchemist
+    </.link>
+    <.link 
+      navigate={~p"/characters/survivalist"} 
+      class={["dropdown-link", if(assigns[:character_slug] == "survivalist", do: "active", else: "")]}
+    >
+      The Survivalist
+    </.link>
+    <.link 
+      navigate={~p"/characters/hobo"} 
+      class={["dropdown-link", if(assigns[:character_slug] == "hobo", do: "active", else: "")]}
+    >
+      The Hobo
+    </.link>
+  </div>
+</div>
+```
+
+4. ADD CSS for active dropdown state:
+
+In assets/css/app.css or appropriate CSS file:
+```css
+.dropdown-link.active {
+  background: #CCC;
+  font-weight: bold;
+}
+
+.dropdown-link.active::before {
+  content: "► ";
+  margin-right: 4px;
+  color: #000;
+}
+```
+
+5. ADD CSS for character info section:
+```css
+/* Character Info in Left Window */
+.character-info {
+  padding: 16px;
+  background: #FFF;
+}
+
+.character-name {
+  font-family: Monaco, monospace;
+  font-size: 16px;
+  font-weight: bold;
+  color: #000;
+  margin: 0 0 4px 0;
+}
+
+.character-archetype {
+  font-family: Monaco, monospace;
+  font-size: 12px;
+  color: #666;
+  margin: 0 0 24px 0;
+  font-style: italic;
+}
+
+.character-section {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #E0E0E0;
+}
+
+.character-section:last-child {
+  border-bottom: none;
+}
+
+.character-section h3 {
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  font-weight: bold;
+  color: #000;
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.character-section p {
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  color: #333;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.character-section ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.character-section li {
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  color: #333;
+  line-height: 1.6;
+  margin-bottom: 4px;
+}
+
+.trust-level {
+  font-weight: bold;
+  color: #16a34a;
+}
+
+.trust-hint {
+  font-size: 10px;
+  color: #666;
+  font-style: italic;
+  margin-top: 4px;
+}
+
+.chat-hint {
+  font-size: 10px;
+  color: #666;
+  font-style: italic;
+}
+```
+
+TESTING:
+- Navigate to /characters/student → Title: "Tavern - The Student", Dropdown: "The Student" highlighted
+- Navigate to /characters/robot → Title: "Tavern - The Robot", Dropdown: "The Robot" highlighted
+- Click through all 7 characters → Each updates correctly
+- Verify character info displays below tavern scene
+
+Follow HyperCard aesthetic for all styling.
+```
+
+---
+
+## 📋 Prompt 2: Fix Tavern Scene to Be Scrollable (Remove Sticky)
+```
+Update the tavern scene in the left window to scroll WITH the content below it, not stay sticky at the top.
+
+PROBLEM:
+Tavern was implemented as sticky (position: sticky), but it should scroll together with the content below it (character info, systems library, etc.).
+
+SOLUTION:
+
+1. UPDATE lib/green_man_tavern_web/components/layouts/app.html.heex:
+
+Remove the separate sticky tavern div structure. The left window should just render @left_window_content:
+```heex
+<!-- Left Window (Fixed Width, Scrollable) -->
+<aside class="left-window">
+  <div class="mac-window">
+    <div class="mac-title-bar">
+      <div class="mac-close-box"></div>
+      <span class="mac-title"><%= assigns[:left_window_title] || "Tavern" %></span>
+    </div>
+    <div class="mac-content-area">
+      <%= if assigns[:left_window_content] do %>
+        <!-- Content includes tavern + context together -->
+        <%= @left_window_content %>
+      <% else %>
+        <!-- Default: Just tavern with empty hint below -->
+        <div class="tavern-scene">
+          <img src="/images/the_tavern.png" alt="Green Man Tavern" class="tavern-image" />
+        </div>
+        <div class="empty-context">
+          <p class="hint-text">Select a character or view to see more information here.</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</aside>
+```
+
+2. UPDATE CSS to remove sticky positioning:
+
+In assets/css/app.css:
+```css
+/* Tavern Scene - SCROLLABLE (not sticky) */
+.tavern-scene {
+  background: #000;
+  border-bottom: 2px solid #000;
+  /* REMOVED: position: sticky; top: 0; z-index: 100; */
+}
+
+.tavern-image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Empty Context Hint */
+.empty-context {
+  padding: 24px 16px;
+  text-align: center;
+  background: #FFF;
+}
+
+.hint-text {
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  color: #666;
+  font-style: italic;
+  margin: 0;
+}
+```
+
+3. VERIFY character_live.ex includes tavern in left_window_content:
+
+Already implemented in Prompt 1 - tavern is included at the top of the rendered content.
+
+4. VERIFY living_web_live.ex includes tavern in left_window_content:
+
+Update the assign_left_window_content function:
+```elixir
+defp assign_left_window_content(socket) do
+  systems_by_category = socket.assigns.systems_by_category
+  
+  content = ~H"""
+  <!-- Tavern Scene -->
+  <div class="tavern-scene">
+    <img src="/images/the_tavern.png" alt="Green Man Tavern" class="tavern-image" />
+  </div>
+  
+  <!-- Systems Library Below Tavern -->
+  <div class="systems-library">
+    <h2 class="library-title">Available Systems</h2>
+    <p class="library-subtitle">Drag systems onto the canvas to add them to your web</p>
+    
+    <%= for {category, systems} <- @systems_by_category do %>
+      <div class="category-section">
+        <h3 class="category-header">
+          <%= category_display_name(category) %>
+        </h3>
+        <div class="systems-grid">
+          <%= for system <- systems do %>
+            <div 
+              class="system-card"
+              draggable="true"
+              phx-hook="DraggableSystem"
+              data-system-id={system.id}
+              id={"system-card-#{system.id}"}
+            >
+              <.icon name={get_icon_component(system.icon_name)} class="system-card-icon" />
+              <div class="system-card-info">
+                <span class="system-card-name"><%= system.name %></span>
+                <span class="system-card-type"><%= system.system_type %></span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  """
+  
+  assign(socket, :left_window_content, content)
+end
+
+# Helper function for category display names
+defp category_display_name("food"), do: "🌱 Food Production"
+defp category_display_name("process"), do: "⚙️ Processing"
+defp category_display_name("storage"), do: "📦 Storage"
+defp category_display_name("water"), do: "💧 Water"
+defp category_display_name("waste"), do: "♻️ Waste & Nutrients"
+defp category_display_name("energy"), do: "⚡ Energy"
+defp category_display_name(other), do: String.capitalize(other)
+```
+
+RESULT:
+- Tavern appears at top of left window
+- When scrolling left window, tavern scrolls UP with content
+- Tavern is NOT pinned at top
+- Each page includes tavern as part of its left window content
+
+TESTING:
+- Navigate to /characters/robot
+- Scroll down in left window → Tavern scrolls up (disappears)
+- Navigate to /living-web
+- Scroll down in left window → Tavern scrolls up, systems library visible
+- Verify all content scrolls together smoothly
+
+Follow HyperCard aesthetic for all styling.
+```
+
+---
+
+## 📋 Prompt 3: Add Tavern to Database and Garden Pages
+```
+Ensure Database and Garden pages also include the tavern scene at the top of their left window content.
+
+CURRENT STATE:
+- Character pages: ✓ Have tavern + character info
+- Living Web: ✓ Has tavern + systems library
+- Database: ✗ Needs tavern + category navigation
+- Garden: ✗ Needs tavern + plant library
+
+IMPLEMENTATION:
+
+1. UPDATE lib/green_man_tavern_web/live/database_live.ex:
+
+Add tavern to left window content:
+```elixir
+def mount(_params, _session, socket) do
+  user_id = socket.assigns.current_user.id
+  
+  # Load user's database categories/stats
+  # ... your existing data loading ...
+  
+  socket =
+    socket
+    |> assign(:right_window_title, "Database")
+    |> assign(:left_window_title, "Tavern - Database")
+    |> assign_left_window_content()
+  
+  {:ok, socket}
+end
+
+defp assign_left_window_content(socket) do
+  content = ~H"""
+  <!-- Tavern Scene -->
+  <div class="tavern-scene">
+    <img src="/images/the_tavern.png" alt="Green Man Tavern" class="tavern-image" />
+  </div>
+  
+  <!-- Database Navigation Below Tavern -->
+  <div class="database-nav">
+    <h2 class="nav-title">Categories</h2>
+    
+    <nav class="category-nav">
+      <button class="category-nav-item active" phx-click="select_category" phx-value-category="profile">
+        <.icon name="hero-user" class="nav-icon" />
+        <span>Profile</span>
+      </button>
+      
+      <button class="category-nav-item" phx-click="select_category" phx-value-category="systems">
+        <.icon name="hero-square-3-stack-3d" class="nav-icon" />
+        <span>Systems</span>
+      </button>
+      
+      <button class="category-nav-item" phx-click="select_category" phx-value-category="climate">
+        <.icon name="hero-sun" class="nav-icon" />
+        <span>Climate</span>
+      </button>
+      
+      <button class="category-nav-item" phx-click="select_category" phx-value-category="resources">
+        <.icon name="hero-cube" class="nav-icon" />
+        <span>Resources</span>
+      </button>
+      
+      <button class="category-nav-item" phx-click="select_category" phx-value-category="notes">
+        <.icon name="hero-document-text" class="nav-icon" />
+        <span>Notes</span>
+      </button>
+      
+      <button class="category-nav-item" phx-click="select_category" phx-value-category="goals">
+        <.icon name="hero-flag" class="nav-icon" />
+        <span>Goals</span>
+      </button>
+    </nav>
+    
+    <div class="database-actions">
+      <button class="database-btn">
+        <.icon name="hero-arrow-down-tray" class="btn-icon" />
+        Export CSV
+      </button>
+    </div>
+  </div>
+  """
+  
+  assign(socket, :left_window_content, content)
+end
+```
+
+2. ADD CSS for database navigation:
+```css
+/* Database Navigation in Left Window */
+.database-nav {
+  padding: 16px;
+  background: #FFF;
+}
+
+.nav-title {
+  font-family: Monaco, monospace;
+  font-size: 14px;
+  font-weight: bold;
+  color: #000;
+  margin: 0 0 16px 0;
+}
+
+.category-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 24px;
+}
+
+.category-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 2px solid #CCC;
+  background: #FAFAFA;
+  cursor: pointer;
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  font-weight: normal;
+  color: #000;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.category-nav-item:hover {
+  background: #EEE;
+  border-color: #999;
+}
+
+.category-nav-item.active {
+  background: #CCC;
+  border-color: #000;
+  font-weight: bold;
+}
+
+.nav-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.database-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.database-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  border: 2px solid #000;
+  background: #CCC;
+  cursor: pointer;
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  font-weight: bold;
+  color: #000;
+  transition: background 0.15s ease;
+}
+
+.database-btn:hover {
+  background: #DDD;
+}
+
+.database-btn:active {
+  background: #AAA;
+}
+
+.btn-icon {
+  width: 16px;
+  height: 16px;
+}
+```
+
+3. UPDATE lib/green_man_tavern_web/live/garden_live.ex:
+
+Add tavern and plant library navigation:
+```elixir
+def mount(_params, _session, socket) do
+  # Load plants grouped by category
+  plants_by_category = Plants.list_plants_by_category()
+  
+  socket =
+    socket
+    |> assign(:plants_by_category, plants_by_category)
+    |> assign(:right_window_title, "Garden")
+    |> assign(:left_window_title, "Tavern - Garden")
+    |> assign_left_window_content()
+  
+  {:ok, socket}
+end
+
+defp assign_left_window_content(socket) do
+  plants_by_category = socket.assigns.plants_by_category
+  
+  content = ~H"""
+  <!-- Tavern Scene -->
+  <div class="tavern-scene">
+    <img src="/images/the_tavern.png" alt="Green Man Tavern" class="tavern-image" />
+  </div>
+  
+  <!-- Plant Library Below Tavern -->
+  <div class="plant-library">
+    <h2 class="library-title">Plant Library</h2>
+    <p class="library-subtitle">Select a plant to see growing information</p>
+    
+    <%= for {category, plants} <- @plants_by_category do %>
+      <div class="category-section">
+        <h3 class="category-header">
+          <%= plant_category_display(category) %>
+        </h3>
+        <div class="plants-list">
+          <%= for plant <- plants do %>
+            <button 
+              class="plant-item"
+              phx-click="select_plant"
+              phx-value-id={plant.id}
+            >
+              <span class="plant-name"><%= plant.common_name %></span>
+              <span class="plant-difficulty"><%= plant.growing_difficulty %></span>
+            </button>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  """
+  
+  assign(socket, :left_window_content, content)
+end
+
+# Helper for plant category display names
+defp plant_category_display("herb"), do: "🌿 Herbs"
+defp plant_category_display("vegetable"), do: "🥕 Vegetables"
+defp plant_category_display("fruit"), do: "🍓 Fruits"
+defp plant_category_display(other), do: String.capitalize(other)
+```
+
+4. ADD CSS for plant library:
+```css
+/* Plant Library in Left Window */
+.plant-library {
+  padding: 16px;
+  background: #FFF;
+}
+
+.plants-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.plant-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border: 2px solid #CCC;
+  background: #FAFAFA;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.plant-item:hover {
+  background: #EEE;
+  border-color: #999;
+  transform: translateX(2px);
+}
+
+.plant-name {
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  font-weight: bold;
+  color: #000;
+}
+
+.plant-difficulty {
+  font-family: Monaco, monospace;
+  font-size: 9px;
+  color: #666;
+  text-transform: lowercase;
+  font-style: italic;
+}
+```
+
+5. IF Plants.list_plants_by_category/0 doesn't exist, create it:
+
+In lib/green_man_tavern/plants.ex (or create this context):
+```elixir
+defmodule GreenManTavern.Plants do
+  import Ecto.Query
+  alias GreenManTavern.Repo
+  alias GreenManTavern.Plants.Plant
+  
+  def list_plants_by_category do
+    Plant
+    |> order_by([p], [p.plant_type, p.common_name])
+    |> Repo.all()
+    |> Enum.group_by(& &1.plant_type)
+  end
+end
+```
+
+TESTING:
+- Navigate to /database
+  - Left window: Tavern at top, database navigation below
+  - Scroll left window: Tavern scrolls up with navigation
+  
+- Navigate to /garden
+  - Left window: Tavern at top, plant library below
+  - Scroll left window: Tavern scrolls up with plants
+  
+- Verify all pages now have consistent tavern inclusion
+
+Follow HyperCard aesthetic for all styling.
+```
+
+---
+
+## 📋 Prompt 4: Update HyperArk (Home) Page Layout
+```
+Update the HyperArk (home/dashboard) page to work correctly with the dual-window layout.
+
+GOAL:
+- Right window: HyperArk dashboard content
+- Left window: Tavern scene + welcome/stats below
+
+IMPLEMENTATION:
+
+1. CREATE lib/green_man_tavern_web/live/hyper_ark_live.ex (if doesn't exist):
+```elixir
+defmodule GreenManTavernWeb.HyperArkLive do
+  use GreenManTavernWeb, :live_view
+  
+  @impl true
+  def mount(_params, _session, socket) do
+    user_id = socket.assigns.current_user.id
+    
+    # Load user stats
+    stats = %{
+      level: 1,
+      xp: 0,
+      systems_count: 0,
+      active_quests: 0,
+      achievements: 0
+    }
+    
+    socket =
+      socket
+      |> assign(:stats, stats)
+      |> assign(:right_window_title, "HyperArk")
+      |> assign(:left_window_title, "Tavern")
+      |> assign_left_window_content()
+    
+    {:ok, socket}
+  end
+  
+  defp assign_left_window_content(socket) do
+    stats = socket.assigns.stats
+    
+    content = ~H"""
+    <!-- Tavern Scene -->
+    <div class="tavern-scene">
+      <img src="/images/the_tavern.png" alt="Green Man Tavern" class="tavern-image" />
+    </div>
+    
+    <!-- Quick Stats Below Tavern -->
+    <div class="quick-stats">
+      <h2 class="stats-title">Your Journey</h2>
+      
+      <div class="stat-item">
+        <span class="stat-label">Level:</span>
+        <span class="stat-value"><%= @stats.level %></span>
+      </div>
+      
+      <div class="stat-item">
+        <span class="stat-label">XP:</span>
+        <span class="stat-value"><%= @stats.xp %></span>
+      </div>
+      
+      <div class="stat-item">
+        <span class="stat-label">Systems:</span>
+        <span class="stat-value"><%= @stats.systems_count %></span>
+      </div>
+      
+      <div class="stat-item">
+        <span class="stat-label">Active Quests:</span>
+        <span class="stat-value"><%= @stats.active_quests %></span>
+      </div>
+      
+      <div class="stat-item">
+        <span class="stat-label">Achievements:</span>
+        <span class="stat-value"><%= @stats.achievements %></span>
+      </div>
+      
+      <div class="quick-actions">
+        <h3 class="actions-title">Quick Start</h3>
+        <.link navigate={~p"/living-web"} class="quick-action-btn">
+          Build Your Web
+        </.link>
+        <.link navigate={~p"/garden"} class="quick-action-btn">
+          Plan Your Garden
+        </.link>
+        <.link navigate={~p"/characters/student"} class="quick-action-btn">
+          Meet The Student
+        </.link>
+      </div>
+    </div>
+    """
+    
+    assign(socket, :left_window_content, content)
+  end
+end
+```
+
+2. CREATE lib/green_man_tavern_web/live/hyper_ark_live.html.heex:
+```heex
+<!-- HyperArk Dashboard (Right Window Content) -->
+<div class="hyper-ark-dashboard">
+  <div class="welcome-section">
+    <h1 class="welcome-title">Welcome to the Green Man Tavern</h1>
+    <p class="welcome-text">
+      Your journey in permaculture and sustainable living begins here.
+    </p>
+  </div>
+  
+  <div class="dashboard-grid">
+    <div class="dashboard-card">
+      <h2 class="card-title">Recent Activity</h2>
+      <div class="card-content">
+        <p class="empty-state">No recent activity yet. Start by building your Living Web!</p>
+      </div>
+    </div>
+    
+    <div class="dashboard-card">
+      <h2 class="card-title">Opportunities</h2>
+      <div class="card-content">
+        <p class="empty-state">Complete your profile to see personalized suggestions.</p>
+      </div>
+    </div>
+    
+    <div class="dashboard-card">
+      <h2 class="card-title">Next Steps</h2>
+      <div class="card-content">
+        <ul class="next-steps-list">
+          <li>✓ Create your account</li>
+          <li>○ Add your first system to Living Web</li>
+          <li>○ Talk to a character</li>
+          <li>○ Complete your first quest</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+3. ADD CSS for HyperArk dashboard and stats:
+```css
+/* HyperArk Dashboard (Right Window) */
+.hyper-ark-dashboard {
+  padding: 24px;
+}
+
+.welcome-section {
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid #CCC;
+}
+
+.welcome-title {
+  font-family: Monaco, monospace;
+  font-size: 20px;
+  font-weight: bold;
+  color: #000;
+  margin: 0 0 12px 0;
+}
+
+.welcome-text {
+  font-family: Monaco, monospace;
+  font-size: 12px;
+  color: #333;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.dashboard-card {
+  border: 2px solid #000;
+  background: #FAFAFA;
+  padding: 16px;
+}
+
+.card-title {
+  font-family: Monaco, monospace;
+  font-size: 14px;
+  font-weight: bold;
+  color: #000;
+  margin: 0 0 12px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #CCC;
+}
+
+.card-content {
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  color: #333;
+}
+
+.empty-state {
+  color: #666;
+  font-style: italic;
+  margin: 0;
+}
+
+.next-steps-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.next-steps-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid #E0E0E0;
+}
+
+.next-steps-list li:last-child {
+  border-bottom: none;
+}
+
+/* Quick Stats (Left Window) */
+.quick-stats {
+  padding: 16px;
+  background: #FFF;
+}
+
+.stats-title {
+  font-family: Monaco, monospace;
+  font-size: 14px;
+  font-weight: bold;
+  color: #000;
+  margin: 0 0 16px 0;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid #CCC;
+  background: #FAFAFA;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  color: #666;
+}
+
+.stat-value {
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  font-weight: bold;
+  color: #000;
+}
+
+.quick-actions {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 2px solid #CCC;
+}
+
+.actions-title {
+  font-family: Monaco, monospace;
+  font-size: 12px;
+  font-weight: bold;
+  color: #000;
+  margin: 0 0 12px 0;
+}
+
+.quick-action-btn {
+  display: block;
+  padding: 10px;
+  border: 2px solid #000;
+  background: #CCC;
+  text-align: center;
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  font-weight: bold;
+  color: #000;
+  text-decoration: none;
+  margin-bottom: 8px;
+  transition: background 0.15s ease;
+}
+
+.quick-action-btn:hover {
+  background: #DDD;
+}
+
+.quick-action-btn:active {
+  background: #AAA;
+}
+```
+
+4. UPDATE router.ex to use HyperArkLive for home:
+```elixir
+scope "/", GreenManTavernWeb do
+  pipe_through [:browser, :require_authenticated_user]
+  
+  live "/", HyperArkLive, :index
+  live "/living-web", LivingWebLive, :index
+  live "/database", DatabaseLive, :index
+  live "/garden", GardenLive, :index
+  live "/characters/:character", CharacterLive, :show
+end
+```
+
+TESTING:
+- Navigate to / (home)
+- Left window: Tavern + quick stats
+- Right window: HyperArk welcome dashboard
+- Scroll left window: Tavern scrolls with stats
+- Click quick action buttons: Navigate to correct pages
+- Verify banner "HyperArk" link returns to home
+
+Follow HyperCard aesthetic for all styling.
+```
+
+---
+
+## 📋 Prompt 5: Remove Duplicate Layout from Living Web Template
+```
+Clean up the Living Web template to remove any remaining duplicate layout elements (banner, windows) and ensure it only contains right window content.
+
+CURRENT ISSUE:
+The living_web_live.html.heex file may still contain its own banner, window chrome, or left sidebar that conflicts with the root layout in app.html.heex.
+
+SOLUTION:
+
+1. OPEN lib/green_man_tavern_web/live/living_web_live.html.heex
+
+2. VERIFY the template contains ONLY these elements:
+   - Controls and legend (for the SVG canvas)
+   - SVG canvas itself
+   - Node details panel (conditional on selected node)
+
+3. REMOVE any of these if they exist:
+   - <header> or <nav> tags with banner
+   - Window chrome (<div class="mac-window">, title bars, etc.)
+   - Left sidebar or systems library (this is now in left_window_content)
+   - Any duplicate banner navigation
+
+4. THE TEMPLATE SHOULD LOOK LIKE THIS:
+```heex
+<!-- Living Web Controls and Legend (Right Window Content Only) -->
+<div class="living-web-header">
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-line legend-active"></div>
+      <span class="legend-label">Active System</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-line legend-potential"></div>
+      <span class="legend-label">Potential Connection</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-badge">P</div>
+      <span class="legend-label">Process Node</span>
+    </div>
+  </div>
+  
+  <label class="control-checkbox">
+    <input 
+      type="checkbox" 
+      checked={@show_potential}
+      phx-click="toggle_potential"
+    />
+    <span>Show Potential Connections</span>
+  </label>
+</div>
+
+<!-- SVG Canvas -->
+<svg 
+  viewBox="0 0 1200 800" 
+  class="living-web-canvas"
+  phx-click="deselect_node"
+  phx-hook="DropZone"
+  id="living-web-canvas"
+>
+  <defs>
+    <!-- Arrow markers will go here when connections are added -->
+  </defs>
+  
+  <!-- Connections render first (when implemented) -->
+  
+  <!-- Nodes -->
+  <%= if @user_systems == [] do %>
+    <text x="600" y="400" text-anchor="middle" class="empty-state-text">
+      Drag systems from the library to start building your Living Web
+    </text>
+  <% else %>
+    <%= for user_system <- @user_systems do %>
+      <%= render_node(user_system, @selected_node_id == user_system.id) %>
+    <% end %>
+  <% end %>
+</svg>
+
+<!-- Selected Node Details Panel -->
+<%= if @selected_node_id do %>
+  <%= if selected = Enum.find(@user_systems, &(&1.id == @selected_node_id)) do %>
+    <div class="node-details-panel">
+      <h3 class="details-title"><%= selected.system.name %></h3>
+      <div class="details-grid">
+        <div class="detail-item">
+          <span class="detail-label">Type:</span>
+          <span class="detail-value"><%= selected.system.system_type %></span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Category:</span>
+          <span class="detail-value"><%= selected.system.category %></span>
+        </div>
+        <%= if selected.system.requirements do %>
+          <div class="detail-item full-width">
+            <span class="detail-label">Requirements:</span>
+            <span class="detail-value"><%= selected.system.requirements %></span>
+          </div>
+        <% end %>
+      </div>
+      <div class="details-actions">
+        <button class="details-btn" phx-click="edit_notes" phx-value-id={selected.id}>
+          Edit Notes
+        </button>
+        <button class="details-btn details-btn-danger" phx-click="remove_system" phx-value-id={selected.id}>
+          Remove System
+        </button>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+```
+
+5. ADD CSS for node details panel:
+```css
+/* Node Details Panel */
+.node-details-panel {
+  margin-top: 24px;
+  padding: 16px;
+  border: 2px solid #000;
+  background: #FAFAFA;
+}
+
+.details-title {
+  font-family: Monaco, monospace;
+  font-size: 16px;
+  font-weight: bold;
+  color: #000;
+  margin: 0 0 16px 0;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #CCC;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.detail-label {
+  font-family: Monaco, monospace;
+  font-size: 10px;
+  font-weight: bold;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-value {
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  color: #000;
+}
+
+.details-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.details-btn {
+  flex: 1;
+  padding: 10px;
+  border: 2px solid #000;
+  background: #CCC;
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  font-weight: bold;
+  color: #000;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.details-btn:hover {
+  background: #DDD;
+}
+
+.details-btn:active {
+  background: #AAA;
+}
+
+.details-btn-danger {
+  background: #FFE0E0;
+  border-color: #CC0000;
+  color: #CC0000;
+}
+
+.details-btn-danger:hover {
+  background: #FFD0D0;
+}
+
+.details-btn-danger:active {
+  background: #FFC0C0;
+}
+```
+
+6. VERIFY living_web_live.ex mount/3 doesn't set any layout options:
+
+The module should NOT have:
+- `layout: false`
+- `layout: {Module, :template}`
+- Custom @inner_layout assigns
+
+It should use the default :app layout from router.
+
+TESTING:
+- Navigate to /living-web
+- Should see: Banner once at top, left window with tavern+systems, right window with canvas
+- Should NOT see: Duplicate banner, duplicate windows, layout errors
+- Scroll left window: Tavern and systems scroll together
+- Scroll right window: Canvas scrolls independently
+
+Follow HyperCard aesthetic for all styling.
+```
+
+---
+
+## 📋 Prompt 6: Add CSS for Legend and Controls
+```
+Add the remaining CSS styles for the Living Web legend and controls that appear in the right window.
+
+IMPLEMENTATION:
+
+Add these styles to assets/css/app.css or to a living-web-specific CSS file:
+```css
+/* Living Web Header (Right Window) */
+.living-web-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 2px solid #CCC;
+  background: #FAFAFA;
+  margin-bottom: 16px;
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 1px solid #CCC;
+  background: #FFF;
+  border-radius: 4px;
+}
+
+.legend-line {
+  width: 20px;
+  height: 3px;
+  flex-shrink: 0;
+}
+
+.legend-active {
+  background: #22c55e;
+}
+
+.legend-potential {
+  background: #f97316;
+  background-image: repeating-linear-gradient(
+    90deg,
+    #f97316,
+    #f97316 4px,
+    transparent 4px,
+    transparent 8px
+  );
+}
+
+.legend-badge {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #8b5cf6;
+  color: #FFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Monaco, monospace;
+  font-size: 10px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.legend-label {
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  color: #333;
+  white-space: nowrap;
+}
+
+/* Control Checkbox */
+.control-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  color: #000;
+  user-select: none;
+}
+
+.control-checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* SVG Canvas */
+.living-web-canvas {
+  width: 100%;
+  min-height: 600px;
+  background: #FAFAFA;
+  border: 2px solid #CCC;
+  display: block;
+}
+
+.empty-state-text {
+  font-family: Monaco, monospace;
+  font-size: 14px;
+  fill: #999;
+  font-style: italic;
+}
+
+/* SVG Node Styles (already added in previous prompt) */
+.node-rect {
+  transition: filter 0.2s ease;
+}
+
+.node-rect:hover {
+  filter: brightness(0.95);
+}
+
+/* Connection Path Styles (for future use) */
+.connection-path {
+  cursor: pointer;
+  transition: stroke-width 0.2s ease;
+}
+
+.connection-path:hover {
+  stroke-width: 4 !important;
+}
+
+.flow-label {
+  font-family: Monaco, monospace;
+  pointer-events: none;
+}
+```
+
+VERIFICATION:
+- Legend displays horizontally with proper spacing
+- Legend items have subtle borders and backgrounds
+- Checkbox is properly styled and aligned
+- SVG canvas has correct background and border
+- Empty state text is centered and styled
+- All fonts use Monaco monospace
+- Colors match HyperCard aesthetic (greyscale with category colors)
+
+Follow HyperCard aesthetic for all styling.
+```
+
+---
+
+## 🎯 Complete Testing Checklist
+```
+COMPREHENSIVE TESTING AFTER ALL PROMPTS:
+
+LAYOUT STRUCTURE:
+[] Banner appears ONCE at top of page (all routes)
+[] Banner is sticky during scroll
+[] Left window is fixed width (360px)
+[] Right window is flexible width
+[] Both windows have proper Mac chrome (title bar, close box)
+[] No duplicate banners anywhere
+[] No broken layouts anywhere
+
+CHARACTER PAGES:
+[] Navigate to /characters/student
+   [] Title: "Tavern - The Student"
+   [] Dropdown: "The Student" highlighted with arrow
+   [] Left window: Tavern + student info (scrollable together)
+   [] Right window: Interaction results
+[] Navigate to /characters/robot
+   [] Title: "Tavern - The Robot"
+   [] Dropdown: "The Robot" highlighted
+   [] Content updates correctly
+[] Test all 7 characters - each shows correctly
+
+LIVING WEB PAGE:
+[] Navigate to /living-web
+   [] Left title: "Tavern - Living Web"
+   [] Left window: Tavern + systems library (scrollable together)
+   [] Right window: Canvas with legend and controls
+   [] No duplicate banners
+   [] Legend displays correctly (3 items)
+   [] Checkbox works (toggle potential connections)
+   [] Systems library shows all categories
+   [] Scroll left window: Tavern scrolls up with systems
+
+DATABASE PAGE:
+[] Navigate to /database
+   [] Left title: "Tavern - Database"
+   [] Left window: Tavern + category navigation (scrollable)
+   [] Right window: Database content
+   [] Category buttons styled correctly
+
+GARDEN PAGE:
+[] Navigate to /garden
+   [] Left title: "Tavern - Garden"
+   [] Left window: Tavern + plant library (scrollable)
+   [] Right window: Garden content
+   [] Plants grouped by category
+
+HYPERARK (HOME):
+[] Navigate to / (home)
+   [] Left title: "Tavern"
+   [] Left window: Tavern + quick stats (scrollable)
+   [] Right window: Welcome dashboard
+   [] Quick action buttons navigate correctly
+   [] Stats display properly
+
+NAVIGATION:
+[] Click HyperArk in banner → Goes to home
+[] Click Characters dropdown → Shows all 7
+[] Click Database in banner → Goes to database
+[] Click Garden in banner → Goes to garden
+[] Click Living Web in banner → Goes to living web
+[] All navigation smooth without flicker
+
+SCROLLING:
+[] Left window scrolls independently
+[] Right window scrolls independently
+[] Tavern scrolls WITH content below it (not sticky)
+[] Banner stays at top (sticky)
+[] No layout shift during scroll
+
+RESPONSIVE (Future - not for V1 Desktop):
+[] N/A - Desktop only for V1
+
+📦 Summary of All Prompts
+
+Prompt 1: Fix character page title and dropdown highlighting
+Prompt 2: Make tavern scrollable (remove sticky)
+Prompt 3: Add tavern to Database and Garden pages
+Prompt 4: Create/update HyperArk home page
+Prompt 5: Clean up Living Web template (remove duplicates)
+Prompt 6: Add CSS for legend and controls
+
+
+🚀 Implementation Order
+Recommend running these prompts in sequence:
+
+Start with Prompt 2 (remove sticky tavern) - foundation fix
+Then Prompt 5 (clean Living Web) - prevents conflicts
+Then Prompt 6 (add CSS) - styling support
+Then Prompt 1 (character fixes) - most visible issue
+Then Prompt 3 (Database/Garden) - consistency
+Finally Prompt 4 (HyperArk) - complete the set
+
+After all prompts are complete, run the comprehensive testing checklist!
+
+Would you like me to provide any additional prompts or clarifications? 🎯RetryJI think we need to back up to git and update the logs before making this change. THEN, can you please provide all of these prompts IN THE ORDER I SHOULD USE THEM? And if possible, make them SEPARATE, DISTINCT chunks of text. Something happens when you post long passages, especially when they contain the triple backtick (```), where the formatting becomes unstable. Try and rectify this if possible!Excellent call! Let's get organized properly. First, let me create prompts for the git workflow and changelog, then provide all the layout fix prompts in the correct order as separate, clean chunks.
+
+🔄 GIT WORKFLOW - Commit Current Work
+Git Commit Prompt
+Commit all current work with a comprehensive message before starting the layout refactor.
+
+STEPS:
+
+1. Check git status to see what's changed:
+git status
+
+2. Review the changes (optional but recommended):
+git diff
+
+3. Stage all changes:
+git add -A
+
+4. Commit with descriptive message:
+git commit -m "feat: SVG node rendering complete for Living Web
+
+- Implemented interactive SVG nodes (120x80px) with category colors
+- Added node selection and details panel
+- Created icon mapping for all system types
+- Added hover states and click interactions
+- Nodes display at user-defined positions from database
+- Empty state shows helpful message
+- All styling follows HyperCard aesthetic
+
+Known issue: Dual-window layout needs refactoring
+- Living Web appears in left window instead of right
+- Character pages show wrong name in title
+- Tavern should scroll with content (not sticky)
+
+Next: Refactor dual-window layout architecture"
+
+5. Create a rollback tag:
+git tag rollback-before-layout-refactor
+
+6. Push to remote (if applicable):
+git push origin main
+git push origin rollback-before-layout-refactor
+
+VERIFICATION:
+- Run: git log --oneline -5
+- Verify commit appears
+- Run: git tag
+- Verify rollback tag exists
+```
+
+---
+
+## 📝 CHANGELOG UPDATE
+
+### **Changelog Update Prompt**
+```
+Update the project changelog to document Phase 4 progress before starting layout refactor.
+
+FILE: Create or update CHANGELOG.md in project root
+
+ADD THIS ENTRY:
+
+---
+
+## [Unreleased] - 2025-10-23
+
+### Added - Phase 4: Living Web (Partial)
+
+**SVG Node Rendering:**
+- Interactive SVG-based diagram displaying user's systems
+- 120x80px node rectangles with category-based colors:
+  - Food: Light green (#dcfce7) with green border
+  - Process: Light amber (#fef3c7) with amber border
+  - Storage: Light orange (#ffedd5) with orange border
+  - Water/Waste: Light blue (#dbeafe) with blue border
+  - Energy: Light yellow (#fef9c3) with yellow border
+- Process nodes display purple badge indicator
+- Node selection with 4px border highlight
+- Click to select, click away to deselect
+- Empty state with helpful message
+- Icon integration via Heroicons
+- System name, type, and requirements displayed in nodes
+- Hover effects with brightness filter
+
+**Node Details Panel:**
+- Appears below canvas when node selected
+- Shows system type, category, requirements
+- Edit notes and remove system buttons (handlers pending)
+- HyperCard-styled panel with proper borders
+
+**Systems Context:**
+- Created Systems context module
+- Functions: get_user_systems/1, list_systems_by_category/0
+- All queries properly scoped to user_id for security
+
+**Database:**
+- 50 permaculture systems seeded
+- Categories: food, process, storage, water, waste, energy
+- System icons, requirements, and metadata populated
+
+### Known Issues
+- **CRITICAL**: Dual-window layout broken
+  - Living Web renders in LEFT window instead of RIGHT
+  - Duplicate banner appearing
+  - Character page titles show wrong character name
+  - Dropdown highlights wrong character
+- **TODO**: Tavern scene should scroll with content (currently sticky)
+- **TODO**: Systems library needs to be in left window content
+- **TODO**: All pages need consistent tavern inclusion
+
+### Next Steps
+- Refactor dual-window layout architecture (6 prompts planned)
+- Fix character page routing and title display
+- Implement connection rendering (green/orange paths)
+- Add drag-and-drop from systems library
+- Create opportunity detection system
+
+---
+
+**Technical Details:**
+- LiveView: living_web_live.ex implementing node rendering
+- CSS: HyperCard aesthetic with Monaco font, sharp borders
+- SVG: viewBox 0 0 1200 800 supporting 10x10 node grid
+- Database: user_systems table tracks position_x, position_y
+
+**Files Modified:**
+- lib/green_man_tavern_web/live/living_web_live.ex
+- lib/green_man_tavern_web/live/living_web_live.html.heex
+- assets/css/living_web_live.css
+- lib/green_man_tavern/systems.ex
+
+**Commits:**
+- feat: SVG node rendering complete for Living Web
+
+---
+
+Save this file and commit it:
+git add CHANGELOG.md
+git commit -m "docs: Update changelog for Phase 4 progress and known issues"
+```
+
+---
+
+# 🎯 LAYOUT REFACTOR PROMPTS - IN ORDER
+
+## ORDER OF EXECUTION:
+
+1. Prompt 1: Remove Sticky Tavern (Foundation Fix)
+2. Prompt 2: Clean Living Web Template (Prevent Conflicts)
+3. Prompt 3: Add Legend and Controls CSS (Styling Support)
+4. Prompt 4: Fix Character Page Routing (Most Visible Issue)
+5. Prompt 5: Add Tavern to Database and Garden (Consistency)
+6. Prompt 6: Create/Update HyperArk Page (Complete Set)
+
+---
+
+## PROMPT 1: Remove Sticky Tavern
+
+**File:** Give this to Cursor as a single prompt
+
+Update the tavern scene in the left window to scroll WITH the content below it, not stay sticky at the top.
+
+PROBLEM: Tavern was implemented as position sticky, but it should scroll together with the content below it.
+
+SOLUTION:
+
+1. UPDATE lib/green_man_tavern_web/components/layouts/app.html.heex
+
+Find the left window section and change it to:
+
+(Start of template code)
+```
+<aside class="left-window">
+  <div class="mac-window">
+    <div class="mac-title-bar">
+      <div class="mac-close-box"></div>
+      <span class="mac-title"><%= assigns[:left_window_title] || "Tavern" %></span>
+    </div>
+    <div class="mac-content-area">
+      <%= if assigns[:left_window_content] do %>
+        <%= @left_window_content %>
+      <% else %>
+        <div class="tavern-scene">
+          <img src="/images/the_tavern.png" alt="Green Man Tavern" class="tavern-image" />
+        </div>
+        <div class="empty-context">
+          <p class="hint-text">Select a character or view to see more information here.</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</aside>
+```
+
+(End of template code)
+
+2. UPDATE CSS in assets/css/app.css
+
+Find the tavern-scene-sticky class and change to:
+
+(Start of CSS)
+```
+.tavern-scene {
+  background: #000;
+  border-bottom: 2px solid #000;
+}
+
+.tavern-image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.empty-context {
+  padding: 24px 16px;
+  text-align: center;
+  background: #FFF;
+}
+
+.hint-text {
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  color: #666;
+  font-style: italic;
+  margin: 0;
+}
+```
+
+(End of CSS)
+
+REMOVE any position sticky, top 0, or z-index from tavern-scene class.
+
+3. UPDATE living_web_live.ex to include tavern in left window content
+
+Find the assign_left_window_content function and ensure it starts with tavern scene.
+
+RESULT: Tavern appears at top of left window and scrolls WITH content below when user scrolls.
+
+TESTING: Navigate to living-web, scroll left window, verify tavern scrolls up with systems library.
+
+Follow HyperCard aesthetic for all styling.
+
+---
+
+## PROMPT 2: Clean Living Web Template
+
+**File:** Give this to Cursor as a single prompt
+
+Clean up the Living Web template to remove any duplicate layout elements.
+
+PROBLEM: The living_web_live.html.heex file may contain its own banner or window chrome that conflicts with root layout.
+
+SOLUTION:
+
+1. OPEN lib/green_man_tavern_web/live/living_web_live.html.heex
+
+2. VERIFY template contains ONLY these elements: controls, legend, SVG canvas, node details panel
+
+3. REMOVE any of these if they exist: header tags, nav tags, window chrome, left sidebar structure, duplicate banner
+
+4. THE TEMPLATE SHOULD LOOK LIKE THIS:
+
+(Start of template)
+```
+<div class="living-web-header">
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-line legend-active"></div>
+      <span class="legend-label">Active System</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-line legend-potential"></div>
+      <span class="legend-label">Potential Connection</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-badge">P</div>
+      <span class="legend-label">Process Node</span>
+    </div>
+  </div>
+  
+  <label class="control-checkbox">
+    <input 
+      type="checkbox" 
+      checked={@show_potential}
+      phx-click="toggle_potential"
+    />
+    <span>Show Potential Connections</span>
+  </label>
+</div>
+
+<svg 
+  viewBox="0 0 1200 800" 
+  class="living-web-canvas"
+  phx-click="deselect_node"
+  phx-hook="DropZone"
+  id="living-web-canvas"
+>
+  <%= if @user_systems == [] do %>
+    <text x="600" y="400" text-anchor="middle" class="empty-state-text">
+      Drag systems from the library to start building your Living Web
+    </text>
+  <% else %>
+    <%= for user_system <- @user_systems do %>
+      <%= render_node(user_system, @selected_node_id == user_system.id) %>
+    <% end %>
+  <% end %>
+</svg>
+
+<%= if @selected_node_id do %>
+  <%= if selected = Enum.find(@user_systems, &(&1.id == @selected_node_id)) do %>
+    <div class="node-details-panel">
+      <h3 class="details-title"><%= selected.system.name %></h3>
+      <div class="details-grid">
+        <div class="detail-item">
+          <span class="detail-label">Type:</span>
+          <span class="detail-value"><%= selected.system.system_type %></span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Category:</span>
+          <span class="detail-value"><%= selected.system.category %></span>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+```
+
+(End of template)
+
+VERIFICATION: Template should be CONTENT ONLY with no layout wrapper.
+
+Follow HyperCard aesthetic.
+
+---
+
+## PROMPT 3: Add Legend and Controls CSS
+
+**File:** Give this to Cursor as a single prompt
+
+Add CSS styles for the Living Web legend and controls.
+
+Add these to assets/css/app.css or living-web-specific CSS file:
+
+(Start of CSS)
+```
+.living-web-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 2px solid #CCC;
+  background: #FAFAFA;
+  margin-bottom: 16px;
+}
+
+.legend {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 1px solid #CCC;
+  background: #FFF;
+  border-radius: 4px;
+}
+
+.legend-line {
+  width: 20px;
+  height: 3px;
+  flex-shrink: 0;
+}
+
+.legend-active {
+  background: #22c55e;
+}
+
+.legend-potential {
+  background: #f97316;
+  background-image: repeating-linear-gradient(
+    90deg,
+    #f97316,
+    #f97316 4px,
+    transparent 4px,
+    transparent 8px
+  );
+}
+
+.legend-badge {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #8b5cf6;
+  color: #FFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Monaco, monospace;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.legend-label {
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  color: #333;
+  white-space: nowrap;
+}
+
+.control-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  color: #000;
+}
+
+.control-checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.node-details-panel {
+  margin-top: 24px;
+  padding: 16px;
+  border: 2px solid #000;
+  background: #FAFAFA;
+}
+
+.details-title {
+  font-family: Monaco, monospace;
+  font-size: 16px;
+  font-weight: bold;
+  color: #000;
+  margin: 0 0 16px 0;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #CCC;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-label {
+  font-family: Monaco, monospace;
+  font-size: 10px;
+  font-weight: bold;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.detail-value {
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  color: #000;
+}
+```
+
+(End of CSS)
+
+VERIFICATION: Legend displays horizontally, checkbox styled, details panel has proper borders.
+
+Follow HyperCard aesthetic.
+
+---
+
+## PROMPT 4: Fix Character Page Routing
+
+**File:** Give this to Cursor as a single prompt
+
+Fix character pages to show correct character name in title and highlight correct character in dropdown.
+
+PROBLEM: Character pages show wrong character name in left window title and wrong character highlighted in dropdown.
+
+SOLUTION:
+
+1. UPDATE lib/green_man_tavern_web/live/character_live.ex mount function:
+
+(Start of code)
+```
+def mount(%{"character" => character_slug}, _session, socket) do
+  character = case character_slug do
+    "student" -> Characters.get_character_by_name("The Student")
+    "grandmother" -> Characters.get_character_by_name("The Grandmother")
+    "farmer" -> Characters.get_character_by_name("The Farmer")
+    "robot" -> Characters.get_character_by_name("The Robot")
+    "alchemist" -> Characters.get_character_by_name("The Alchemist")
+    "survivalist" -> Characters.get_character_by_name("The Survivalist")
+    "hobo" -> Characters.get_character_by_name("The Hobo")
+    _ -> nil
+  end
+  
+  if character do
+    socket =
+      socket
+      |> assign(:character, character)
+      |> assign(:character_slug, character_slug)
+      |> assign(:left_window_title, "Tavern - #{character.name}")
+      |> assign(:right_window_title, "Interaction Results")
+      |> assign_left_window_content(character)
+    
+    {:ok, socket}
+  else
+    {:ok, socket |> put_flash(:error, "Character not found") |> redirect(to: ~p"/")}
+  end
+end
+```
+
+(End of code)
+
+2. ADD assign_left_window_content function in same file:
+
+(Start of code)
+```
+defp assign_left_window_content(socket, character) do
+  content = ~H"""
+  <div class="tavern-scene">
+    <img src="/images/the_tavern.png" alt="Green Man Tavern" class="tavern-image" />
+  </div>
+  
+  <div class="character-info">
+    <h2 class="character-name"><%= @character.name %></h2>
+    <p class="character-archetype"><%= @character.archetype %></p>
+    
+    <div class="character-section">
+      <h3>Focus Area:</h3>
+      <p><%= @character.focus_area %></p>
+    </div>
+    
+    <div class="character-section">
+      <h3>Description:</h3>
+      <p><%= @character.description %></p>
+    </div>
+  </div>
+  """
+  
+  assign(socket, :left_window_content, content)
+end
+```
+
+(End of code)
+
+3. UPDATE app.html.heex dropdown to use character_slug for highlighting:
+
+Find the Characters dropdown and update each link class attribute to check assigns character_slug.
+
+4. ADD CSS for character info:
+
+(Start of CSS)
+```
+.character-info {
+  padding: 16px;
+  background: #FFF;
+}
+
+.character-name {
+  font-family: Monaco, monospace;
+  font-size: 16px;
+  font-weight: bold;
+  color: #000;
+  margin: 0 0 4px 0;
+}
+
+.character-archetype {
+  font-family: Monaco, monospace;
+  font-size: 12px;
+  color: #666;
+  margin: 0 0 24px 0;
+  font-style: italic;
+}
+
+.character-section {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #E0E0E0;
+}
+
+.character-section h3 {
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  font-weight: bold;
+  color: #000;
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+}
+
+.character-section p {
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  color: #333;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.dropdown-link.active {
+  background: #CCC;
+  font-weight: bold;
+}
+
+.dropdown-link.active::before {
+  content: "► ";
+  margin-right: 4px;
+}
+```
+
+(End of CSS)
+
+TESTING: Navigate to characters/robot, verify title says Tavern - The Robot, dropdown highlights The Robot.
+
+Follow HyperCard aesthetic.
+
+---
+
+## PROMPT 5: Add Tavern to Database and Garden
+
+**File:** Give this to Cursor as a single prompt (Part A and B)
+
+### PART A: Database Page
+
+Ensure Database page includes tavern at top of left window.
+
+UPDATE lib/green_man_tavern_web/live/database_live.ex:
+
+Add these functions to mount and assign left window content with tavern plus database navigation.
+
+(Start of code)
+```
+def mount(_params, _session, socket) do
+  socket =
+    socket
+    |> assign(:right_window_title, "Database")
+    |> assign(:left_window_title, "Tavern - Database")
+    |> assign_left_window_content()
+  
+  {:ok, socket}
+end
+
+defp assign_left_window_content(socket) do
+  content = ~H"""
+  <div class="tavern-scene">
+    <img src="/images/the_tavern.png" alt="Green Man Tavern" class="tavern-image" />
+  </div>
+  
+  <div class="database-nav">
+    <h2 class="nav-title">Categories</h2>
+    <nav class="category-nav">
+      <button class="category-nav-item active">Profile</button>
+      <button class="category-nav-item">Systems</button>
+      <button class="category-nav-item">Climate</button>
+      <button class="category-nav-item">Notes</button>
+    </nav>
+  </div>
+  """
+  
+  assign(socket, :left_window_content, content)
+end
+```
+
+(End of code)
+
+ADD CSS for database navigation in assets/css/app.css.
+
+---
+
+### PART B: Garden Page
+
+UPDATE lib/green_man_tavern_web/live/garden_live.ex:
+
+(Start of code)
+```
+def mount(_params, _session, socket) do
+  socket =
+    socket
+    |> assign(:right_window_title, "Garden")
+    |> assign(:left_window_title, "Tavern - Garden")
+    |> assign_left_window_content()
+  
+  {:ok, socket}
+end
+
+defp assign_left_window_content(socket) do
+  content = ~H"""
+  <div class="tavern-scene">
+    <img src="/images/the_tavern.png" alt="Green Man Tavern" class="tavern-image" />
+  </div>
+  
+  <div class="plant-library">
+    <h2 class="library-title">Plant Library</h2>
+    <p class="library-subtitle">Browse available plants</p>
+  </div>
+  """
+  
+  assign(socket, :left_window_content, content)
+end
+```
+
+(End of code)
+
+TESTING: Navigate to database and garden, verify tavern appears at top of left window and scrolls with content.
+
+Follow HyperCard aesthetic.
+
+---
+
+## PROMPT 6: Create HyperArk Page
+
+**File:** Give this to Cursor as a single prompt
+
+Create or update HyperArk home page to work with dual-window layout.
+
+1. CREATE lib/green_man_tavern_web/live/hyper_ark_live.ex:
+
+(Start of code)
+```
+defmodule GreenManTavernWeb.HyperArkLive do
+  use GreenManTavernWeb, :live_view
+  
+  def mount(_params, _session, socket) do
+    socket =
+      socket
+      |> assign(:right_window_title, "HyperArk")
+      |> assign(:left_window_title, "Tavern")
+      |> assign_left_window_content()
+    
+    {:ok, socket}
+  end
+  
+  defp assign_left_window_content(socket) do
+    content = ~H"""
+    <div class="tavern-scene">
+      <img src="/images/the_tavern.png" alt="Green Man Tavern" class="tavern-image" />
+    </div>
+    
+    <div class="quick-stats">
+      <h2 class="stats-title">Your Journey</h2>
+      <div class="stat-item">
+        <span class="stat-label">Level:</span>
+        <span class="stat-value">1</span>
+      </div>
+    </div>
+    """
+    
+    assign(socket, :left_window_content, content)
+  end
+end
+```
+
+(End of code)
+
+2. CREATE lib/green_man_tavern_web/live/hyper_ark_live.html.heex:
+
+(Start of template)
+```
+<div class="hyper-ark-dashboard">
+  <div class="welcome-section">
+    <h1 class="welcome-title">Welcome to the Green Man Tavern</h1>
+    <p class="welcome-text">Your journey in permaculture begins here.</p>
+  </div>
+</div>
+(End of template)
+
+UPDATE router.ex to use HyperArkLive for home route.
+
+TESTING: Navigate to home, verify tavern plus stats in left, welcome in right.
+Follow HyperCard aesthetic.

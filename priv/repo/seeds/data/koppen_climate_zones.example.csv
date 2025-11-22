@@ -1,0 +1,7 @@
+code,name,category,description,temperature_pattern,precipitation_pattern
+Cfb,Oceanic,Temperate,Mild maritime climate with cool summers and no dry season,Cool summers (10-22°C) mild winters (0-10°C),Evenly distributed throughout year 700-1500mm annually
+Cfa,Humid subtropical,Temperate,Hot humid summers with mild winters,Hot summers (22-27°C) mild winters (-3-18°C),Summer rainfall peak 800-1600mm annually
+Csa,Mediterranean hot summer,Temperate,Hot dry summers and mild wet winters,Hot summers (22-28°C) mild winters (0-18°C),Winter rainfall 400-900mm annually
+Csb,Mediterranean warm summer,Temperate,Warm dry summers and mild wet winters,Warm summers (10-22°C) mild winters (0-10°C),Winter rainfall 450-900mm annually
+Dfb,Warm-summer humid continental,Continental,Warm summers and very cold winters,Warm summers (10-22°C) very cold winters (-30-0°C),Evenly distributed 500-1000mm annually
+

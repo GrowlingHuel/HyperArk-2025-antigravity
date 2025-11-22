@@ -1,0 +1,44 @@
+CURSOR 2.0
+
+
+This is going great! Now, as several of our previously generated artifacts show (please tell me if I should upload to show you these!) the living web should accomplish several goals - the first of which is to enable the user to generate their own systems, synthesize them, and then place them back in the systems library (under 'my systems'). To do this, they need to geneate connections between the nodes - they need to build systems that have inputs and outputs, and this will require (at a minimum) the ability to draw LINES, PREFERABLY CURVED LINES WHEN NEEDED (which was the whole reason we integrated XyFlow) between nodes. They also need to be able to RENAME NODES - to name them after whatever aspects of systems (or systems) they have. THEN, we need to be able to create inputs and outputs FROM EACH GENERATED SYSTEM. THEN - we need to be able to SUGGEST TO THEM what ELSE they could do with their existing (or hypothetical) systems. Please set up a plan whereby we can accomplish this using the exsting design strategies.
+
+Response from cursor:
+
+Reviewing the current implementation to draft the plan. Checking edge/line functionality and the data model:
+
+
+[8 tools called]
+
+I need a few clarifications before drafting the plan:
+
+1. **Edge Creation Method**: Should edges be created by:
+   - a) Dragging from one node to another (ReactFlow-style)
+   - b) Selecting source and target nodes then clicking a "Connect" button
+   - c) Other method
+
+2. **Edge Curvature**: For curved edges:
+   - a) Switch to ReactFlow (has built-in curved Bezier edges)
+   - b) Implement curved SVG paths in the current vanilla JS hook
+
+3. **System Suggestions**: What should drive suggestions?
+   - a) Rule-based logic (e.g., "compost needs inputs")
+   - b) AI/LLM analysis of user's systems
+   - c) Database of common system combinations
+   - d) Combination of the above
+
+4. **Node Renaming**: How should users rename nodes?
+   - a) Double-click to edit inline
+   - b) Right-click context menu
+   - c) Button/modal in a sidebar
+
+5. **Composite System Inputs/Outputs**: Should external inputs/outputs be:
+   - a) Auto-inferred from internal nodes' inputs/outputs
+   - b) Manually defined by the user
+   - c) Auto-suggested with user confirmation
+
+Share your preferences, and I’ll draft the plan.
+
+Me: Clarifications: 1=b, 2=a, 3-d, 4=a, 5=a, but with the possibility of other input both from the user and from the app
+
+

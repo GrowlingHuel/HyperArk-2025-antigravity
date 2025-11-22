@@ -1,0 +1,141 @@
+Fix character pages to show correct character name in title and highlight correct character in dropdown.
+
+PROBLEM: Character pages show wrong character name in left window title and wrong character highlighted in dropdown.
+
+SOLUTION:
+
+1. UPDATE lib/green_man_tavern_web/live/character_live.ex mount function:
+
+(Start of code)
+```
+def mount(%{"character" => character_slug}, _session, socket) do
+  character = case character_slug do
+    "student" -> Characters.get_character_by_name("The Student")
+    "grandmother" -> Characters.get_character_by_name("The Grandmother")
+    "farmer" -> Characters.get_character_by_name("The Farmer")
+    "robot" -> Characters.get_character_by_name("The Robot")
+    "alchemist" -> Characters.get_character_by_name("The Alchemist")
+    "survivalist" -> Characters.get_character_by_name("The Survivalist")
+    "hobo" -> Characters.get_character_by_name("The Hobo")
+    _ -> nil
+  end
+  
+  if character do
+    socket =
+      socket
+      |> assign(:character, character)
+      |> assign(:character_slug, character_slug)
+      |> assign(:left_window_title, "Tavern - #{character.name}")
+      |> assign(:right_window_title, "Interaction Results")
+      |> assign_left_window_content(character)
+    
+    {:ok, socket}
+  else
+    {:ok, socket |> put_flash(:error, "Character not found") |> redirect(to: ~p"/")}
+  end
+end
+```
+
+(End of code)
+
+2. ADD assign_left_window_content function in same file:
+
+(Start of code)
+```
+defp assign_left_window_content(socket, character) do
+  content = ~H"""
+  <div class="tavern-scene">
+    <img src="/images/the_tavern.png" alt="Green Man Tavern" class="tavern-image" />
+  </div>
+  
+  <div class="character-info">
+    <h2 class="character-name"><%= @character.name %></h2>
+    <p class="character-archetype"><%= @character.archetype %></p>
+    
+    <div class="character-section">
+      <h3>Focus Area:</h3>
+      <p><%= @character.focus_area %></p>
+    </div>
+    
+    <div class="character-section">
+      <h3>Description:</h3>
+      <p><%= @character.description %></p>
+    </div>
+  </div>
+  """
+  
+  assign(socket, :left_window_content, content)
+end
+```
+
+(End of code)
+
+3. UPDATE app.html.heex dropdown to use character_slug for highlighting:
+
+Find the Characters dropdown and update each link class attribute to check assigns character_slug.
+
+4. ADD CSS for character info:
+
+(Start of CSS)
+```
+.character-info {
+  padding: 16px;
+  background: #FFF;
+}
+
+.character-name {
+  font-family: Monaco, monospace;
+  font-size: 16px;
+  font-weight: bold;
+  color: #000;
+  margin: 0 0 4px 0;
+}
+
+.character-archetype {
+  font-family: Monaco, monospace;
+  font-size: 12px;
+  color: #666;
+  margin: 0 0 24px 0;
+  font-style: italic;
+}
+
+.character-section {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #E0E0E0;
+}
+
+.character-section h3 {
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  font-weight: bold;
+  color: #000;
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+}
+
+.character-section p {
+  font-family: Monaco, monospace;
+  font-size: 11px;
+  color: #333;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.dropdown-link.active {
+  background: #CCC;
+  font-weight: bold;
+}
+
+.dropdown-link.active::before {
+  content: "► ";
+  margin-right: 4px;
+}
+```
+
+(End of CSS)
+
+TESTING: Navigate to characters/robot, verify title says Tavern - The Robot, dropdown highlights The Robot.
+
+Follow HyperCard aesthetic.
+
