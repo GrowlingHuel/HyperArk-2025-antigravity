@@ -57,3 +57,9 @@ batch_debug.log
 /1
 t 10 filenames
 .env
+
+# Security: Ignore files containing sensitive tokens/keys
+git commit token
+*token*
+*secret*
+*key*.txt
