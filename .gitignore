@@ -54,12 +54,8 @@ backups/
 /files/
 batch_debug.log
 *.zip
-/1
-t 10 filenames
-.env
-
-# Security: Ignore files containing sensitive tokens/keys
-git commit token
-*token*
-*secret*
-*key*.txt
+ 
+ # Security: Ignore files containing sensitive tokens/keys
+ *token*
+ *secret*
+ *key*.txt
