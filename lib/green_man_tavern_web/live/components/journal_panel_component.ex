@@ -81,248 +81,293 @@ defmodule GreenManTavernWeb.JournalPanelComponent do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="journal-panel" style="height: 100%; display: flex; flex-direction: column; background: #FDFBF7; font-family: Georgia, 'Times New Roman', serif;">
-      <!-- Tabs/Header -->
-      <div class="journal-header" style="
-        padding: 16px 24px;
-        border-bottom: 1px solid #E0D8C8;
-        background: #F4EFE6;
+    <div class="journal-panel" style="height: 100%; padding: 10px; background: #CCCCCC; font-family: Georgia, 'Times New Roman', serif; box-sizing: border-box; overflow: hidden;">
+      <!-- Main Notebook Container -->
+      <div style="
+        height: 100%;
+        background: #FFF;
+        border: 3px solid #000;
+        outline: 1px solid #000;
+        outline-offset: -6px;
+        display: flex;
+        position: relative;
+        box-shadow: 5px 5px 0 rgba(0,0,0,0.2);
       ">
-        <h2 style="margin: 0; font-size: 24px; color: #3d2817; font-weight: normal; letter-spacing: 1px;">Journal & Quests</h2>
-      </div>
-
-      <div class="journal-content" style="flex: 1; overflow-y: auto; padding: 24px;">
-        <!-- Quests Section -->
-        <div class="quests-section" style="margin-bottom: 40px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <h3 style="margin: 0; font-size: 18px; color: #5C4033; border-bottom: 2px solid #D4C5A9; padding-bottom: 4px; display: inline-block;">Active Quests</h3>
+        <!-- LEFT PAGE -->
+        <div class="journal-page left-page" style="flex: 1; padding: 20px 10px 20px 20px; display: flex; flex-direction: column; overflow: hidden; position: relative; background: transparent; background-image: none; border: none; box-shadow: none;">
+          <!-- Header Row -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px;">
+            <h2 style="margin: 0; font-size: 22px; font-weight: bold; color: #333;">Journal</h2>
             
             <div style="display: flex; gap: 8px;">
-              <button 
-                phx-click="filter_quests" 
-                phx-value-filter="all" 
-                phx-target={@myself}
-                style={"padding: 4px 8px; font-size: 11px; border: 1px solid #8B4513; background: #{if @quest_filter == "all", do: "#8B4513; color: #FFF", else: "transparent; color: #8B4513"}; cursor: pointer;"}
-              >All</button>
-              <button 
-                phx-click="filter_quests" 
-                phx-value-filter="active" 
-                phx-target={@myself}
-                style={"padding: 4px 8px; font-size: 11px; border: 1px solid #8B4513; background: #{if @quest_filter == "active", do: "#8B4513; color: #FFF", else: "transparent; color: #8B4513"}; cursor: pointer;"}
-              >Active</button>
-              <button 
-                phx-click="filter_quests" 
-                phx-value-filter="completed" 
-                phx-target={@myself}
-                style={"padding: 4px 8px; font-size: 11px; border: 1px solid #8B4513; background: #{if @quest_filter == "completed", do: "#8B4513; color: #FFF", else: "transparent; color: #8B4513"}; cursor: pointer;"}
-              >Completed</button>
-            </div>
-          </div>
-
-          <!-- Quest Search -->
-          <div style="margin-bottom: 16px;">
-            <form phx-change="search_quests" phx-submit="search_quests" phx-target={@myself} onsubmit="return false;">
-              <input 
-                type="text" 
-                name="term" 
-                value={@quest_search_term} 
-                placeholder="Search quests..." 
-                style="width: 100%; padding: 8px; border: 1px solid #D4C5A9; background: #FFF; font-family: Georgia, serif; font-size: 13px;"
-              />
-            </form>
-          </div>
-
-          <!-- Quest List -->
-          <div class="quest-list">
-            <%= if Enum.empty?(@user_quests) do %>
-              <div style="padding: 20px; text-align: center; color: #888; font-style: italic; background: rgba(255,255,255,0.5); border: 1px dashed #CCC;">
-                No quests found. Talk to characters to receive quests!
-              </div>
-            <% else %>
-              <%= for user_quest <- filter_quests(@user_quests, @quest_filter, @quest_search_term) do %>
-                <%= render_quest_item(user_quest, @expanded_quest_id == user_quest.id, @characters) %>
-              <% end %>
-            <% end %>
-          </div>
-        </div>
-
-        <!-- Journal Entries Section -->
-        <div class="journal-entries-section">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <h3 style="margin: 0; font-size: 18px; color: #5C4033; border-bottom: 2px solid #D4C5A9; padding-bottom: 4px; display: inline-block;">Journal Entries</h3>
-            
-            <div style="display: flex; align-items: center; gap: 8px;">
               <%= if not @creating_new_entry do %>
                 <button
                   phx-click="start_new_entry"
                   phx-target={@myself}
+                  title="New Entry"
                   style="
-                    padding: 4px 10px;
-                    background: rgba(255, 255, 255, 0.8);
-                    border: 1px solid rgba(101, 67, 33, 0.4);
-                    font-family: Georgia, 'Times New Roman', serif;
-                    font-size: 11px;
-                    color: #2a2a2a;
+                    width: 32px; 
+                    height: 32px; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center;
+                    background: #FFF;
+                    border: 1px solid #CCC;
+                    font-size: 18px;
                     cursor: pointer;
+                    color: #666;
                   "
-                >
-                  + New Entry
-                </button>
-              <% end %>
-              <label style="font-size: 11px; color: #666; display: flex; align-items: center; gap: 4px; cursor: pointer;">
-                <input type="checkbox" phx-click="toggle_hidden_entries" phx-target={@myself} checked={@journal_show_hidden} />
-                Show Hidden
-              </label>
-            </div>
-          </div>
-
-          <!-- New Entry Form -->
-          <%= if @creating_new_entry do %>
-            <div style="margin-bottom: 20px; padding: 10px; background: rgba(255, 255, 255, 0.5); border: 1px solid rgba(101, 67, 33, 0.3);">
-              <form phx-submit="save_new_entry" phx-change="update_new_entry" phx-target={@myself}>
-                <textarea
-                  name="text"
-                  placeholder="Write your journal entry..."
+                >+</button>
+                <button
+                  phx-click="start_new_entry"
+                  phx-target={@myself}
                   style="
-                    width: 100%;
-                    min-height: 100px;
-                    padding: 8px;
-                    background: rgba(255, 255, 255, 0.9);
-                    border: 1px solid rgba(101, 67, 33, 0.3);
+                    padding: 0 12px;
+                    height: 32px;
+                    background: #FFF;
+                    border: 1px solid #CCC;
                     font-family: Georgia, 'Times New Roman', serif;
                     font-size: 13px;
-                    color: #2a2a2a;
-                    line-height: 1.7;
-                    resize: vertical;
+                    color: #333;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
                   "
-                ><%= @new_entry_text %></textarea>
-                <div style="margin-top: 8px; display: flex; gap: 8px; justify-content: flex-end;">
-                  <button
-                    type="submit"
-                    disabled={String.trim(@new_entry_text) == ""}
-                    style="
-                      padding: 4px 10px;
-                      background: rgba(255, 255, 255, 0.8);
-                      border: 1px solid rgba(101, 67, 33, 0.4);
-                      font-family: Georgia, 'Times New Roman', serif;
-                      font-size: 11px;
-                      color: #2a2a2a;
-                      cursor: pointer;
-                    "
-                  >
-                    Save
-                  </button>
-                  <button
-                    type="button"
-                    phx-click="cancel_new_entry"
-                    phx-target={@myself}
-                    style="
-                      padding: 4px 10px;
-                      background: rgba(255, 255, 255, 0.8);
-                      border: 1px solid rgba(101, 67, 33, 0.4);
-                      font-family: Georgia, 'Times New Roman', serif;
-                      font-size: 11px;
-                      color: #2a2a2a;
-                      cursor: pointer;
-                    "
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
+                >+ New Entry</button>
+              <% end %>
             </div>
-          <% end %>
-
-          <!-- Journal Search -->
-          <div style="margin-bottom: 16px;">
-            <form phx-change="search_journal" phx-submit="search_journal" phx-target={@myself} onsubmit="return false;">
-              <input 
-                type="text" 
-                name="term" 
-                value={@journal_search_term} 
-                placeholder="Search journal entries..." 
-                style="width: 100%; padding: 8px; border: 1px solid #D4C5A9; background: #FFF; font-family: Georgia, serif; font-size: 13px;"
-              />
-            </form>
           </div>
 
-          <!-- Entries List -->
-          <div class="entries-list">
+          <!-- Content Area (Entries) -->
+          <div style="flex: 1; overflow-y: auto; padding-right: 10px; margin-bottom: 10px;">
+            <!-- New Entry Form -->
+            <%= if @creating_new_entry do %>
+              <div style="margin-bottom: 20px; padding: 15px; background: #F9F9F9; border: 1px solid #CCC;">
+                <form phx-submit="save_new_entry" phx-change="update_new_entry" phx-target={@myself}>
+                  <textarea
+                    name="text"
+                    placeholder="Write your journal entry..."
+                    style="
+                      width: 100%;
+                      min-height: 120px;
+                      padding: 10px;
+                      background: #FFF;
+                      border: 1px solid #CCC;
+                      font-family: Georgia, 'Times New Roman', serif;
+                      font-size: 13px;
+                      color: #000;
+                      line-height: 1.5;
+                      resize: vertical;
+                      margin-bottom: 10px;
+                    "
+                  ><%= @new_entry_text %></textarea>
+                  <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button
+                      type="submit"
+                      disabled={String.trim(@new_entry_text) == ""}
+                      style="padding: 6px 15px; background: #333; color: #FFF; border: none; cursor: pointer; font-size: 12px;"
+                    >Save</button>
+                    <button
+                      type="button"
+                      phx-click="cancel_new_entry"
+                      phx-target={@myself}
+                      style="padding: 6px 15px; background: #DDD; color: #000; border: none; cursor: pointer; font-size: 12px;"
+                    >Cancel</button>
+                  </div>
+                </form>
+              </div>
+            <% end %>
+
+            <!-- Entries List -->
             <%= if Enum.empty?(@journal_entries) do %>
-              <div style="padding: 20px; text-align: center; color: #888; font-style: italic; background: rgba(255,255,255,0.5); border: 1px dashed #CCC;">
+              <div style="padding: 20px; text-align: center; color: #999; font-style: italic; font-size: 13px;">
                 No journal entries yet.
               </div>
             <% else %>
               <% 
                 paginated = paginated_entries(@journal_entries, @journal_current_page, @journal_entries_per_page)
-                total_pgs = total_pages(@journal_entries, @journal_entries_per_page)
               %>
               
               <%= for entry <- paginated do %>
-                <div class="journal-entry" style={"margin-bottom: 20px; padding: 16px; background: #FFF; border: 1px solid #E0D8C8; box-shadow: 2px 2px 5px rgba(0,0,0,0.05); position: relative; opacity: #{if entry.is_hidden, do: "0.6", else: "1.0"};"}>
-                  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; border-bottom: 1px solid #EEE; padding-bottom: 8px;">
-                    <div style="font-weight: bold; color: #3d2817; font-size: 14px;">
-                      <%= if entry.title, do: entry.title, else: "Entry ##{entry.id}" %>
+                <div class="journal-entry" style={"margin-bottom: 24px; position: relative; opacity: #{if entry.is_hidden, do: "0.6", else: "1.0"};"}>
+                  <div style="display: flex; align-items: flex-start; gap: 10px;">
+                    <div style="flex: 1;">
+                      <div style="font-size: 13px; line-height: 1.6; color: #333;">
+                        <%= raw(TextFormattingHelpers.render_markdown(entry.content)) %>
+                      </div>
                     </div>
-                    <div style="font-size: 11px; color: #888;">
-                      <%= Calendar.strftime(entry.inserted_at, "%b %d, %Y %H:%M") %>
-                      <%= if entry.is_hidden do %>
-                        <span style="margin-left: 4px; color: #999;">(Hidden)</span>
-                      <% end %>
+                    
+                    <div style="display: flex; gap: 2px;">
+                       <button 
+                        phx-click="delete_entry" 
+                        phx-value-id={entry.id} 
+                        phx-target={@myself}
+                        data-confirm="Delete this entry?"
+                        title="Delete"
+                        style="width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border: 1px solid #CCC; background: #FFF; color: #999; cursor: pointer; font-size: 10px;"
+                      >×</button>
                     </div>
                   </div>
-                  
-                  <div style="font-size: 13px; line-height: 1.6; color: #333;">
-                    <%= raw(TextFormattingHelpers.render_markdown(entry.content)) %>
-                  </div>
-                  
-                  <div style="margin-top: 12px; display: flex; justify-content: flex-end; gap: 8px;">
-                    <button 
-                      phx-click="delete_entry" 
-                      phx-value-id={entry.id} 
-                      phx-target={@myself}
-                      data-confirm="Are you sure you want to delete this entry?"
-                      style="font-size: 10px; color: #999; background: none; border: none; cursor: pointer; text-decoration: underline;"
-                    >Delete</button>
-                  </div>
-                </div>
-              <% end %>
-
-              <!-- Pagination -->
-              <%= if total_pgs > 1 do %>
-                <div class="pagination" style="display: flex; justify-content: center; gap: 8px; margin-top: 24px; align-items: center;">
-                  <button 
-                    phx-click="journal_first_page" 
-                    phx-target={@myself}
-                    disabled={@journal_current_page == 1}
-                    style="padding: 4px 8px; border: 1px solid #CCC; background: #FFF; cursor: pointer;"
-                  >&laquo;</button>
-                  <button 
-                    phx-click="journal_prev_page" 
-                    phx-target={@myself}
-                    disabled={@journal_current_page == 1}
-                    style="padding: 4px 8px; border: 1px solid #CCC; background: #FFF; cursor: pointer;"
-                  >&lsaquo;</button>
-                  
-                  <span style="font-size: 12px; color: #666;">
-                    Page <%= @journal_current_page %> of <%= total_pgs %>
-                  </span>
-                  
-                  <button 
-                    phx-click="journal_next_page" 
-                    phx-target={@myself}
-                    disabled={@journal_current_page == total_pgs}
-                    style="padding: 4px 8px; border: 1px solid #CCC; background: #FFF; cursor: pointer;"
-                  >&rsaquo;</button>
-                  <button 
-                    phx-click="journal_last_page" 
-                    phx-target={@myself}
-                    disabled={@journal_current_page == total_pgs}
-                    style="padding: 4px 8px; border: 1px solid #CCC; background: #FFF; cursor: pointer;"
-                  >&raquo;</button>
                 </div>
               <% end %>
             <% end %>
+          </div>
+
+          <!-- Bottom Controls Container -->
+          <div style="margin-top: auto; padding-top: 10px; border-top: 1px solid #EEE;">
+            <!-- Search -->
+            <div style="margin-bottom: 15px;">
+               <form phx-change="search_journal" phx-submit="search_journal" phx-target={@myself} onsubmit="return false;">
+                <input 
+                  type="text" 
+                  name="term" 
+                  value={@journal_search_term} 
+                  placeholder="Search journal entries..." 
+                  style="width: 100%; padding: 10px; border: 1px solid #CCC; background: #FFF; font-family: Georgia, serif; font-size: 13px; color: #666;"
+                />
+              </form>
+            </div>
+
+            <!-- Pagination -->
+            <% total_pgs = total_pages(@journal_entries, @journal_entries_per_page) %>
+            <div style="display: flex; justify-content: center; align-items: center; padding: 10px; border: 1px solid #CCC; background: #FFF;">
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <button phx-click="journal_first_page" phx-target={@myself} disabled={@journal_current_page == 1} style="width: 24px; height: 24px; border: 1px solid #CCC; background: #FFF; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #666;">|&laquo;</button>
+                <button phx-click="journal_prev_page" phx-target={@myself} disabled={@journal_current_page == 1} style="width: 24px; height: 24px; border: 1px solid #CCC; background: #FFF; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #666;">&laquo;</button>
+                
+                <span style="font-size: 12px; color: #666; margin: 0 8px;">
+                  Page <span style="border: 1px solid #CCC; padding: 2px 6px; margin: 0 4px;"><%= @journal_current_page %></span> of <%= total_pgs %>
+                </span>
+                
+                <button phx-click="journal_next_page" phx-target={@myself} disabled={@journal_current_page == total_pgs} style="width: 24px; height: 24px; border: 1px solid #CCC; background: #FFF; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #666;">&raquo;</button>
+                <button phx-click="journal_last_page" phx-target={@myself} disabled={@journal_current_page == total_pgs} style="width: 24px; height: 24px; border: 1px solid #CCC; background: #FFF; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #666;">&raquo;|</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SPINE -->
+        <div class="notebook-spine" style="
+          width: 40px;
+          background: #F0F0F0;
+          border-left: 1px solid #DDD;
+          border-right: 1px solid #DDD;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding-top: 20px;
+          padding-bottom: 20px;
+          justify-content: space-between;
+          flex-shrink: 0;
+          z-index: 10;
+          height: 100%;
+          overflow: hidden;
+        ">
+          <%= for _i <- 1..20 do %>
+            <div style="
+              width: 100%;
+              height: 12px;
+              position: relative;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin: 15px 0;
+            ">
+              <!-- Ring -->
+              <div style="
+                width: 36px;
+                height: 4px;
+                background: #333;
+                border-radius: 2px;
+                position: absolute;
+                z-index: 2;
+              "></div>
+              <!-- Hole Left -->
+              <div style="
+                width: 8px;
+                height: 8px;
+                background: #333;
+                border-radius: 50%;
+                position: absolute;
+                left: -4px;
+                z-index: 1;
+              "></div>
+              <!-- Hole Right -->
+              <div style="
+                width: 8px;
+                height: 8px;
+                background: #333;
+                border-radius: 50%;
+                position: absolute;
+                right: -4px;
+                z-index: 1;
+              "></div>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- RIGHT PAGE -->
+        <div class="journal-page right-page" style="flex: 1; padding: 20px 20px 20px 10px; display: flex; flex-direction: column; overflow: hidden; background: transparent; background-image: none; border: none; box-shadow: none;">
+           <!-- Header Row -->
+          <div style="margin-bottom: 20px; padding-bottom: 10px;">
+            <h2 style="margin: 0; font-size: 22px; font-weight: bold; color: #333;">Quests</h2>
+          </div>
+
+          <div style="flex: 1; overflow-y: auto; padding-left: 10px;">
+            <!-- Active Quests -->
+            <div style="margin-bottom: 30px;">
+              <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 10px; color: #333;">Active Quests</h3>
+              
+              <% active_quests = Enum.filter(@user_quests, fn q -> q.status != "completed" end) %>
+              
+              <%= if Enum.empty?(active_quests) do %>
+                <div style="padding: 15px; background: #F5F5F5; color: #888; font-style: italic; font-size: 13px; border-radius: 4px;">
+                  No active quests yet. Start a quest from the Available Quests section below.
+                </div>
+              <% else %>
+                <%= for user_quest <- active_quests do %>
+                  <%= render_quest_item(user_quest, @expanded_quest_id == user_quest.id, @characters) %>
+                <% end %>
+              <% end %>
+            </div>
+
+            <!-- Available Quests -->
+            <div style="margin-bottom: 30px;">
+              <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 10px; color: #333;">Available Quests</h3>
+               <div style="padding: 15px; background: #F5F5F5; color: #888; font-style: italic; font-size: 13px; border-radius: 4px;">
+                  No available quests yet. Chat with characters to discover new quests!
+                </div>
+            </div>
+            
+            <!-- Completed Quests -->
+            <div style="margin-bottom: 30px;">
+              <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 10px; color: #333;">Completed</h3>
+              
+              <% completed_quests = Enum.filter(@user_quests, fn q -> q.status == "completed" end) %>
+              
+              <%= if Enum.empty?(completed_quests) do %>
+                <div style="padding: 15px; background: #F5F5F5; color: #888; font-style: italic; font-size: 13px; border-radius: 4px;">
+                  No completed quests yet. Complete active quests to see them here.
+                </div>
+              <% else %>
+                <%= for user_quest <- completed_quests do %>
+                  <%= render_quest_item(user_quest, @expanded_quest_id == user_quest.id, @characters) %>
+                <% end %>
+              <% end %>
+            </div>
+
+            <!-- Search -->
+            <div style="margin-top: 20px; margin-bottom: 20px;">
+              <form phx-change="search_quests" phx-submit="search_quests" phx-target={@myself} onsubmit="return false;">
+                <input 
+                  type="text" 
+                  name="term" 
+                  value={@quest_search_term} 
+                  placeholder="Search quests..." 
+                  style="width: 100%; padding: 10px; border: 1px solid #CCC; background: #FFF; font-family: Georgia, serif; font-size: 13px; color: #666;"
+                />
+              </form>
+            </div>
           </div>
         </div>
       </div>

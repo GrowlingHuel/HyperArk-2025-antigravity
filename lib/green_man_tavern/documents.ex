@@ -533,129 +533,13 @@ defmodule GreenManTavern.Documents do
     {:ok, results}
   end
 
-  defp process_single_pdf(file_path, chunk_size, overlap, skip_existing) do
+  defp process_single_pdf(file_path, _chunk_size, _overlap, _skip_existing) do
     filename = Path.basename(file_path)
-    Logger.debug("Processing PDF: #{filename}")
-
-    # Check if already processed
-    if skip_existing and document_exists?(filename) do
-      Logger.debug("Skipping already processed file: #{filename}")
-      {:ok, %{file: filename, chunk_count: 0, status: :skipped}}
-    else
-      with {:ok, text_data} <- extract_pdf_text(file_path),
-           {:ok, chunks} <- chunk_pdf_text(text_data, chunk_size, overlap),
-           {:ok, document} <- store_document_with_chunks(file_path, text_data, chunks) do
-        {:ok,
-         %{
-           file: filename,
-           chunk_count: length(chunks),
-           status: :processed,
-           document_id: document.id
-         }}
-      end
-    end
+    Logger.debug("Skipping PDF processing for: #{filename} (PDFProcessor disabled)")
+    {:ok, %{file: filename, chunk_count: 0, status: :skipped_disabled}}
   end
 
-  defp extract_pdf_text(file_path) do
-    alias GreenManTavern.Documents.PDFProcessor
 
-    case PDFProcessor.extract_with_metadata(file_path) do
-      {:ok, result} ->
-        # Result already has the structure we need: %{text: ..., metadata: ..., page_count: ...}
-        # Add file_size to the result
-        {:ok, Map.put(result, :file_size, File.stat!(file_path).size)}
-
-      {:error, reason} = error ->
-        Logger.error("PDF extraction failed for #{Path.basename(file_path)}: #{inspect(reason)}")
-        error
-    end
-  end
-
-  defp chunk_pdf_text(text_data, chunk_size, overlap) do
-    alias GreenManTavern.Documents.TextChunker
-
-    doc_metadata = %{
-      page_count: text_data.page_count,
-      file_size: text_data.file_size
-    }
-
-    # Merge any additional metadata from PDFProcessor
-    doc_metadata = Map.merge(doc_metadata, text_data.metadata || %{})
-
-    case TextChunker.chunk_with_metadata(text_data.text, doc_metadata,
-           chunk_size: chunk_size,
-           overlap: overlap
-         ) do
-      {:ok, chunks} -> {:ok, chunks}
-      {:error, reason} -> {:error, reason}
-    end
-  end
-
-  defp store_document_with_chunks(file_path, text_data, chunks) do
-    filename = Path.basename(file_path)
-    title = filename |> Path.rootname() |> String.replace("_", " ") |> String.capitalize()
-
-    # Prepare document attributes
-    doc_attrs = %{
-      title: title,
-      source_file: filename,
-      file_path: file_path,
-      total_chunks: length(chunks),
-      metadata: %{
-        page_count: text_data.page_count,
-        file_size: text_data.file_size,
-        processed_at: DateTime.utc_now() |> DateTime.truncate(:second)
-      }
-    }
-
-    # Merge any additional metadata from PDFProcessor
-    doc_attrs =
-      put_in(doc_attrs.metadata, Map.merge(doc_attrs.metadata, text_data.metadata || %{}))
-
-    # Use Ecto.Multi for transactional insert
-    multi = Ecto.Multi.new()
-
-    # 1. Create Document record
-    multi = Ecto.Multi.insert(multi, :document, Document.create_changeset(%Document{}, doc_attrs))
-
-    # 2. Create all DocumentChunk records (batch insert)
-    # We need to add document_id after the document is created
-    multi =
-      Ecto.Multi.run(multi, :chunks, fn _repo, %{document: document} ->
-        now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
-
-        chunk_attrs =
-          chunks
-          |> Enum.map(fn chunk ->
-            %{
-              document_id: document.id,
-              content: chunk.content,
-              chunk_index: chunk.index,
-              character_count: chunk.metadata.character_count,
-              metadata: chunk.metadata,
-              inserted_at: now,
-              updated_at: now
-            }
-          end)
-
-        {count, _} = Repo.insert_all(DocumentChunk, chunk_attrs)
-        {:ok, {count, nil}}
-      end)
-
-    # Execute transaction
-    case Repo.transaction(multi) do
-      {:ok, %{document: document, chunks: {count, _chunks}}} ->
-        # Update document with actual chunk count
-        document
-        |> Document.update_chunks_count_changeset(count)
-        |> Repo.update()
-
-        {:ok, document}
-
-      {:error, _operation, changeset, _changes} ->
-        {:error, changeset}
-    end
-  end
 
   defp build_summary(results, duration) do
     total_files = length(results)

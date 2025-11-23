@@ -12,6 +12,7 @@ defmodule GreenManTavern.Application do
       GreenManTavern.Repo,
       {DNSCluster, query: Application.get_env(:green_man_tavern, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: GreenManTavern.PubSub},
+      GreenManTavern.Logging.LogStore,
       # Start a worker by calling: GreenManTavern.Worker.start_link(arg)
       # {GreenManTavern.Worker, arg},
       # Start to serve requests, typically the last entry

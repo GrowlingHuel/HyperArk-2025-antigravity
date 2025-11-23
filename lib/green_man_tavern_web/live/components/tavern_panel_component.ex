@@ -3,6 +3,19 @@ defmodule GreenManTavernWeb.TavernPanelComponent do
   alias GreenManTavern.Characters
   alias GreenManTavernWeb.TextFormattingHelpers
 
+  @impl true
+  def update(assigns, socket) do
+    {:ok,
+     socket
+     |> assign(assigns)
+     |> assign_new(:show_logs, fn -> false end)}
+  end
+
+  @impl true
+  def handle_event("toggle_logs", _, socket) do
+    {:noreply, update(socket, :show_logs, &(!&1))}
+  end
+
   def render(assigns) do
     ~H"""
     <div class="dual-left-panel" style="margin: 0 !important; margin-left: 0 !important; margin-right: 0 !important; padding: 0 !important; padding-left: 0 !important; padding-top: 20px !important; left: 0 !important; position: relative !important;">
@@ -13,6 +26,7 @@ defmodule GreenManTavernWeb.TavernPanelComponent do
           <% :character_chat -> %>
             Chat with {@selected_character.name}
         <% end %>
+        <button phx-click="toggle_logs" phx-target={@myself} title="Toggle Logs" style="margin-left: auto; background: transparent; border: none; cursor: pointer; font-size: 14px;">🐞</button>
       </div>
       <div class="panel-content" phx-hook="ScrollableContent" id="left-panel-content" style="margin-top: 0 !important; padding-top: 0 !important;">
         <%= case @view do %>
@@ -167,6 +181,9 @@ defmodule GreenManTavernWeb.TavernPanelComponent do
             </div>
         <% end %>
       </div>
+      <%= if @show_logs do %>
+        <.live_component module={GreenManTavernWeb.LogViewerComponent} id="log-viewer" />
+      <% end %>
     </div>
     """
   end

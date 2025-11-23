@@ -5,19 +5,17 @@ defmodule GreenManTavernWeb.DualPanelLive do
 
   alias Phoenix.PubSub
   alias GreenManTavern.Characters
-  alias GreenManTavern.{Systems, Diagrams, Conversations, Accounts, Sessions}
+  alias GreenManTavern.{Conversations, Accounts, Sessions}
   alias GreenManTavern.AI.{OpenAIClient, CharacterContext, SessionProcessor}
   alias GreenManTavern.PlantingGuide
-  alias GreenManTavern.PlantingGuide.{Plant, CompanionRelationship, UserPlant}
-  alias GreenManTavern.Journal
-  alias GreenManTavern.Quests
-  alias GreenManTavern.Quests.{QuestGenerator, DifficultyCalculator, CharacterVoice, PlantingQuestManager}
-  alias GreenManTavern.Diagrams.Suggestions
-  alias GreenManTavern.Knowledge
-  alias GreenManTavernWeb.KnowledgeHelpers
-  alias GreenManTavernWeb.TextFormattingHelpers
+  alias GreenManTavern.PlantingGuide.UserPlant
+  alias GreenManTavern.PlantingGuide.Plant
   alias GreenManTavern.Repo
   alias GreenManTavern.Inventory
+  alias GreenManTavern.Journal
+  alias GreenManTavern.Quests
+  alias GreenManTavern.Quests.{QuestGenerator, PlantingQuestManager}
+
 
   @pubsub GreenManTavern.PubSub
   @topic "navigation"
@@ -80,6 +78,8 @@ defmodule GreenManTavernWeb.DualPanelLive do
       |> assign(:show_harvest_panel, false)
       |> assign(:show_opportunities_panel, false)
       |> assign(:opportunities, [])
+      |> assign(:projects, [])
+      |> assign(:diagram, nil)
 
     {:ok, socket}
   end
@@ -1427,7 +1427,7 @@ defmodule GreenManTavernWeb.DualPanelLive do
       # Store user message in conversation history and process (async)
       Task.start(fn ->
         alias GreenManTavern.Conversations
-        alias GreenManTavern.Journal.EntryGenerator
+
         alias GreenManTavern.AI.FactExtractor
         alias GreenManTavern.Accounts
         require Logger
@@ -1725,31 +1725,16 @@ defmodule GreenManTavernWeb.DualPanelLive do
   end
 
   # Journal creation handlers
-  @impl true
 
-  # Helper functions
-  defp schedule_delete_confirmation(entry_id) do
-    Process.send_after(self(), {:confirm_delete_entry, entry_id}, 5_000)
-  end
 
-  defp get_ordinal_suffix(n) when rem(n, 10) == 1 and rem(n, 100) != 11, do: "st"
-  defp get_ordinal_suffix(n) when rem(n, 10) == 2 and rem(n, 100) != 12, do: "nd"
-  defp get_ordinal_suffix(n) when rem(n, 10) == 3 and rem(n, 100) != 13, do: "rd"
-  defp get_ordinal_suffix(_n), do: "th"
+
+
+
 
   # ======================
   # Planting Guide Helper Functions
   # ======================
 
-  @doc """
-  Generates calendar data for a specific month and year.
-  Returns a map with:
-  - `:month_name` - Full month name (e.g., "January")
-  - `:month_number` - Month number (1-12)
-  - `:year` - Year
-  - `:days` - List of maps, each with `:day` (1-31), `:date` (%Date{}), `:day_of_week` (1-7, Mon=1)
-  - `:first_day_of_week` - Day of week for the 1st (1-7, Mon=1)
-  """
   defp generate_calendar_month(month_number, year) when month_number in 1..12 do
     first_date = Date.new!(year, month_number, 1)
     last_day = Date.end_of_month(first_date)
@@ -1780,9 +1765,6 @@ defmodule GreenManTavernWeb.DualPanelLive do
     }
   end
 
-  @doc """
-  Generates calendar data for all 12 months of the current year.
-  """
   defp generate_all_calendars(year \\ nil) do
     year = year || Date.utc_today().year
 
@@ -1792,10 +1774,11 @@ defmodule GreenManTavernWeb.DualPanelLive do
     end)
   end
 
-  @doc """
-  Checks if a specific date falls within a planting months string.
-  For example, if plant has "Sep-Nov" and date is "2025-10-15", returns true.
-  """
+
+  defp month_abbreviation_from_number(month_num) do
+    Enum.at(~w(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec), month_num - 1)
+  end
+
   defp date_in_planting_string?(date, months_str, hemisphere) when is_struct(date, Date) and is_binary(months_str) do
     month_abbr = month_abbreviation_from_number(date.month)
     month_in_planting_string?(month_abbr, months_str)
@@ -1803,19 +1786,8 @@ defmodule GreenManTavernWeb.DualPanelLive do
 
   defp date_in_planting_string?(_, _, _), do: false
 
-  @doc """
-  Converts month number (1-12) to month abbreviation (Jan-Dec).
-  """
-  defp month_abbreviation_from_number(month_num) when month_num in 1..12 do
-    ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-    |> Enum.at(month_num - 1)
-  end
 
-  @doc """
-  Checks if any date in a range falls within a planting months string.
-  Returns true if ANY day in the range can be planted.
-  """
+
   defp date_range_in_planting_string?(start_date, end_date, months_str, hemisphere)
        when is_struct(start_date, Date) and is_struct(end_date, Date) do
     # Generate all dates in the range
@@ -1827,9 +1799,7 @@ defmodule GreenManTavernWeb.DualPanelLive do
 
   defp date_range_in_planting_string?(_, _, _, _), do: false
 
-  @doc """
-  Checks if a month appears in a planting months string.
-
+  """
   Handles formats like:
   - "Sep-Nov" (range: Sep, Oct, Nov all match)
   - "Feb-Apr,Aug-Oct" (multiple ranges)
@@ -1874,10 +1844,7 @@ defmodule GreenManTavernWeb.DualPanelLive do
 
   defp month_in_planting_string?(_, _), do: false
 
-  @doc """
-  Checks if a month falls within a range of months.
-  Months are ordered: Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec
-  """
+
   defp month_in_range?(month, start_month, end_month) do
     month_order = %{
       "Jan" => 1, "Feb" => 2, "Mar" => 3, "Apr" => 4,
@@ -1911,9 +1878,7 @@ defmodule GreenManTavernWeb.DualPanelLive do
     end
   end
 
-  @doc """
-  Filters plants based on active filters in page_data.
-
+  """
   Applies filters in order:
   1. Climate zone (if city selected)
   2. Planting month (if month and city selected)
@@ -2105,9 +2070,7 @@ defmodule GreenManTavernWeb.DualPanelLive do
     assign(socket, :page_data, page_data)
   end
 
-  @doc """
-  Enriches plants with companion group IDs based on clustering compatible plants.
-
+  """
   Groups plants that can be planted together (connected through good relationships,
   with no bad relationships between them). Each group gets a unique pattern ID.
 
@@ -2265,15 +2228,7 @@ defmodule GreenManTavernWeb.DualPanelLive do
     end)
   end
 
-  @doc """
-  Helper function to check if frost data is available for the selected city.
 
-  Returns true if a city is selected AND that city has frost date data available.
-  """
-  defp has_frost_data?(socket) do
-    page_data = socket.assigns[:page_data]
-    page_data && page_data[:selected_city] && page_data[:city_frost_dates]
-  end
 
   @impl true
   def handle_event("accept_quest", %{"quest_id" => quest_id_str}, socket) do
@@ -2311,77 +2266,8 @@ defmodule GreenManTavernWeb.DualPanelLive do
 
 
 
-  defp get_character_name(character_id) do
-    alias GreenManTavern.Characters
-
-    try do
-      character = Characters.get_character!(character_id)
-      character.name
-    rescue
-      Ecto.NoResultsError ->
-        "Unknown"
-    end
-  end
-
-  defp get_quest_steps(quest) do
-    cond do
-      # New format: steps is a map with "steps" key
-      is_map(quest.steps) && Map.has_key?(quest.steps, "steps") ->
-        List.wrap(Map.get(quest.steps, "steps", []))
-
-      # Old format: instructions is an array
-      is_list(quest.instructions) ->
-        quest.instructions
-
-      # Fallback
-      true ->
-        []
-    end
-  end
-
-  defp format_skill_name(domain) when is_binary(domain) do
-    domain
-    |> String.replace("_", " ")
-    |> String.split()
-    |> Enum.map(&String.capitalize/1)
-    |> Enum.join(" ")
-  end
-  defp format_skill_name(_), do: "Unknown Skill"
 
 
-
-
-
-
-
-
-
-
-
-
-
-  # Term summary handler
-  @impl true
-  def handle_event("fetch_term_summary", %{"term" => term}, socket) do
-    require Logger
-    Logger.info("[DualPanel] fetch_term_summary event received for term: #{term}")
-
-    # Fetch summary (from database cache or Wikipedia)
-    result = case Knowledge.get_term_summary(term) do
-      {:ok, summary} ->
-        Logger.info("[DualPanel] Successfully fetched summary for '#{term}' (length: #{String.length(summary)})")
-        %{summary: summary}
-
-      {:error, reason} ->
-        Logger.warning("[DualPanel] Failed to fetch summary for term '#{term}': #{inspect(reason)}")
-        %{summary: nil, error: "Summary not available"}
-    end
-
-    # Send reply to the HOOK that sent the event using push_event
-    # The hook will receive this via its handleEvent() method
-    Logger.info("[DualPanel] Pushing term_summary_received event to hook")
-    {:noreply, push_event(socket, "term_summary_received", result)}
-  end
 
   @impl true
   def terminate(_reason, socket) do
