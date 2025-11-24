@@ -19,10 +19,10 @@ defmodule GreenManTavernWeb.BannerMenuComponent do
         </div>
 
         <!-- Navigation buttons - all in one container -->
-        <a href="#" phx-click="navigate" phx-value-page="hyperark" class="banner-menu-item-invisible" style="margin-right: 10px !important; color: #000000 !important; text-decoration: none !important; display: inline-flex !important; align-items: center !important; padding: 0 !important; line-height: 1 !important; height: auto !important;">
+        <.link navigate={~p"/"} class="banner-menu-item-invisible" style="margin-right: 10px !important; color: #000000 !important; text-decoration: none !important; display: inline-flex !important; align-items: center !important; padding: 0 !important; line-height: 1 !important; height: auto !important;">
           <span class="banner-icon-emoji" style="filter: grayscale(100%) !important; display: inline-block !important; line-height: 1 !important; margin: 0 !important; padding: 0 !important;">🏰</span>
           <span class="banner-text" style="display: inline-block !important; line-height: 1 !important; margin: 0 !important; padding: 0 !important;">Tavern</span>
-        </a>
+        </.link>
 
         <!-- Characters Dropdown -->
         <div style="position: relative; display: inline-block; margin-right: 10px !important;">
@@ -58,22 +58,34 @@ defmodule GreenManTavernWeb.BannerMenuComponent do
           </div>
         </div>
 
-        <a href="#" phx-click="navigate" phx-value-page="living_web" class="banner-menu-item-invisible" style="margin-right: 10px !important; color: #000000 !important; text-decoration: none !important; display: inline-flex !important; align-items: center !important; padding: 0 !important; line-height: 1 !important; height: auto !important;">
+        <.link
+          navigate={~p"/living-web"}
+          class="banner-menu-item-invisible"
+          style="margin-right: 10px !important; color: #000000 !important; text-decoration: none !important; display: inline-flex !important; align-items: center !important; padding: 0 !important; line-height: 1 !important; height: auto !important;"
+        >
           <span class="banner-icon-emoji" style="filter: grayscale(100%) !important; display: inline-block !important; line-height: 1 !important; margin: 0 !important; padding: 0 !important;">🌀</span>
           <span class="banner-text" style="display: inline-block !important; line-height: 1 !important; margin: 0 !important; padding: 0 !important;">Living Web</span>
-        </a>
-        <a href="#" phx-click="navigate" phx-value-page="planting_guide" class="banner-menu-item-invisible" style="margin-right: 10px !important; color: #000000 !important; text-decoration: none !important; display: inline-flex !important; align-items: center !important; padding: 0 !important; line-height: 1 !important; height: auto !important;">
-          <span class="banner-icon-emoji" style="filter: grayscale(100%) !important; display: inline-block !important; line-height: 1 !important; margin: 0 !important; padding: 0 !important;">🍀</span>
+        </.link>
+        <.link
+          navigate={~p"/?page=planting_guide"}
+          class="banner-menu-item-invisible"
+          style="margin-right: 10px !important; color: #000000 !important; text-decoration: none !important; display: inline-flex !important; align-items: center !important; padding: 0 !important; line-height: 1 !important; height: auto !important;"
+        >
+          <span class="banner-icon-emoji" style="filter: grayscale(100%) !important; display: inline-block !important; line-height: 1 !important; margin: 0 !important; padding: 0 !important;">🌱</span>
           <span class="banner-text" style="display: inline-block !important; line-height: 1 !important; margin: 0 !important; padding: 0 !important;">Planting Guide</span>
-        </a>
+        </.link>
         <.link navigate={~p"/inventory"} class="banner-menu-item-invisible" style="margin-right: 10px !important; color: #000000 !important; text-decoration: none !important; display: inline-flex !important; align-items: center !important; padding: 0 !important; line-height: 1 !important; height: auto !important;">
           <span class="banner-icon-emoji" style="filter: grayscale(100%) !important; display: inline-block !important; line-height: 1 !important; margin: 0 !important; padding: 0 !important;">📦</span>
           <span class="banner-text" style="display: inline-block !important; line-height: 1 !important; margin: 0 !important; padding: 0 !important;">Inventory</span>
         </.link>
-        <a href="#" phx-click="navigate" phx-value-page="journal" class="banner-menu-item-invisible" style="margin-right: 10px !important; color: #000000 !important; text-decoration: none !important; display: inline-flex !important; align-items: center !important; padding: 0 !important; line-height: 1 !important; height: auto !important;">
+        <.link
+          navigate={~p"/?page=journal"}
+          class="banner-menu-item-invisible"
+          style="margin-right: 10px !important; color: #000000 !important; text-decoration: none !important; display: inline-flex !important; align-items: center !important; padding: 0 !important; line-height: 1 !important; height: auto !important;"
+        >
           <span class="banner-icon-emoji" style="filter: grayscale(100%) !important; display: inline-block !important; line-height: 1 !important; margin: 0 !important; padding: 0 !important;">✍️</span>
           <span class="banner-text" style="display: inline-block !important; line-height: 1 !important; margin: 0 !important; padding: 0 !important;">Journal</span>
-        </a>
+        </.link>
 
         <!-- RIGHT: Authentication Section -->
         <div class="banner-auth-section" style="margin-left: auto !important; display: flex !important; align-items: center !important; padding: 0 !important; line-height: 1 !important; height: auto !important;">

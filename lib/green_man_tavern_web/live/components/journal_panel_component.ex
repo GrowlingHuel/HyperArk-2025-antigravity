@@ -189,11 +189,11 @@ defmodule GreenManTavernWeb.JournalPanelComponent do
               %>
               
               <%= for entry <- paginated do %>
-                <div class="journal-entry" style={"margin-bottom: 24px; position: relative; opacity: #{if entry.is_hidden, do: "0.6", else: "1.0"};"}>
+                <div class="journal-entry" style={"margin-bottom: 24px; position: relative; opacity: #{if entry.hidden, do: "0.6", else: "1.0"};"}>
                   <div style="display: flex; align-items: flex-start; gap: 10px;">
                     <div style="flex: 1;">
                       <div style="font-size: 13px; line-height: 1.6; color: #333;">
-                        <%= raw(TextFormattingHelpers.render_markdown(entry.content)) %>
+                        <%= raw(TextFormattingHelpers.render_markdown(entry.body)) %>
                       </div>
                     </div>
                     
@@ -433,7 +433,7 @@ defmodule GreenManTavernWeb.JournalPanelComponent do
   def handle_event("save_new_entry", %{"text" => text}, socket) do
     user_id = socket.assigns.current_user.id
     
-    case Journal.create_entry(%{user_id: user_id, content: text, title: "New Entry"}) do
+    case Journal.create_entry(%{user_id: user_id, body: text, title: "New Entry"}) do
       {:ok, _entry} ->
         socket = refresh_journal(socket)
         {:noreply, 
@@ -635,7 +635,7 @@ defmodule GreenManTavernWeb.JournalPanelComponent do
     quest_id = Integer.to_string(user_quest.id)
     
     title = if user_quest.quest, do: user_quest.quest.title, else: user_quest.title
-    title_html = TextFormattingHelpers.render_text_with_terms(title, characters) |> Phoenix.HTML.safe_to_string()
+    title_html = TextFormattingHelpers.render_text_with_terms(title, characters)
 
     assigns = %{
       user_quest: user_quest,
@@ -659,7 +659,7 @@ defmodule GreenManTavernWeb.JournalPanelComponent do
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
           <div style="flex: 1;">
             <div style="font-size: 14px; font-weight: bold; color: #3d2817; margin-bottom: 2px;">
-              <%= raw(@title_html) %>
+              <%= @title_html %>
             </div>
             <div style="font-size: 11px; color: #666; display: flex; align-items: center; gap: 8px;">
               <span><%= @stars %></span>
@@ -695,7 +695,7 @@ defmodule GreenManTavernWeb.JournalPanelComponent do
                 <ol style="margin: 0; padding-left: 20px; font-size: 12px; color: #2a2a2a; line-height: 1.6;">
                   <%= for step <- @quest_steps do %>
                     <li style="margin-bottom: 4px;">
-                      <%= raw(TextFormattingHelpers.render_text_with_terms(step, @characters) |> Phoenix.HTML.safe_to_string()) %>
+                      <%= TextFormattingHelpers.render_text_with_terms(step, @characters) %>
                     </li>
                   <% end %>
                 </ol>
