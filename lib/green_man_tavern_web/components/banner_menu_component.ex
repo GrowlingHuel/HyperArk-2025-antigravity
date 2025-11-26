@@ -8,7 +8,6 @@ defmodule GreenManTavernWeb.BannerMenuComponent do
 
   def banner_menu(assigns) do
     characters = Characters.list_characters()
-
     assigns = assign(assigns, :characters, characters)
 
     ~H"""
@@ -19,7 +18,7 @@ defmodule GreenManTavernWeb.BannerMenuComponent do
         </div>
 
         <!-- Navigation buttons - all in one container -->
-        <.link navigate={~p"/"} class="banner-menu-item-invisible" style="margin-right: 10px !important; color: #000000 !important; text-decoration: none !important; display: inline-flex !important; align-items: center !important; padding: 0 !important; line-height: 1 !important; height: auto !important;">
+        <.link navigate={build_path("/", @current_character)} class="banner-menu-item-invisible" style="margin-right: 10px !important; color: #000000 !important; text-decoration: none !important; display: inline-flex !important; align-items: center !important; padding: 0 !important; line-height: 1 !important; height: auto !important;">
           <span class="banner-icon-emoji" style="filter: grayscale(100%) !important; display: inline-block !important; line-height: 1 !important; margin: 0 !important; padding: 0 !important;">🏰</span>
           <span class="banner-text" style="display: inline-block !important; line-height: 1 !important; margin: 0 !important; padding: 0 !important;">Tavern</span>
         </.link>
@@ -59,7 +58,7 @@ defmodule GreenManTavernWeb.BannerMenuComponent do
         </div>
 
         <.link
-          navigate={~p"/living-web"}
+          navigate={build_path("/living-web", @current_character)}
           class="banner-menu-item-invisible"
           style="margin-right: 10px !important; color: #000000 !important; text-decoration: none !important; display: inline-flex !important; align-items: center !important; padding: 0 !important; line-height: 1 !important; height: auto !important;"
         >
@@ -67,19 +66,19 @@ defmodule GreenManTavernWeb.BannerMenuComponent do
           <span class="banner-text" style="display: inline-block !important; line-height: 1 !important; margin: 0 !important; padding: 0 !important;">Living Web</span>
         </.link>
         <.link
-          navigate={~p"/?page=planting_guide"}
+          navigate={build_path("/", @current_character, %{"page" => "planting_guide"})}
           class="banner-menu-item-invisible"
           style="margin-right: 10px !important; color: #000000 !important; text-decoration: none !important; display: inline-flex !important; align-items: center !important; padding: 0 !important; line-height: 1 !important; height: auto !important;"
         >
           <span class="banner-icon-emoji" style="filter: grayscale(100%) !important; display: inline-block !important; line-height: 1 !important; margin: 0 !important; padding: 0 !important;">🌱</span>
           <span class="banner-text" style="display: inline-block !important; line-height: 1 !important; margin: 0 !important; padding: 0 !important;">Planting Guide</span>
         </.link>
-        <.link navigate={~p"/inventory"} class="banner-menu-item-invisible" style="margin-right: 10px !important; color: #000000 !important; text-decoration: none !important; display: inline-flex !important; align-items: center !important; padding: 0 !important; line-height: 1 !important; height: auto !important;">
+        <.link navigate={build_path("/inventory", @current_character)} class="banner-menu-item-invisible" style="margin-right: 10px !important; color: #000000 !important; text-decoration: none !important; display: inline-flex !important; align-items: center !important; padding: 0 !important; line-height: 1 !important; height: auto !important;">
           <span class="banner-icon-emoji" style="filter: grayscale(100%) !important; display: inline-block !important; line-height: 1 !important; margin: 0 !important; padding: 0 !important;">📦</span>
           <span class="banner-text" style="display: inline-block !important; line-height: 1 !important; margin: 0 !important; padding: 0 !important;">Inventory</span>
         </.link>
         <.link
-          navigate={~p"/?page=journal"}
+          navigate={build_path("/", @current_character, %{"page" => "journal"})}
           class="banner-menu-item-invisible"
           style="margin-right: 10px !important; color: #000000 !important; text-decoration: none !important; display: inline-flex !important; align-items: center !important; padding: 0 !important; line-height: 1 !important; height: auto !important;"
         >
@@ -107,6 +106,24 @@ defmodule GreenManTavernWeb.BannerMenuComponent do
       </div>
     </div>
     """
+  end
+
+  defp build_path(path, current_character, extra_params \\ %{}) do
+    params = extra_params
+
+    params =
+      if current_character do
+        Map.put(params, "character", Characters.name_to_slug(current_character.name))
+      else
+        params
+      end
+
+    if map_size(params) > 0 do
+      query = URI.encode_query(params)
+      "#{path}?#{query}"
+    else
+      path
+    end
   end
 
   defp is_current_character?(character, current_character) do

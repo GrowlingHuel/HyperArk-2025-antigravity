@@ -5,6 +5,12 @@
  * Uses vanilla JS with DOM manipulation - no React needed.
  */
 
+const DEBUG = false; // Set to true to enable console logging
+const LOG_LEVEL = 'error'; // Set to 'debug' to enable verbose logs
+// Silence console output based on LOG_LEVEL
+if (LOG_LEVEL === 'none') {
+  console.log = console.warn = console.error = console.info = console.debug = () => { };
+}
 const GRID_SIZE = 20;
 
 function snapToGrid(position) {
@@ -49,86 +55,111 @@ function findNonOverlappingPosition(x, y, existingNodes) {
 
 const XyflowEditorHook = {
   mounted() {
-    console.log("=== XyflowEditor Hook Mounted ===");
-    console.log("Container element:", this.el);
+    DEBUG && console.log("=== XyflowEditor Hook Mounted ===");
+    DEBUG && console.log("Container element:", this.el);
     this.container = this.el;
     this.nodes = [];
     this.edges = [];
     this.potentialEdges = [];
     this.expandedComposites = []; // Track expanded composite node IDs
     this.selectedNode = null;
-      // PART 3: Ensure selectedNodes initialization
-      this.selectedNodes = [];
-      this.selectedEdges = new Set(); // Track selected edges
-      this.marqueeActive = false; // Marquee selection state
-      this.marqueeStart = null; // Marquee start position
-      this.connectingPort = null; // Track port connection in progress
-      this.dragState = null; // For drag-to-connect
-      this.tempLine = null; // Temporary SVG line during drag
-      this.clickState = null; // For click-to-connect
-      this.isDraggingNode = false; // Flag to prevent bounds updates during drag
-      this.isMarqueeSelecting = false; // Flag for marquee selection box
-      this.marqueeBox = null; // DOM element for selection box
-      this.marqueeStartX = 0;
-      this.marqueeStartY = 0;
-      this.isPanningCanvas = false; // Flag to distinguish canvas panning from marquee selection
-      this.zoomLevel = 1; // Zoom level (1 = 100%)
-      this.panX = 0; // Pan X offset
-      this.panY = 0; // Pan Y offset
-      this.showKeyboardHelp = false; // Keyboard shortcuts help panel
-      
-      // Load initial nodes, edges, and projects from data attributes
-      this.loadInitialData();
-    
+    // PART 3: Ensure selectedNodes initialization
+    this.selectedNodes = [];
+    this.selectedEdges = new Set(); // Track selected edges
+    this.marqueeActive = false; // Marquee selection state
+    this.marqueeStart = null; // Marquee start position
+    this.connectingPort = null; // Track port connection in progress
+    this.dragState = null; // For drag-to-connect
+    this.tempLine = null; // Temporary SVG line during drag
+    this.clickState = null; // For click-to-connect
+    this.isDraggingNode = false; // Flag to prevent bounds updates during drag
+    this.isMarqueeSelecting = false; // Flag for marquee selection box
+    this.marqueeBox = null; // DOM element for selection box
+    this.marqueeStartX = 0;
+    this.marqueeStartY = 0;
+    this.isPanningCanvas = false; // Flag to distinguish canvas panning from marquee selection
+    this.zoomLevel = 1; // Zoom level (1 = 100%)
+    this.panX = 0; // Pan X offset
+    this.panY = 0; // Pan Y offset
+    this.showKeyboardHelp = false; // Keyboard shortcuts help panel
+
+    // Load initial nodes, edges, and projects from data attributes
+    this.loadInitialData();
+
     // Log container dimensions
-    console.log("Container dimensions:", { width: this.el.offsetWidth, height: this.el.offsetHeight });
+    DEBUG && console.log("Container dimensions:", { width: this.el.offsetWidth, height: this.el.offsetHeight });
 
     // Render the nodes
     this.renderNodes();
-    
-      // Setup drag and drop
-      this.setupDragAndDrop();
-      // Setup marquee selection
-      this.setupMarqueeSelection();
-      // Setup toolbar action buttons
-      this.setupToolbarButtons();
-    
+
+    // Setup drag and drop
+    this.setupDragAndDrop();
+    // Setup global drag listeners (once)
+    this.setupGlobalDragListeners();
+    // Setup marquee selection
+    this.setupMarqueeSelection();
+    // Setup toolbar action buttons
+    this.setupToolbarButtons();
+
     // Setup library item drag handlers
     this.setupLibraryItemDrag();
-    
+
     // Setup server event listeners
     this.setupServerEvents();
-    
+
     // Setup keyboard shortcuts
     this.setupKeyboardShortcuts();
-    
+
     // Setup zoom and pan controls
     this.setupZoomAndPan();
 
     // Debug: log nodes_updated events pushed from server
     this.handleEvent("nodes_updated", ({ nodes }) => {
-      console.log("Nodes updated:", nodes);
-      console.log("Node count:", Array.isArray(nodes) ? nodes.length : (nodes && Object.keys(nodes).length) || 0);
-      
+      // Circuit breaker: prevent infinite loops
+      const now = Date.now();
+      if (!this.lastUpdateReset || now - this.lastUpdateReset > 1000) {
+        this.updateCount = 0;
+        this.lastUpdateReset = now;
+      }
+      this.updateCount = (this.updateCount || 0) + 1;
+
+      if (this.updateCount > 50) {
+        if (this.updateCount === 51) {
+          console.error("Infinite loop detected! Stopping updates.");
+        }
+        return;
+      }
+
+      DEBUG && console.log("Nodes updated:", nodes);
+      DEBUG && console.log("Node count:", Array.isArray(nodes) ? nodes.length : (nodes && Object.keys(nodes).length) || 0);
+
       if (nodes) {
+        // Prevent infinite loops by checking if nodes actually changed
+        const nodesJson = JSON.stringify(nodes);
+        if (this.lastNodesJson === nodesJson) {
+          DEBUG && console.log("Nodes unchanged, skipping render");
+          return;
+        }
+        this.lastNodesJson = nodesJson;
+
         const normalizedNodes = this.normalizeNodes(nodes);
-        
+
         // Filter out expanded composite nodes
         const visibleNodes = normalizedNodes.filter(node => {
           if (this.expandedComposites.includes(node.id)) {
-            console.log('[NodesUpdated] Filtering out expanded composite node:', node.id);
+            DEBUG && console.log('[NodesUpdated] Filtering out expanded composite node:', node.id);
             return false;
           }
           return true;
         });
-        
+
         this.nodes = visibleNodes;
         this.renderNodes();
         this.renderEdges();
       }
-      
+
       if (Array.isArray(nodes) && nodes.length > 0) {
-        console.log("First node structure:", JSON.stringify(nodes[0], null, 2));
+        DEBUG && console.log("First node structure:", JSON.stringify(nodes[0], null, 2));
       }
       // Update edges if provided and re-render
       if (edges !== undefined) {
@@ -136,10 +167,10 @@ const XyflowEditorHook = {
         this.renderEdges();
       }
     });
-    
+
     // Listen for edge added/updated events
     this.handleEvent("edge_added_success", ({ edges }) => {
-      console.log("Edge added successfully, edges:", edges);
+      DEBUG && console.log("Edge added successfully, edges:", edges);
       if (edges !== undefined) {
         this.edges = edges;
         this.renderEdges();
@@ -148,7 +179,7 @@ const XyflowEditorHook = {
 
     // Listen for edges deleted
     this.handleEvent("edges_deleted_success", ({ edges }) => {
-      console.log("Edges deleted successfully, edges:", edges);
+      DEBUG && console.log("Edges deleted successfully, edges:", edges);
       if (edges !== undefined) {
         this.edges = edges;
         this.renderEdges();
@@ -162,7 +193,16 @@ const XyflowEditorHook = {
 
     // Listen for edges updated (from create_connection)
     this.handleEvent("edges_updated", ({ edges }) => {
-      console.log("Edges updated, edges:", edges);
+      DEBUG && console.log("Edges updated, edges:", edges);
+
+      // Prevent infinite loops by checking if edges actually changed
+      const edgesJson = JSON.stringify(edges);
+      if (this.lastEdgesJson === edgesJson) {
+        DEBUG && console.log("Edges unchanged, skipping render");
+        return;
+      }
+      this.lastEdgesJson = edgesJson;
+
       if (edges !== undefined) {
         this.edges = edges;
         this.renderEdges();
@@ -171,20 +211,20 @@ const XyflowEditorHook = {
 
     // Listen for reset zoom event (from UI button)
     this.handleEvent("reset_zoom", () => {
-      console.log('Reset zoom event received');
+      DEBUG && console.log('Reset zoom event received');
       this.zoomLevel = 1;
       this.panX = 0;
       this.panY = 0;
       this.applyZoomTransform();
-      
+
       // Also reset transforms directly as backup
       if (this.svgContainer) {
         this.svgContainer.style.transform = 'scale(1) translate(0px, 0px)';
       }
-      
-      const nodesContainer = this.nodesContainer || 
-                             this.el.querySelector('.nodes-container') || 
-                             this.el.querySelector('[data-nodes-container]');
+
+      const nodesContainer = this.nodesContainer ||
+        this.el.querySelector('.nodes-container') ||
+        this.el.querySelector('[data-nodes-container]');
       if (nodesContainer) {
         nodesContainer.style.transform = 'scale(1) translate(0px, 0px)';
       }
@@ -195,7 +235,7 @@ const XyflowEditorHook = {
       this.selectedNodes = [];
       this.renderNodes();
     });
-    
+
     // Prompt 1: Add handler for nodes_selected event from backend
     this.handleEvent("nodes_selected", ({ nodes }) => {
       if (nodes && Array.isArray(nodes)) {
@@ -206,7 +246,16 @@ const XyflowEditorHook = {
 
     // Listen for potential edges updated
     this.handleEvent("potential_edges_updated", ({ potential_edges }) => {
-      console.log("Potential edges updated, count:", potential_edges?.length || 0);
+      DEBUG && console.log("Potential edges updated, count:", potential_edges?.length || 0);
+
+      // Prevent infinite loops by checking if potential edges actually changed
+      const potentialEdgesJson = JSON.stringify(potential_edges);
+      if (this.lastPotentialEdgesJson === potentialEdgesJson) {
+        DEBUG && console.log("Potential edges unchanged, skipping update");
+        return;
+      }
+      this.lastPotentialEdgesJson = potentialEdgesJson;
+
       this.potentialEdges = potential_edges || [];
       this.renderEdges(); // Re-render to show/hide potential edges
     });
@@ -225,21 +274,21 @@ const XyflowEditorHook = {
         if (this.selectedNodes) {
           this.selectedNodes = this.selectedNodes.filter(id => id !== nodeId);
         }
-        
+
         // Also remove any edges connected to deleted node
         if (this.edges) {
-          const edgesArray = Array.isArray(this.edges) 
-            ? this.edges 
+          const edgesArray = Array.isArray(this.edges)
+            ? this.edges
             : Object.entries(this.edges || {}).map(([edgeId, edgeData]) => ({
-                id: edgeId,
-                source_id: edgeData.source_id || edgeData.source,
-                target_id: edgeData.target_id || edgeData.target
-              }));
-          
+              id: edgeId,
+              source_id: edgeData.source_id || edgeData.source,
+              target_id: edgeData.target_id || edgeData.target
+            }));
+
           const edgesToRemove = edgesArray
             .filter(edge => edge.source_id === nodeId || edge.target_id === nodeId)
             .map(edge => edge.id);
-          
+
           // Remove from edges map
           edgesToRemove.forEach(edgeId => {
             if (Array.isArray(this.edges)) {
@@ -252,7 +301,7 @@ const XyflowEditorHook = {
               this.selectedEdges.delete(edgeId);
             }
           });
-          
+
           // Re-render edges to update display
           if (edgesToRemove.length > 0) {
             this.renderEdges();
@@ -264,7 +313,7 @@ const XyflowEditorHook = {
       }
       // Update canvas bounds after nodes are deleted
       this.updateCanvasBounds();
-      console.log(`Deleted ${node_ids.length} nodes`);
+      DEBUG && console.log(`Deleted ${node_ids.length} nodes`);
     });
 
     // Listen for nodes hidden success
@@ -284,12 +333,12 @@ const XyflowEditorHook = {
       }
       // Update canvas bounds after nodes are hidden
       this.updateCanvasBounds();
-      console.log(`Hidden ${node_ids.length} nodes`);
+      DEBUG && console.log(`Hidden ${node_ids.length} nodes`);
     });
 
     // Listen for show all success (server will trigger LV re-render)
     this.handleEvent("show_all_success", ({ nodes }) => {
-      console.log('Showing all nodes, will trigger re-render');
+      DEBUG && console.log('Showing all nodes, will trigger re-render');
     });
 
     // Listen for canvas cleared
@@ -304,7 +353,7 @@ const XyflowEditorHook = {
       }
       // Update canvas bounds after canvas is cleared
       this.updateCanvasBounds();
-      console.log('Canvas cleared');
+      DEBUG && console.log('Canvas cleared');
     });
   },
 
@@ -316,18 +365,18 @@ const XyflowEditorHook = {
 
     // Inspect rendered nodes in DOM
     const reactNodes = document.querySelectorAll('.react-flow__node');
-    console.log("Rendered .react-flow__node in DOM:", reactNodes.length);
+    DEBUG && console.log("Rendered .react-flow__node in DOM:", reactNodes.length);
     if (reactNodes.length > 0) {
       const cs = window.getComputedStyle(reactNodes[0]);
-      console.log("First RF node HTML:", reactNodes[0].innerHTML);
-      console.log("First RF node computed styles:", { border: cs.border, background: cs.backgroundColor, padding: cs.padding });
+      DEBUG && console.log("First RF node HTML:", reactNodes[0].innerHTML);
+      DEBUG && console.log("First RF node computed styles:", { border: cs.border, background: cs.backgroundColor, padding: cs.padding });
     }
     const domNodes = this.container.querySelectorAll('.flow-node');
-    console.log("Rendered .flow-node in DOM:", domNodes.length);
+    DEBUG && console.log("Rendered .flow-node in DOM:", domNodes.length);
     if (domNodes.length > 0) {
       const cs2 = window.getComputedStyle(domNodes[0]);
-      console.log("First flow-node HTML:", domNodes[0].innerHTML);
-      console.log("First flow-node computed styles:", { border: cs2.border, background: cs2.backgroundColor, padding: cs2.padding });
+      DEBUG && console.log("First flow-node HTML:", domNodes[0].innerHTML);
+      DEBUG && console.log("First flow-node computed styles:", { border: cs2.border, background: cs2.backgroundColor, padding: cs2.padding });
     }
   },
 
@@ -396,7 +445,7 @@ const XyflowEditorHook = {
   renderNodes() {
     // Clear existing nodes
     this.container.innerHTML = '';
-    
+
     // Create a canvas wrapper
     this.canvas = document.createElement('div');
     this.canvas.className = 'flow-canvas';
@@ -411,7 +460,7 @@ const XyflowEditorHook = {
     this.canvas.style.width = `${initialWidth}px`;
     this.canvas.style.height = `${initialHeight}px`;
     this.canvas.style.background = 'transparent'; // Background is on .canvas-scroll-area
-    
+
     // Create SVG container for edges (behind nodes)
     this.svgContainer = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     this.svgContainer.style.position = 'absolute';
@@ -426,7 +475,7 @@ const XyflowEditorHook = {
     this.svgContainer.setAttribute('width', `${initialWidth}`);
     this.svgContainer.setAttribute('height', `${initialHeight}`);
     this.canvas.appendChild(this.svgContainer);
-    
+
     // Create a nodes container that can be transformed for negative positions
     // This container should be transparent so the canvas background shows through
     this.nodesContainer = document.createElement('div');
@@ -439,9 +488,9 @@ const XyflowEditorHook = {
     this.nodesContainer.style.pointerEvents = 'none'; // Allow clicks to pass through to nodes
     this.nodesContainer.style.zIndex = '2';
     this.canvas.appendChild(this.nodesContainer);
-    
+
     this.container.appendChild(this.canvas);
-    
+
     // Create marquee selection box (recreate if renderNodes() was called and cleared it)
     // Place it in nodesContainer so it uses the same coordinate system as nodes
     if (!this.marqueeBox || (!this.nodesContainer.contains(this.marqueeBox) && !this.canvas.contains(this.marqueeBox))) {
@@ -449,7 +498,7 @@ const XyflowEditorHook = {
       if (this.marqueeBox && this.marqueeBox.parentNode) {
         this.marqueeBox.parentNode.removeChild(this.marqueeBox);
       }
-      
+
       this.marqueeBox = document.createElement('div');
       this.marqueeBox.className = 'marquee-selection-box';
       this.marqueeBox.style.position = 'absolute';
@@ -458,7 +507,7 @@ const XyflowEditorHook = {
       this.marqueeBox.style.pointerEvents = 'none';
       this.marqueeBox.style.zIndex = '1000';
       this.marqueeBox.style.display = 'none';
-      
+
       // Add to nodesContainer (same coordinate system as nodes)
       if (this.nodesContainer) {
         this.nodesContainer.appendChild(this.marqueeBox);
@@ -522,34 +571,34 @@ const XyflowEditorHook = {
 
   renderCompositeContainers() {
     if (!this.canvas || !this.nodes) return;
-    
+
     // Remove existing containers
     const existingContainers = this.canvas.querySelectorAll('.composite-container');
     existingContainers.forEach(container => container.remove());
-    
+
     // Find all expanded composite nodes
     const expandedComposites = this.nodes.filter(node => {
       const category = (node.category || '').toLowerCase();
       const isComposite = category === 'composite' || node.composite_system_id;
       return isComposite && (node.is_expanded || false);
     });
-    
+
     // Create container for each expanded composite
     expandedComposites.forEach(compositeNode => {
       const compositeId = compositeNode.id;
       const compositeName = compositeNode.name || 'System';
-      
+
       // Find all nodes that belong to this composite
       const childNodes = this.nodes.filter(n => n.parent_composite_id === compositeId);
-      
+
       if (childNodes.length === 0) return;
-      
+
       // Calculate bounds
       const bounds = this.calculateCompositeBounds(childNodes);
-      
+
       // Create container
       const container = this.createCompositeContainer(compositeName, bounds);
-      
+
       // Add to canvas (behind nodes)
       if (this.canvas) {
         this.canvas.appendChild(container);
@@ -561,17 +610,17 @@ const XyflowEditorHook = {
     if (!nodes || nodes.length === 0) {
       return { minX: 0, minY: 0, width: 100, height: 100 };
     }
-    
+
     const positions = nodes.map(n => ({
       x: n.x || 0,
       y: n.y || 0
     }));
-    
+
     const minX = Math.min(...positions.map(p => p.x));
     const minY = Math.min(...positions.map(p => p.y));
     const maxX = Math.max(...positions.map(p => p.x)) + 120; // Node width estimate (composite nodes are 120px)
     const maxY = Math.max(...positions.map(p => p.y)) + 60; // Node height estimate
-    
+
     return {
       minX,
       minY,
@@ -594,7 +643,7 @@ const XyflowEditorHook = {
       pointer-events: none;
       z-index: -1;
     `;
-    
+
     // Add header
     const header = document.createElement('div');
     header.style.cssText = `
@@ -613,13 +662,13 @@ const XyflowEditorHook = {
     `;
     header.textContent = compositeName + ' (expanded)';
     container.appendChild(header);
-    
+
     return container;
   },
 
   renderEdges() {
     if (!this.svgContainer || !this.edges) return;
-    
+
     // Clear existing edges (but preserve defs for arrowhead)
     const defs = this.svgContainer.querySelector('defs');
     while (this.svgContainer.firstChild) {
@@ -628,44 +677,44 @@ const XyflowEditorHook = {
     if (defs) {
       this.svgContainer.appendChild(defs);
     }
-    
+
     // Get transform from nodesContainer if it exists
     const transform = this.getNodesContainerTransform();
     const offsetX = transform.x || 0;
     const offsetY = transform.y || 0;
-    
+
     // Render each edge
     // Edges are stored as a map: { "edge_id": { "source_id": "...", "target_id": "..." } }
-    const edgesArray = Array.isArray(this.edges) 
-      ? this.edges 
+    const edgesArray = Array.isArray(this.edges)
+      ? this.edges
       : Object.entries(this.edges || {}).map(([edgeId, edgeData]) => ({
-          id: edgeId,
-          source_id: edgeData.source_id || edgeData.source,
-          target_id: edgeData.target_id || edgeData.target,
-          source_handle: edgeData.source_handle,
-          target_handle: edgeData.target_handle,
-          label: edgeData.label,
-          resource_type: edgeData.resource_type,
-          connection_type: edgeData.connection_type
-        }));
-    
+        id: edgeId,
+        source_id: edgeData.source_id || edgeData.source,
+        target_id: edgeData.target_id || edgeData.target,
+        source_handle: edgeData.source_handle,
+        target_handle: edgeData.target_handle,
+        label: edgeData.label,
+        resource_type: edgeData.resource_type,
+        connection_type: edgeData.connection_type
+      }));
+
     // Build nodes map for quick lookup
     const nodesMap = {};
     this.nodes.forEach(node => {
       nodesMap[node.id] = node;
     });
-    
+
     edgesArray.forEach(edge => {
       const sourceId = edge.source_id || edge.source;
       const targetId = edge.target_id || edge.target;
       const edgeId = edge.id;
-      
+
       // Skip rendering edges that connect to non-existent nodes
       const sourceNode = nodesMap[sourceId];
       const targetNode = nodesMap[targetId];
-      
+
       if (!sourceNode || !targetNode) {
-        console.warn('[RenderEdges] Skipping edge - node not found:', {
+        if (LOG_LEVEL === 'debug') console.warn('[RenderEdges] Skipping edge - node not found:', {
           edgeId,
           sourceId,
           targetId,
@@ -674,28 +723,28 @@ const XyflowEditorHook = {
         });
         return; // Skip this edge
       }
-      
+
       // Extract resource_type with fallback chain
       const resourceType = edge.resource_type || edge.source_handle || edge.target_handle || edge.label || 'connection';
       const isActual = (edge.connection_type === 'actual' || !edge.connection_type); // Default to actual
-      
+
       // Get node positions (accounting for transform offset)
       const sourceX = (sourceNode.x || sourceNode.position?.x || 0) + offsetX;
       const sourceY = (sourceNode.y || sourceNode.position?.y || 0) + offsetY;
       const targetX = (targetNode.x || targetNode.position?.x || 0) + offsetX;
       const targetY = (targetNode.y || targetNode.position?.y || 0) + offsetY;
-      
+
       // Get node dimensions (default to 140x80)
       const sourceWidth = 140;
       const sourceHeight = 80;
       const targetWidth = 140;
       const targetHeight = 80;
-      
+
       // Calculate connection points
       // If edge has source_handle/target_handle, use port positions
       // Otherwise fallback to center-right/center-left
       let sourceX1, sourceY1, targetX1, targetY1;
-      
+
       if (edge.source_handle && edge.target_handle) {
         // Find port handle positions
         const sourceHandleEl = this.canvas.querySelector(
@@ -704,13 +753,13 @@ const XyflowEditorHook = {
         const targetHandleEl = this.canvas.querySelector(
           `[data-node-id="${targetId}"][data-port="${edge.target_handle}"][data-port-type="input"]`
         );
-        
+
         if (sourceHandleEl && targetHandleEl) {
           const sourceRect = sourceHandleEl.getBoundingClientRect();
           const canvasRect = this.canvas.getBoundingClientRect();
           sourceX1 = sourceRect.left - canvasRect.left + sourceRect.width / 2 + offsetX;
           sourceY1 = sourceRect.top - canvasRect.top + sourceRect.height / 2 + offsetY;
-          
+
           const targetRect = targetHandleEl.getBoundingClientRect();
           targetX1 = targetRect.left - canvasRect.left + targetRect.width / 2 + offsetX;
           targetY1 = targetRect.top - canvasRect.top + targetRect.height / 2 + offsetY;
@@ -728,30 +777,30 @@ const XyflowEditorHook = {
         targetX1 = targetX;
         targetY1 = targetY + targetHeight / 2;
       }
-      
+
       // Calculate Bezier curve control points for smooth curved edges
       const dx = targetX1 - sourceX1;
       const dy = targetY1 - sourceY1;
       const curvature = 0.5; // Curvature factor (0 = straight, 1 = very curved)
-      
+
       const cp1x = sourceX1 + dx * curvature;
       const cp1y = sourceY1;
       const cp2x = targetX1 - dx * curvature;
       const cp2y = targetY1;
-      
+
       // Create SVG path for Bezier curve
       const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       const pathData = `M ${sourceX1} ${sourceY1} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${targetX1} ${targetY1}`;
       path.setAttribute('d', pathData);
-      
+
       // Check if edge is selected
       const isSelected = this.selectedEdges && this.selectedEdges.has(edgeId);
-      
+
       // Style based on connection_type
       const strokeColor = isActual ? '#22c55e' : '#f97316';  // Green for actual, orange for potential
       const strokeWidth = isSelected ? '4' : (isActual ? '2' : '1');
       const strokeDasharray = isActual ? '0' : '5,5';  // Solid for actual, dashed for potential
-      
+
       path.setAttribute('stroke', isSelected ? '#000' : strokeColor);
       path.setAttribute('stroke-width', strokeWidth);
       path.setAttribute('stroke-dasharray', strokeDasharray);
@@ -760,7 +809,7 @@ const XyflowEditorHook = {
       path.dataset.edgeId = edgeId;
       path.style.cursor = 'pointer';
       path.style.transition = 'none'; // Instant updates for HyperCard aesthetic
-      
+
       // Make edge clickable for selection
       path.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -784,11 +833,11 @@ const XyflowEditorHook = {
         }
         this.toggleEdgeSelection(edgeId);
       });
-      
+
       // Always show resource label in middle of edge
       const midX = (sourceX1 + targetX1) / 2;
       const midY = (sourceY1 + targetY1) / 2;
-      
+
       const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       label.setAttribute('x', midX);
       label.setAttribute('y', midY - 5);
@@ -798,7 +847,7 @@ const XyflowEditorHook = {
       label.setAttribute('fill', strokeColor);
       label.setAttribute('font-family', 'Chicago, Geneva, monospace');
       label.textContent = resourceType;
-      
+
       // Add background rectangle for readability
       const labelRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
       const textLength = resourceType.length * 6; // Approximate text width
@@ -809,14 +858,14 @@ const XyflowEditorHook = {
       labelRect.setAttribute('fill', '#FFF');
       labelRect.setAttribute('stroke', strokeColor);
       labelRect.setAttribute('stroke-width', '1');
-      
+
       this.svgContainer.appendChild(labelRect);
       this.svgContainer.appendChild(label);
-      
+
       // Add to SVG container
       this.svgContainer.appendChild(path);
     });
-    
+
     // Render potential edges (dashed orange lines)
     if (this.potentialEdges && Array.isArray(this.potentialEdges)) {
       // Create nodes map for quick lookup
@@ -828,42 +877,42 @@ const XyflowEditorHook = {
       this.potentialEdges.forEach(edge => {
         const sourceNode = nodesMap[edge.source_id];
         const targetNode = nodesMap[edge.target_id];
-        
+
         if (!sourceNode || !targetNode) return;
-        
+
         // Get node positions (accounting for transform offset)
         const sourceX = (sourceNode.x || sourceNode.position?.x || 0) + offsetX;
         const sourceY = (sourceNode.y || sourceNode.position?.y || 0) + offsetY;
         const targetX = (targetNode.x || targetNode.position?.x || 0) + offsetX;
         const targetY = (targetNode.y || targetNode.position?.y || 0) + offsetY;
-        
+
         // Get node dimensions (default to 100x50 for regular nodes)
         const sourceWidth = 100;
         const sourceHeight = 50;
         const targetWidth = 100;
         const targetHeight = 50;
-        
+
         // Calculate connection points (right side of source, left side of target)
         const sourceX1 = sourceX + sourceWidth;
         const sourceY1 = sourceY + sourceHeight / 2;
         const targetX1 = targetX;
         const targetY1 = targetY + targetHeight / 2;
-        
+
         // Calculate Bezier curve control points for smooth curved edges
         const dx = targetX1 - sourceX1;
         const dy = targetY1 - sourceY1;
         const curvature = 0.5; // Curvature factor
-        
+
         const cp1x = sourceX1 + dx * curvature;
         const cp1y = sourceY1;
         const cp2x = targetX1 - dx * curvature;
         const cp2y = targetY1;
-        
+
         // Create SVG path for Bezier curve
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         const pathData = `M ${sourceX1} ${sourceY1} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${targetX1} ${targetY1}`;
         path.setAttribute('d', pathData);
-        
+
         path.setAttribute('stroke', '#f97316'); // Orange
         path.setAttribute('stroke-width', '1.5');
         path.setAttribute('stroke-dasharray', '5,5'); // Dashed
@@ -872,7 +921,7 @@ const XyflowEditorHook = {
         path.setAttribute('class', 'potential-edge');
         path.style.cursor = 'pointer';
         path.style.transition = 'none'; // Instant updates for HyperCard aesthetic
-        
+
         // Click to create connection
         path.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -883,7 +932,7 @@ const XyflowEditorHook = {
             target_handle: edge.resource_type
           });
         });
-        
+
         // Hover effect
         path.addEventListener('mouseenter', () => {
           path.setAttribute('stroke-width', '2.5');
@@ -893,13 +942,13 @@ const XyflowEditorHook = {
           path.setAttribute('stroke-width', '1.5');
           path.setAttribute('opacity', '0.6');
         });
-        
+
         this.svgContainer.appendChild(path);
-        
+
         // Add label
         const midX = (sourceX1 + targetX1) / 2;
         const midY = (sourceY1 + targetY1) / 2;
-        
+
         const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         label.setAttribute('x', midX);
         label.setAttribute('y', midY - 5);
@@ -911,7 +960,7 @@ const XyflowEditorHook = {
         label.setAttribute('font-family', 'Chicago, Geneva, monospace');
         label.textContent = edge.resource_type || 'connection';
         label.style.pointerEvents = 'none';
-        
+
         // Add background rectangle for readability
         const labelRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
         const textLength = (edge.resource_type || 'connection').length * 6;
@@ -924,12 +973,12 @@ const XyflowEditorHook = {
         labelRect.setAttribute('stroke-width', '1');
         labelRect.setAttribute('opacity', '0.9');
         labelRect.style.pointerEvents = 'none';
-        
+
         this.svgContainer.appendChild(labelRect);
         this.svgContainer.appendChild(label);
       });
     }
-    
+
     // Create arrowhead marker definition (if it doesn't exist)
     if (!this.svgContainer.querySelector('defs')) {
       const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
@@ -940,7 +989,7 @@ const XyflowEditorHook = {
       marker.setAttribute('refX', '9');
       marker.setAttribute('refY', '3');
       marker.setAttribute('orient', 'auto');
-      
+
       const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
       polygon.setAttribute('points', '0 0, 10 3, 0 6');
       polygon.setAttribute('fill', '#333');
@@ -951,21 +1000,21 @@ const XyflowEditorHook = {
   },
 
   renderNode(node) {
-    console.log("Creating node (renderNode):", node);
-    console.log('[RenderNode] Rendering node:', node.id, 'inputs:', node.inputs?.length || 0, 'outputs:', node.outputs?.length || 0);
-    
+    DEBUG && console.log("Creating node (renderNode):", node);
+    DEBUG && console.log('[RenderNode] Rendering node:', node.id, 'inputs:', node.inputs?.length || 0, 'outputs:', node.outputs?.length || 0);
+
     // Skip rendering if this node is an expanded composite
     if (this.expandedComposites && this.expandedComposites.includes(node.id)) {
-      console.log('[RenderNode] Skipping expanded composite node:', node.id);
+      DEBUG && console.log('[RenderNode] Skipping expanded composite node:', node.id);
       return;
     }
-    
+
     // Check if this is a composite node
     const category = (node.category || '').toLowerCase();
     const isComposite = category === 'composite' || node.composite_system_id;
     const isExpanded = node.is_expanded || false;
     const isExpandedInternal = node.parent_composite_id; // This node is inside an expanded composite
-    
+
     // Create node element
     const nodeEl = document.createElement('div');
     const categoryClass = category ? `node-${category}` : '';
@@ -974,7 +1023,7 @@ const XyflowEditorHook = {
     nodeEl.style.position = 'absolute';
     nodeEl.style.left = `${node.x}px`;
     nodeEl.style.top = `${node.y}px`;
-    
+
     // Composite nodes are slightly larger
     if (isComposite) {
       nodeEl.style.width = '120px';
@@ -985,33 +1034,33 @@ const XyflowEditorHook = {
       nodeEl.style.minHeight = '50px';
       nodeEl.style.padding = '6px';
     }
-    
+
     // Calculate required height based on ACTUAL connected ports (for auto-resizing)
     // We need to calculate connected ports early for height
-    const edgesForHeight = Array.isArray(this.edges) 
-      ? this.edges 
+    const edgesForHeight = Array.isArray(this.edges)
+      ? this.edges
       : Object.entries(this.edges || {}).map(([edgeId, edgeData]) => ({
-          source_id: edgeData.source_id || edgeData.source,
-          target_id: edgeData.target_id || edgeData.target,
-          source_handle: edgeData.source_handle,
-          target_handle: edgeData.target_handle
-        }));
+        source_id: edgeData.source_id || edgeData.source,
+        target_id: edgeData.target_id || edgeData.target,
+        source_handle: edgeData.source_handle,
+        target_handle: edgeData.target_handle
+      }));
 
-    const connectedInputsCount = edgesForHeight.filter(e => 
+    const connectedInputsCount = edgesForHeight.filter(e =>
       (e.target_id || e.target) === node.id && e.target_handle
     ).length;
 
-    const connectedOutputsCount = edgesForHeight.filter(e => 
+    const connectedOutputsCount = edgesForHeight.filter(e =>
       (e.source_id || e.source) === node.id && e.source_handle
     ).length;
 
     const maxPorts = Math.max(connectedInputsCount, connectedOutputsCount);
-    
+
     const baseHeight = 60; // Icon + name
     const portSpace = maxPorts * 16; // 16px per port
     const bottomSpace = 20; // Space for I/O counts and buttons
     const calculatedHeight = Math.max(80, baseHeight + portSpace + bottomSpace);
-    
+
     // Apply calculated height
     nodeEl.style.height = `${calculatedHeight}px`;
     nodeEl.style.minHeight = `${calculatedHeight}px`;
@@ -1033,22 +1082,22 @@ const XyflowEditorHook = {
       const clickedElement = event.target;
       const isCheckbox = clickedElement.classList.contains('node-select-checkbox');
       const isInfoButton = clickedElement.classList.contains('node-info-button');
-      
+
       if (isCheckbox || isInfoButton) {
         event.stopPropagation(); // Prevent bubbling
         return; // Don't process selection
       }
-      
+
       // Initialize selectedNodes if needed
       if (!Array.isArray(this.selectedNodes)) {
         this.selectedNodes = [];
       }
-      
+
       // SHIFT+CLICK: Toggle selection (add/remove from array)
       if (event.shiftKey) {
         event.stopPropagation();
         event.preventDefault();
-        
+
         const index = this.selectedNodes.indexOf(node.id);
         if (index > -1) {
           // Remove from selection
@@ -1057,16 +1106,16 @@ const XyflowEditorHook = {
           // Add to selection
           this.selectedNodes.push(node.id);
         }
-        
+
         // Push to backend
-        this.pushEvent("nodes_selected", {node_ids: [...this.selectedNodes]});
+        this.pushEvent("nodes_selected", { node_ids: [...this.selectedNodes] });
         this.renderNodes();
         return; // CRITICAL: Stop here, don't continue to single-select
       }
-      
+
       // REGULAR CLICK: Replace selection with just this node
       this.selectedNodes = [node.id];
-      this.pushEvent("nodes_selected", {node_ids: [node.id]});
+      this.pushEvent("nodes_selected", { node_ids: [node.id] });
       this.renderNodes();
     });
 
@@ -1075,7 +1124,7 @@ const XyflowEditorHook = {
     nodeEl.style.fontFamily = "'Chicago', 'Geneva', 'Monaco', monospace";
     nodeEl.style.fontSize = '9px'; // Base font size - all child elements should override this
     nodeEl.style.color = '#000';
-    
+
     // Visual selection highlight
     if (this.selectedNodes && this.selectedNodes.includes(node.id)) {
       nodeEl.style.outline = '3px solid #0066FF';
@@ -1156,7 +1205,7 @@ const XyflowEditorHook = {
     infoButton.style.zIndex = '5';
     infoButton.style.boxShadow = '1px 1px 0 rgba(0,0,0,0.2)';
     infoButton.title = 'View node info';
-    
+
     // Hover effect
     infoButton.addEventListener('mouseenter', () => {
       infoButton.style.background = '#d1d5db';
@@ -1166,14 +1215,14 @@ const XyflowEditorHook = {
       infoButton.style.background = '#e5e7eb';
       infoButton.style.boxShadow = '1px 1px 0 rgba(0,0,0,0.2)';
     });
-    
+
     // Click handler - push event to LiveView
     infoButton.addEventListener('click', (e) => {
       e.stopPropagation(); // Prevent node dragging/selection
       e.preventDefault();
       this.pushEvent('node_info_clicked', { node_id: node.id });
     });
-    
+
     nodeEl.appendChild(infoButton);
 
     // Create content container (for composite nodes, this will be the inner bordered div)
@@ -1187,30 +1236,30 @@ const XyflowEditorHook = {
       contentContainer.style.fontSize = '9px'; // Explicitly set to prevent inheritance - all node text should be 9px
       contentContainer.style.fontFamily = "'Chicago', 'Geneva', monospace"; // Explicitly set
       nodeEl.appendChild(contentContainer);
-      
+
       // Double-click to expand/collapse composite
       // Add to both nodeEl and contentContainer to catch all clicks
       const handleDoubleClick = (e) => {
         e.stopPropagation();
         e.preventDefault();
-        
-        console.log('[Composite] Double-click detected!', {
+
+        DEBUG && console.log('[Composite] Double-click detected!', {
           target: e.target,
           nodeId: node.id,
           isExpanded: isExpanded,
           compositeId: node.composite_system_id,
           nodeData: node
         });
-        
+
         if (isExpanded) {
-          console.log('[Composite] Requesting collapse for node:', node.id);
+          DEBUG && console.log('[Composite] Requesting collapse for node:', node.id);
           this.pushEvent('collapse_composite_node', { node_id: node.id });
         } else {
-          console.log('[Composite] Requesting expand for node:', node.id);
+          DEBUG && console.log('[Composite] Requesting expand for node:', node.id);
           this.pushEvent('expand_composite_node', { node_id: node.id });
         }
       };
-      
+
       nodeEl.addEventListener('dblclick', handleDoubleClick);
       if (contentContainer) {
         contentContainer.addEventListener('dblclick', handleDoubleClick);
@@ -1219,44 +1268,44 @@ const XyflowEditorHook = {
       contentContainer = nodeEl;
     }
 
-      // Icon and name (layout differs for composite vs regular)
-      if (isComposite) {
-        // Composite: icon and name in same line
-        const headerDiv = document.createElement('div');
-        headerDiv.style.display = 'flex';
-        headerDiv.style.alignItems = 'center';
-        headerDiv.style.justifyContent = 'center';
-        headerDiv.style.gap = '4px';
-        headerDiv.style.marginBottom = '4px';
-        headerDiv.style.fontSize = '9px'; // Explicitly set to prevent inheritance - composite names should be 9px
-        
-        const iconSpan = document.createElement('span');
-        iconSpan.textContent = node.icon_name || '📦';
-        iconSpan.style.fontSize = '14px'; // Icons can be slightly larger
-        iconSpan.style.lineHeight = '1';
-        headerDiv.appendChild(iconSpan);
-        
-        const nameSpan = document.createElement('span');
-        nameSpan.textContent = node.name || 'Composite';
-        nameSpan.style.fontSize = '9px'; // Explicitly set - must override parent
-        nameSpan.style.fontWeight = '700';
-        nameSpan.style.fontFamily = "'Chicago', 'Geneva', monospace";
-        nameSpan.style.overflow = 'hidden';
-        nameSpan.style.textOverflow = 'ellipsis';
-        nameSpan.style.whiteSpace = 'nowrap';
-        nameSpan.style.maxWidth = '120px';
-        headerDiv.appendChild(nameSpan);
-        
-        contentContainer.appendChild(headerDiv);
-        
-        // Info text
-        const infoDiv = document.createElement('div');
-        infoDiv.style.fontSize = '9px'; // Explicitly set
-        infoDiv.style.fontFamily = "'Chicago', 'Geneva', monospace"; // Explicitly set
-        infoDiv.style.opacity = '0.8';
-        infoDiv.style.marginBottom = '2px';
-        infoDiv.textContent = isExpanded ? '(Expanded)' : '(Double-click to expand)';
-        contentContainer.appendChild(infoDiv);
+    // Icon and name (layout differs for composite vs regular)
+    if (isComposite) {
+      // Composite: icon and name in same line
+      const headerDiv = document.createElement('div');
+      headerDiv.style.display = 'flex';
+      headerDiv.style.alignItems = 'center';
+      headerDiv.style.justifyContent = 'center';
+      headerDiv.style.gap = '4px';
+      headerDiv.style.marginBottom = '4px';
+      headerDiv.style.fontSize = '9px'; // Explicitly set to prevent inheritance - composite names should be 9px
+
+      const iconSpan = document.createElement('span');
+      iconSpan.textContent = node.icon_name || '📦';
+      iconSpan.style.fontSize = '14px'; // Icons can be slightly larger
+      iconSpan.style.lineHeight = '1';
+      headerDiv.appendChild(iconSpan);
+
+      const nameSpan = document.createElement('span');
+      nameSpan.textContent = node.name || 'Composite';
+      nameSpan.style.fontSize = '9px'; // Explicitly set - must override parent
+      nameSpan.style.fontWeight = '700';
+      nameSpan.style.fontFamily = "'Chicago', 'Geneva', monospace";
+      nameSpan.style.overflow = 'hidden';
+      nameSpan.style.textOverflow = 'ellipsis';
+      nameSpan.style.whiteSpace = 'nowrap';
+      nameSpan.style.maxWidth = '120px';
+      headerDiv.appendChild(nameSpan);
+
+      contentContainer.appendChild(headerDiv);
+
+      // Info text
+      const infoDiv = document.createElement('div');
+      infoDiv.style.fontSize = '9px'; // Explicitly set
+      infoDiv.style.fontFamily = "'Chicago', 'Geneva', monospace"; // Explicitly set
+      infoDiv.style.opacity = '0.8';
+      infoDiv.style.marginBottom = '2px';
+      infoDiv.textContent = isExpanded ? '(Expanded)' : '(Double-click to expand)';
+      contentContainer.appendChild(infoDiv);
     } else {
       // Regular node: icon above name
       const iconDiv = document.createElement('div');
@@ -1311,13 +1360,13 @@ const XyflowEditorHook = {
       nameDiv.style.cursor = 'text';
       nameDiv.title = 'Double-click to rename';
       nameDiv.dataset.nodeId = node.id;
-      
+
       // Double-click to edit
       nameDiv.addEventListener('dblclick', (e) => {
         e.stopPropagation(); // Prevent node dragging
         this.enableNodeNameEdit(nameDiv, node.id, projectName);
       });
-      
+
       // CRITICAL: Ensure nameDiv is appended - this wraps the name text
       contentContainer.appendChild(nameDiv);
     }
@@ -1328,10 +1377,10 @@ const XyflowEditorHook = {
     const ioInputCount = availableInputs.length;
     const ioOutputCount = availableOutputs.length;
 
-    console.log('[RenderNode] I/O counts - inputs:', ioInputCount, 'outputs:', ioOutputCount);
+    DEBUG && console.log('[RenderNode] I/O counts - inputs:', ioInputCount, 'outputs:', ioOutputCount);
 
     if (ioInputCount > 0 || ioOutputCount > 0) {
-      console.log('[RenderNode] Creating I/O display for node:', node.id);
+      DEBUG && console.log('[RenderNode] Creating I/O display for node:', node.id);
       const ioDisplay = document.createElement('div');
       ioDisplay.style.position = 'absolute';
       ioDisplay.style.bottom = '4px';
@@ -1422,15 +1471,15 @@ const XyflowEditorHook = {
     // Create visual port boxes (only for regular nodes with I/O)
     if (!isComposite && !isExpandedInternal && (ioInputCount > 0 || ioOutputCount > 0)) {
       // Get edges array in consistent format
-      const edgesArray = Array.isArray(this.edges) 
-        ? this.edges 
+      const edgesArray = Array.isArray(this.edges)
+        ? this.edges
         : Object.entries(this.edges || {}).map(([edgeId, edgeData]) => ({
-            id: edgeId,
-            source_id: edgeData.source_id || edgeData.source,
-            target_id: edgeData.target_id || edgeData.target,
-            source_handle: edgeData.source_handle,
-            target_handle: edgeData.target_handle
-          }));
+          id: edgeId,
+          source_id: edgeData.source_id || edgeData.source,
+          target_id: edgeData.target_id || edgeData.target,
+          source_handle: edgeData.source_handle,
+          target_handle: edgeData.target_handle
+        }));
 
       // Find which input resources are actually connected to this node
       const connectedInputs = new Set();
@@ -1459,7 +1508,7 @@ const XyflowEditorHook = {
         portBox.dataset.portName = inputName;
         portBox.dataset.nodeId = node.id;
         portBox.dataset.portType = 'input';
-        
+
         portBox.style.position = 'absolute';
         portBox.style.left = '-6px';
         portBox.style.top = `${30 + (index * 16)}px`;
@@ -1472,12 +1521,12 @@ const XyflowEditorHook = {
         portBox.style.zIndex = '10';
         portBox.style.boxShadow = '1px 1px 0 rgba(0,0,0,0.2)';
         portBox.title = `Input: ${inputName}`;
-        
+
         // Prevent node dragging when interacting with port
         portBox.addEventListener('mousedown', (e) => {
           e.stopPropagation();
         });
-        
+
         // Hover effect (green for inputs)
         portBox.addEventListener('mouseenter', () => {
           if (!this.clickState || this.clickState.sourcePort === inputName) {
@@ -1489,16 +1538,16 @@ const XyflowEditorHook = {
             portBox.style.background = '#E5E7EB';
           }
         });
-        
+
         // Click handler for click-to-connect
         portBox.addEventListener('click', (e) => {
           e.stopPropagation();
-          
+
           if (this.clickState && this.clickState.sourcePort === inputName) {
             // Second click: Complete connection
             const targetPort = inputName;
             const sourcePort = this.clickState.sourcePort;
-            
+
             if (sourcePort === targetPort) {
               // Compatible - create connection
               this.pushEvent('create_connection', {
@@ -1509,16 +1558,16 @@ const XyflowEditorHook = {
               });
             } else {
               // Incompatible
-              console.log(`Cannot connect ${sourcePort} to ${targetPort}`);
+              DEBUG && console.log(`Cannot connect ${sourcePort} to ${targetPort}`);
             }
-            
+
             this.resetClickState();
           }
         });
-        
+
         nodeEl.appendChild(portBox);
       });
-      
+
       // OUTPUT PORTS (right side) - only show connected outputs
       outputPortsToShow.forEach((outputName, index) => {
         const portBox = document.createElement('div');
@@ -1526,7 +1575,7 @@ const XyflowEditorHook = {
         portBox.dataset.portName = outputName;
         portBox.dataset.nodeId = node.id;
         portBox.dataset.portType = 'output';
-        
+
         portBox.style.position = 'absolute';
         portBox.style.right = '-6px';
         portBox.style.top = `${30 + (index * 16)}px`;
@@ -1539,12 +1588,12 @@ const XyflowEditorHook = {
         portBox.style.zIndex = '10';
         portBox.style.boxShadow = '1px 1px 0 rgba(0,0,0,0.2)';
         portBox.title = `Output: ${outputName}`;
-        
+
         // Prevent node dragging when interacting with port
         portBox.addEventListener('mousedown', (e) => {
           e.stopPropagation();
         });
-        
+
         // Hover effect (orange for outputs)
         portBox.addEventListener('mouseenter', () => {
           portBox.style.background = '#f97316';
@@ -1554,25 +1603,25 @@ const XyflowEditorHook = {
             portBox.style.background = '#E5E7EB';
           }
         });
-        
+
         // Drag handler for drag-to-connect
         portBox.addEventListener('mousedown', (e) => {
           if (portBox.dataset.portType !== 'output') return;
-          
+
           e.stopPropagation();
           e.preventDefault();
-          
+
           // Get port position in SVG coordinates
           const rect = portBox.getBoundingClientRect();
           const svgRect = this.svgContainer.getBoundingClientRect();
-          
+
           this.dragState = {
             sourceNodeId: node.id,
             sourcePort: outputName,
-            startX: rect.left + rect.width/2 - svgRect.left,
-            startY: rect.top + rect.height/2 - svgRect.top
+            startX: rect.left + rect.width / 2 - svgRect.left,
+            startY: rect.top + rect.height / 2 - svgRect.top
           };
-          
+
           // Create temporary line
           this.tempLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
           this.tempLine.setAttribute('stroke', '#f97316');
@@ -1583,30 +1632,30 @@ const XyflowEditorHook = {
           this.tempLine.setAttribute('x2', this.dragState.startX);
           this.tempLine.setAttribute('y2', this.dragState.startY);
           this.svgContainer.appendChild(this.tempLine);
-          
+
           // Add global listeners
           const handleDragMove = (e) => {
             if (!this.dragState || !this.tempLine) return;
-            
+
             const svgRect = this.svgContainer.getBoundingClientRect();
             const x = e.clientX - svgRect.left;
             const y = e.clientY - svgRect.top;
-            
+
             this.tempLine.setAttribute('x2', x);
             this.tempLine.setAttribute('y2', y);
           };
-          
+
           const handleDragEnd = (e) => {
             if (!this.dragState) return;
-            
+
             // Check if dropped on input port
             const targetElement = document.elementFromPoint(e.clientX, e.clientY);
-            
+
             if (targetElement && targetElement.classList.contains('input-port')) {
               const targetNodeId = targetElement.dataset.nodeId;
               const targetPort = targetElement.dataset.portName;
               const sourcePort = this.dragState.sourcePort;
-              
+
               // Check compatibility (exact match for now)
               if (sourcePort === targetPort) {
                 // Create connection via LiveView
@@ -1618,10 +1667,10 @@ const XyflowEditorHook = {
                 });
               } else {
                 // Show incompatible feedback
-                console.log(`Cannot connect ${sourcePort} to ${targetPort}`);
+                DEBUG && console.log(`Cannot connect ${sourcePort} to ${targetPort}`);
               }
             }
-            
+
             // Clean up
             if (this.tempLine) {
               this.tempLine.remove();
@@ -1631,29 +1680,29 @@ const XyflowEditorHook = {
             document.removeEventListener('mousemove', handleDragMove);
             document.removeEventListener('mouseup', handleDragEnd);
           };
-          
+
           document.addEventListener('mousemove', handleDragMove);
           document.addEventListener('mouseup', handleDragEnd);
         });
-        
+
         // Click handler for click-to-connect
         portBox.addEventListener('click', (e) => {
           e.stopPropagation();
-          
+
           // First click: Select output port
           this.resetClickState(); // Clear any previous selection
-          
+
           this.clickState = {
             sourceNodeId: node.id,
             sourcePort: outputName,
             selectedElement: portBox
           };
-          
+
           // Highlight selected output
           portBox.style.background = '#f97316';
           portBox.style.borderColor = '#f97316';
           portBox.style.borderWidth = '3px';
-          
+
           // Highlight compatible input ports
           document.querySelectorAll('.input-port').forEach(inputPort => {
             if (inputPort.dataset.portName === outputName) {
@@ -1664,7 +1713,7 @@ const XyflowEditorHook = {
             }
           });
         });
-        
+
         nodeEl.appendChild(portBox);
       });
     }
@@ -1672,17 +1721,17 @@ const XyflowEditorHook = {
     // Add connection count badges (after content, before handles)
     if (!isComposite) {
       // Count edges for this node
-      const edgesArray = Array.isArray(this.edges) 
-        ? this.edges 
+      const edgesArray = Array.isArray(this.edges)
+        ? this.edges
         : Object.entries(this.edges || {}).map(([edgeId, edgeData]) => ({
-            id: edgeId,
-            source_id: edgeData.source_id || edgeData.source,
-            target_id: edgeData.target_id || edgeData.target
-          }));
-      
+          id: edgeId,
+          source_id: edgeData.source_id || edgeData.source,
+          target_id: edgeData.target_id || edgeData.target
+        }));
+
       const outputCount = edgesArray.filter(e => (e.source_id || e.source) === node.id).length;
       const inputCount = edgesArray.filter(e => (e.target_id || e.target) === node.id).length;
-      
+
       // Output badge (top-right corner)
       if (outputCount > 0) {
         const outputBadge = document.createElement('div');
@@ -1703,7 +1752,7 @@ const XyflowEditorHook = {
         outputBadge.style.zIndex = '4';
         nodeEl.appendChild(outputBadge);
       }
-      
+
       // Input badge (below output badge)
       if (inputCount > 0) {
         const inputBadge = document.createElement('div');
@@ -1730,11 +1779,11 @@ const XyflowEditorHook = {
     if (!isComposite && !isExpandedInternal) {
       // Remove old handles if they exist (prevents duplicates on re-render)
       nodeEl.querySelectorAll('.input-handle, .output-handle').forEach(old => old.remove());
-      
+
       // Get ports from node data (enriched by LiveView) or fallback to project
       let inputPorts = node.inputs || [];
       let outputPorts = node.outputs || [];
-      
+
       // If node doesn't have ports, try to get from project
       if ((!inputPorts || inputPorts.length === 0) && (!outputPorts || outputPorts.length === 0)) {
         const project = getProjectById(this.projects, node.project_id);
@@ -1745,7 +1794,7 @@ const XyflowEditorHook = {
           } else if (project.inputs) {
             inputPorts = Object.keys(project.inputs);
           }
-          
+
           if (project.output_ports && project.output_ports.length > 0) {
             outputPorts = project.output_ports;
           } else if (project.outputs) {
@@ -1753,7 +1802,7 @@ const XyflowEditorHook = {
           }
         }
       }
-      
+
       // Render input handles (left side)
       if (inputPorts && inputPorts.length > 0) {
         inputPorts.forEach((port, index) => {
@@ -1777,7 +1826,7 @@ const XyflowEditorHook = {
           handle.style.zIndex = '10';
           handle.style.boxShadow = '1px 1px 0 rgba(0,0,0,0.3)';
           handle.style.display = 'none';  // Hide by default (completely remove from layout)
-          
+
           // Hover effect - show handle when hovering directly
           handle.addEventListener('mouseenter', () => {
             handle.style.display = 'block';
@@ -1797,7 +1846,7 @@ const XyflowEditorHook = {
               }
             }
           });
-          
+
           // Drag-and-drop connection: allow drop on input handles
           handle.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -1808,7 +1857,7 @@ const XyflowEditorHook = {
               handle.style.border = '3px solid #000';
             }
           });
-          
+
           handle.addEventListener('dragleave', (e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -1817,7 +1866,7 @@ const XyflowEditorHook = {
               handle.style.border = '2px solid #000';
             }
           });
-          
+
           handle.addEventListener('drop', (e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -1825,17 +1874,17 @@ const XyflowEditorHook = {
               this.handlePortDrop(handle, 'input');
             }
           });
-          
+
           // Click handler for connection creation (fallback)
           handle.addEventListener('click', (e) => {
             e.stopPropagation();
             this.handlePortClick(handle, 'input');
           });
-          
+
           nodeEl.appendChild(handle);
         });
       }
-      
+
       // Render output handles (right side)
       if (outputPorts && outputPorts.length > 0) {
         outputPorts.forEach((port, index) => {
@@ -1860,7 +1909,7 @@ const XyflowEditorHook = {
           handle.style.zIndex = '10';
           handle.style.boxShadow = '1px 1px 0 rgba(0,0,0,0.3)';
           handle.style.display = 'none';  // Hide by default (completely remove from layout)
-          
+
           // Drag start - begin connection
           handle.addEventListener('dragstart', (e) => {
             e.stopPropagation();
@@ -1874,7 +1923,7 @@ const XyflowEditorHook = {
             handle.style.background = '#999';
             handle.style.border = '3px solid #000';
             handle.style.cursor = 'grabbing';
-            
+
             // Store data for drop
             e.dataTransfer.effectAllowed = 'link';
             e.dataTransfer.setData('text/plain', JSON.stringify({
@@ -1882,13 +1931,13 @@ const XyflowEditorHook = {
               port: port,
               type: 'output'
             }));
-            
-            console.log(`[Port] Started drag from output port "${port}" on node ${node.id}`);
-            
+
+            DEBUG && console.log(`[Port] Started drag from output port "${port}" on node ${node.id}`);
+
             // Highlight all compatible input handles
             this.highlightCompatibleInputs(port);
           });
-          
+
           handle.addEventListener('dragend', (e) => {
             e.stopPropagation();
             // Reset if connection wasn't completed (check if drop happened)
@@ -1904,7 +1953,7 @@ const XyflowEditorHook = {
               }
             }, 100);
           });
-          
+
           // Hover effect - show handle when hovering directly
           handle.addEventListener('mouseenter', () => {
             handle.style.display = 'block';
@@ -1923,23 +1972,23 @@ const XyflowEditorHook = {
               }
             }
           });
-          
+
           // Click handler for connection creation (fallback)
           handle.addEventListener('click', (e) => {
             e.stopPropagation();
             this.handlePortClick(handle, 'output');
           });
-          
+
           nodeEl.appendChild(handle);
         });
       }
     }
-    
+
     // Add inputs/outputs for composite nodes
     if (isComposite && node.external_inputs && node.external_outputs) {
       const inputKeys = Object.keys(node.external_inputs || {});
       const outputKeys = Object.keys(node.external_outputs || {});
-      
+
       if (inputKeys.length > 0 || outputKeys.length > 0) {
         const ioDiv = document.createElement('div');
         ioDiv.style.fontSize = '8px';
@@ -1948,7 +1997,7 @@ const XyflowEditorHook = {
         ioDiv.style.paddingTop = '2px';
         ioDiv.style.borderTop = '1px solid #666';
         ioDiv.style.lineHeight = '1.3';
-        
+
         if (inputKeys.length > 0) {
           const inputsSpan = document.createElement('div');
           inputsSpan.style.marginBottom = '2px';
@@ -1957,7 +2006,7 @@ const XyflowEditorHook = {
           inputsSpan.innerHTML = `<strong>IN:</strong> ${inputKeys.join(', ')}`;
           ioDiv.appendChild(inputsSpan);
         }
-        
+
         if (outputKeys.length > 0) {
           const outputsSpan = document.createElement('div');
           outputsSpan.style.fontSize = '8px';
@@ -1966,7 +2015,7 @@ const XyflowEditorHook = {
           outputsSpan.innerHTML = `<strong>OUT:</strong> ${outputKeys.join(', ')}`;
           ioDiv.appendChild(outputsSpan);
         }
-        
+
         contentContainer.appendChild(ioDiv);
       }
     }
@@ -2006,99 +2055,98 @@ const XyflowEditorHook = {
   },
 
   makeDraggable(element) {
-    let isDragging = false;
-    let startX, startY, initialX, initialY;
-    let dragScrollLeft = 0;
-    let dragScrollTop = 0;
-    let selectedNodesInitialPositions = new Map(); // Store initial positions for multi-node drag
-    let dragStartMouseX = 0; // Track mouse position at drag start for cumulative offset
-    let dragStartMouseY = 0;
-
     element.addEventListener('mousedown', (e) => {
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-      
+
       // Check if this node is selected and if we have multiple nodes selected
       const nodeId = element.dataset.nodeId;
       const isNodeSelected = this.selectedNodes && this.selectedNodes.includes(nodeId);
       const hasMultipleSelected = this.selectedNodes && this.selectedNodes.length > 1;
-      
-      // If multiple nodes are selected and this node is one of them, prepare multi-node drag
-      if (hasMultipleSelected && isNodeSelected) {
-        selectedNodesInitialPositions.clear();
-        
-        // Store initial positions of all selected nodes
+
+      // If clicking an unselected node, or if only one node is selected, select just this one
+      // (unless Shift is held, which is handled by click event, but we need to handle drag start)
+      if (!isNodeSelected && !e.shiftKey) {
+        // If we start dragging an unselected node, it becomes the selection
+        // But we defer this to click if no drag happens?
+        // Actually, for dragging, we usually select on mousedown
+        // But we don't want to clear selection if we are just clicking to add to selection
+      }
+
+      // Initialize drag state
+      this.globalDragState.isDragging = true;
+      this.globalDragState.element = element;
+      element.style.cursor = 'grabbing';
+
+      // Store mouse position at drag start
+      this.globalDragState.dragStartMouseX = e.clientX;
+      this.globalDragState.dragStartMouseY = e.clientY;
+
+      this.globalDragState.startX = e.clientX;
+      this.globalDragState.startY = e.clientY;
+
+      const rect = element.getBoundingClientRect();
+      this.globalDragState.initialX = rect.left;
+      this.globalDragState.initialY = rect.top;
+
+      // Save scroll position at start of drag
+      const scrollArea = this.container.closest('.canvas-scroll-area');
+      if (scrollArea) {
+        this.globalDragState.dragScrollLeft = scrollArea.scrollLeft;
+        this.globalDragState.dragScrollTop = scrollArea.scrollTop;
+      }
+
+      // Set flag to prevent bounds updates during drag
+      this.isDraggingNode = true;
+
+      // Initialize multi-node drag positions if applicable
+      this.globalDragState.selectedNodesInitialPositions.clear();
+      if (isNodeSelected && hasMultipleSelected) {
         this.selectedNodes.forEach(selectedId => {
           const selectedNodeEl = this.canvas.querySelector(`[data-node-id="${selectedId}"]`);
           if (selectedNodeEl) {
             const x = parseInt(selectedNodeEl.style.left) || 0;
             const y = parseInt(selectedNodeEl.style.top) || 0;
-            selectedNodesInitialPositions.set(selectedId, { x, y });
+            this.globalDragState.selectedNodesInitialPositions.set(selectedId, { x, y });
           }
         });
       }
-      // DISABLED: Let click handler manage selection instead
-      // The click handler at line 1036 handles all selection logic including Shift+Click
-      // else if (!isNodeSelected) {
-      //   // If clicking on an unselected node, clear selection first
-      //   // (User can hold Shift to add to selection, but for now we'll just select this one)
-      //   this.clearSelection();
-      //   if (!this.selectedNodes.includes(nodeId)) {
-      //     this.selectedNodes.push(nodeId);
-      //   }
-      //   this.syncCheckboxState(element);
-      //   console.log("📍 CALLING updateSelectionCount FROM:", new Error().stack);
-      //   this.updateSelectionCount();
-      // }
-      
-      isDragging = true;
-      element.style.cursor = 'grabbing';
-      
-      // Store mouse position at drag start (for cumulative offset calculation)
-      dragStartMouseX = e.clientX;
-      dragStartMouseY = e.clientY;
-      
-      startX = e.clientX;
-      startY = e.clientY;
-      
-      const rect = element.getBoundingClientRect();
-      initialX = rect.left;
-      initialY = rect.top;
-      
-      // Save scroll position at start of drag
-      const scrollArea = this.container.closest('.canvas-scroll-area');
-      if (scrollArea) {
-        dragScrollLeft = scrollArea.scrollLeft;
-        dragScrollTop = scrollArea.scrollTop;
-      }
-      
-      // Set flag to prevent bounds updates during drag
-      this.isDraggingNode = true;
 
       e.preventDefault();
-      // REMOVED: Let click events bubble to click handler
-      // e.stopPropagation(); // Prevent marquee selection from starting
     });
+  },
 
-    document.addEventListener('mousemove', (e) => {
-      if (!isDragging) return;
+  setupGlobalDragListeners() {
+    this.globalDragState = {
+      isDragging: false,
+      element: null,
+      startX: 0, startY: 0,
+      initialX: 0, initialY: 0,
+      dragScrollLeft: 0, dragScrollTop: 0,
+      selectedNodesInitialPositions: new Map(),
+      dragStartMouseX: 0, dragStartMouseY: 0
+    };
 
+    this.handleGlobalMouseMove = (e) => {
+      if (!this.globalDragState.isDragging || !this.globalDragState.element) return;
+
+      const element = this.globalDragState.element;
       const nodeId = element.dataset.nodeId;
       const hasMultipleSelected = this.selectedNodes && this.selectedNodes.length > 1 && this.selectedNodes.includes(nodeId);
-      
-      if (hasMultipleSelected && selectedNodesInitialPositions.size > 0) {
+
+      if (hasMultipleSelected && this.globalDragState.selectedNodesInitialPositions.size > 0) {
         // Multi-node drag: use cumulative offset from drag start
-        const cumulativeDx = e.clientX - dragStartMouseX;
-        const cumulativeDy = e.clientY - dragStartMouseY;
-        
+        const cumulativeDx = e.clientX - this.globalDragState.dragStartMouseX;
+        const cumulativeDy = e.clientY - this.globalDragState.dragStartMouseY;
+
         // Move all selected nodes by the same cumulative offset from their initial positions
-        selectedNodesInitialPositions.forEach((initialPos, selectedId) => {
+        this.globalDragState.selectedNodesInitialPositions.forEach((initialPos, selectedId) => {
           const selectedNodeEl = this.canvas.querySelector(`[data-node-id="${selectedId}"]`);
           if (selectedNodeEl) {
             const newX = initialPos.x + cumulativeDx;
             const newY = initialPos.y + cumulativeDy;
             selectedNodeEl.style.left = `${newX}px`;
             selectedNodeEl.style.top = `${newY}px`;
-            
+
             // Update node position in nodes array for edge rendering
             const node = this.nodes.find(n => n.id === selectedId);
             if (node) {
@@ -2107,70 +2155,73 @@ const XyflowEditorHook = {
             }
           }
         });
-        
+
         // Re-render edges to reflect new positions
         this.renderEdges();
       } else {
         // Single node drag: use incremental offset (standard drag behavior)
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
-        
+        const dx = e.clientX - this.globalDragState.startX;
+        const dy = e.clientY - this.globalDragState.startY;
+
         const currentLeft = parseInt(element.style.left || '0');
         const currentTop = parseInt(element.style.top || '0');
         const newX = currentLeft + dx;
         const newY = currentTop + dy;
         element.style.left = `${newX}px`;
         element.style.top = `${newY}px`;
-        
+
         // Update node position in nodes array for edge rendering
         const node = this.nodes.find(n => n.id === nodeId);
         if (node) {
           node.x = newX;
           node.y = newY;
         }
-        
+
         // Re-render edges to reflect new position
         this.renderEdges();
-        
-        startX = e.clientX;
-        startY = e.clientY;
+
+        this.globalDragState.startX = e.clientX;
+        this.globalDragState.startY = e.clientY;
       }
-    });
+    };
 
-    document.addEventListener('mouseup', () => {
-      if (!isDragging) return;
-      
-      isDragging = false;
-      element.style.cursor = 'move';
+    this.handleGlobalMouseUp = (e) => {
+      if (!this.globalDragState.isDragging) return;
 
-      const nodeId = element.dataset.nodeId;
+      this.globalDragState.isDragging = false;
+      if (this.globalDragState.element) {
+        this.globalDragState.element.style.cursor = 'move';
+      }
+
+      const element = this.globalDragState.element;
+      const nodeId = element ? element.dataset.nodeId : null;
       const hasMultipleSelected = this.selectedNodes && this.selectedNodes.length > 1 && this.selectedNodes.includes(nodeId);
-      
-      if (hasMultipleSelected && selectedNodesInitialPositions.size > 0) {
+
+      if (hasMultipleSelected && this.globalDragState.selectedNodesInitialPositions.size > 0) {
         // Multi-node drag: send position updates for all selected nodes
         const updates = [];
-        selectedNodesInitialPositions.forEach((initialPos, selectedId) => {
+        this.globalDragState.selectedNodesInitialPositions.forEach((initialPos, selectedId) => {
           const selectedNodeEl = this.canvas.querySelector(`[data-node-id="${selectedId}"]`);
           if (selectedNodeEl) {
             let x = parseInt(selectedNodeEl.style.left) || 0;
             let y = parseInt(selectedNodeEl.style.top) || 0;
-            
+
             // Snap to grid on drop
             const snapped = snapToGrid({ x, y });
             x = snapped.x;
             y = snapped.y;
             selectedNodeEl.style.left = `${x}px`;
             selectedNodeEl.style.top = `${y}px`;
-            
+
             updates.push({ node_id: selectedId, position_x: x, position_y: y });
           }
         });
-        
+
         // Send all updates to server
         updates.forEach(update => {
           this.pushEvent('node_moved', update);
         });
-        
+
         // Update nodes array with final positions
         updates.forEach(update => {
           const node = this.nodes.find(n => n.id === update.node_id);
@@ -2179,15 +2230,15 @@ const XyflowEditorHook = {
             node.y = update.position_y;
           }
         });
-        
+
         // Re-render edges with updated positions
         this.renderEdges();
-        
-        selectedNodesInitialPositions.clear();
-      } else {
+
+        this.globalDragState.selectedNodesInitialPositions.clear();
+      } else if (element) {
         // Single node drag
-        let x = parseInt(element.style.left);
-        let y = parseInt(element.style.top);
+        let x = parseInt(element.style.left) || 0;
+        let y = parseInt(element.style.top) || 0;
 
         // Snap to grid on drop
         const snapped = snapToGrid({ x, y });
@@ -2202,35 +2253,37 @@ const XyflowEditorHook = {
           node.x = x;
           node.y = y;
         }
-        
-        // Re-render edges with updated position
+
+        // Send update to server
+        this.pushEvent('node_moved', { node_id: nodeId, position_x: x, position_y: y });
+
+        // Re-render edges with snapped position
         this.renderEdges();
-        
-        this.pushEvent('node_moved', {
-          node_id: nodeId,
-          position_x: x,
-          position_y: y
-        });
       }
 
       // Clear dragging flag
       this.isDraggingNode = false;
-      
+
       // Update canvas bounds after node is moved, but preserve scroll position
       // Get current scroll position relative to the dragged node
       const scrollArea = this.container.closest('.canvas-scroll-area');
-      const nodeScrollLeft = scrollArea ? scrollArea.scrollLeft : dragScrollLeft;
-      const nodeScrollTop = scrollArea ? scrollArea.scrollTop : dragScrollTop;
-      
+      const nodeScrollLeft = scrollArea ? scrollArea.scrollLeft : this.globalDragState.dragScrollLeft;
+      const nodeScrollTop = scrollArea ? scrollArea.scrollTop : this.globalDragState.dragScrollTop;
+
       // Store scroll position that should be maintained
       this.pendingScrollLeft = nodeScrollLeft;
       this.pendingScrollTop = nodeScrollTop;
-      
+
       // Delay bounds update slightly to avoid interrupting user interaction
       setTimeout(() => {
         this.updateCanvasBounds();
       }, 100);
-    });
+
+      this.globalDragState.element = null;
+    };
+
+    document.addEventListener('mousemove', this.handleGlobalMouseMove);
+    document.addEventListener('mouseup', this.handleGlobalMouseUp);
   },
 
   setupDragAndDrop() {
@@ -2256,7 +2309,7 @@ const XyflowEditorHook = {
 
     container.addEventListener('drop', (e) => {
       e.preventDefault();
-      
+
       container.classList.remove('xyflow-drag-over');
       container.style.cursor = '';
       this.isDragging = false;
@@ -2281,10 +2334,10 @@ const XyflowEditorHook = {
       const finalPos = findNonOverlappingPosition(rawX, rawY, this.nodes);
       let x = finalPos.x;
       let y = finalPos.y;
-      console.log('Drop requested at', { rawX, rawY }, 'adjusted to', { x, y });
+      DEBUG && console.log('Drop requested at', { rawX, rawY }, 'adjusted to', { x, y });
 
       const tempId = 'temp_' + Date.now();
-      
+
       // Create temporary node
       this.addTemporaryNode(tempId, x, y, 'Loading...');
 
@@ -2314,9 +2367,9 @@ const XyflowEditorHook = {
       this.clickState.selectedElement.style.borderColor = '#000';
       this.clickState.selectedElement.style.borderWidth = '2px';
     }
-    
+
     this.clickState = null;
-    
+
     // Reset all port styles
     document.querySelectorAll('.input-port, .output-port').forEach(port => {
       port.style.background = '#E5E7EB';
@@ -2330,7 +2383,7 @@ const XyflowEditorHook = {
   setupMarqueeSelection() {
     const container = this.container;
     const scrollArea = container.closest('.canvas-scroll-area');
-    
+
     // Reset click state on canvas click (outside ports)
     // Only listen within canvas area, and ignore navigation elements
     const canvas = this.canvas || container;
@@ -2340,23 +2393,23 @@ const XyflowEditorHook = {
         if (e.target.closest('.flow-node')) {
           return; // Early return - don't process canvas clicks on nodes
         }
-        
+
         // Ignore clicks on links, buttons, and UI elements (let navigation work)
         if (e.target.closest('a, button, .system-item, nav, header, .node-info-button')) {
           return; // Don't reset, let navigation/interaction work
         }
-        
+
         // Only reset if clicking on canvas area (not on ports)
         if (!e.target.closest('.input-port') && !e.target.closest('.output-port')) {
           this.resetClickState();
         }
       });
     }
-    
+
     let isMarqueeActive = false;
     let startX = 0;
     let startY = 0;
-    
+
     // Create marquee selection box element (if it doesn't exist)
     // Place it in nodesContainer so it uses the same coordinate system as nodes
     if (!this.marqueeBox) {
@@ -2368,7 +2421,7 @@ const XyflowEditorHook = {
       this.marqueeBox.style.pointerEvents = 'none';
       this.marqueeBox.style.zIndex = '1000';
       this.marqueeBox.style.display = 'none';
-      
+
       // Add to nodesContainer (same coordinate system as nodes)
       if (this.nodesContainer) {
         this.nodesContainer.appendChild(this.marqueeBox);
@@ -2376,65 +2429,65 @@ const XyflowEditorHook = {
         this.canvas.appendChild(this.marqueeBox);
       }
     }
-    
+
     container.addEventListener('mousedown', (e) => {
       // Only start marquee if clicking directly on canvas (not on a node, toolbar, etc.)
-      if (e.target.closest('.flow-node') || 
-          e.target.closest('.living-web-toolbar') ||
-          e.target.closest('.library-header') ||
-          e.target.closest('.library-content') ||
-          e.target.tagName === 'path') { // Don't start marquee if clicking on an edge
+      if (e.target.closest('.flow-node') ||
+        e.target.closest('.living-web-toolbar') ||
+        e.target.closest('.library-header') ||
+        e.target.closest('.library-content') ||
+        e.target.tagName === 'path') { // Don't start marquee if clicking on an edge
         // If clicking on canvas (not edge), clear edge selection
-        if (!e.target.closest('.flow-node') && 
-            !e.target.closest('.living-web-toolbar') &&
-            !e.target.closest('.library-header') &&
-            !e.target.closest('.library-content') &&
-            e.target.tagName !== 'path') {
+        if (!e.target.closest('.flow-node') &&
+          !e.target.closest('.living-web-toolbar') &&
+          !e.target.closest('.library-header') &&
+          !e.target.closest('.library-content') &&
+          e.target.tagName !== 'path') {
           this.clearEdgeSelection();
         }
         return;
       }
-      
+
       // Clear edge selection when clicking on empty canvas
       this.clearEdgeSelection();
-      
+
       // Check for multi-select (Shift key)
       const isMultiSelect = e.shiftKey;
-      
+
       if (!isMultiSelect) {
         this.selectedNodes = [];
       }
-      
+
       this.marqueeActive = true;
       this.marqueeStart = { x: e.clientX, y: e.clientY };
       this.isMarqueeSelecting = true;
-      
+
       // Get starting position relative to nodesContainer (accounting for transform and scroll)
       const scrollLeft = scrollArea ? scrollArea.scrollLeft : 0;
       const scrollTop = scrollArea ? scrollArea.scrollTop : 0;
-      
+
       // Get the transform offset of nodesContainer (if any)
       const nodesContainerTransform = this.getNodesContainerTransform();
-      
+
       // Calculate position relative to the actual canvas coordinate system (where nodes are)
       // Mouse position in viewport
       const viewportX = e.clientX;
       const viewportY = e.clientY;
-      
+
       // Get canvas position in viewport
       const canvasRect = this.canvas.getBoundingClientRect();
-      
+
       // Convert to canvas coordinates (accounting for scroll)
       const canvasX = viewportX - canvasRect.left + scrollLeft;
       const canvasY = viewportY - canvasRect.top + scrollTop;
-      
+
       // Account for nodesContainer transform offset (reverse the transform)
       startX = canvasX - nodesContainerTransform.x;
       startY = canvasY - nodesContainerTransform.y;
-      
+
       this.marqueeStartX = startX;
       this.marqueeStartY = startY;
-      
+
       // Show and position marquee box
       if (this.marqueeBox) {
         this.marqueeBox.style.display = 'block';
@@ -2443,93 +2496,93 @@ const XyflowEditorHook = {
         this.marqueeBox.style.width = '0px';
         this.marqueeBox.style.height = '0px';
       }
-      
+
       e.preventDefault();
       e.stopPropagation();
     });
-    
+
     document.addEventListener('mousemove', (e) => {
       if (!this.marqueeActive || !this.marqueeBox) return;
-      
+
       // Calculate current position relative to nodesContainer (same coordinate system as nodes)
       const scrollLeft = scrollArea ? scrollArea.scrollLeft : 0;
       const scrollTop = scrollArea ? scrollArea.scrollTop : 0;
-      
+
       // Get the transform offset of nodesContainer
       const nodesContainerTransform = this.getNodesContainerTransform();
-      
+
       // Calculate position in canvas coordinate system
       const canvasRect = this.canvas.getBoundingClientRect();
       const viewportX = e.clientX;
       const viewportY = e.clientY;
-      
+
       const canvasX = viewportX - canvasRect.left + scrollLeft;
       const canvasY = viewportY - canvasRect.top + scrollTop;
-      
+
       // Account for nodesContainer transform offset
       const currentX = canvasX - nodesContainerTransform.x;
       const currentY = canvasY - nodesContainerTransform.y;
-      
+
       // Calculate rectangle bounds
       const left = Math.min(startX, currentX);
       const top = Math.min(startY, currentY);
       const width = Math.abs(currentX - startX);
       const height = Math.abs(currentY - startY);
-      
+
       // Update marquee box
       this.marqueeBox.style.left = `${left}px`;
       this.marqueeBox.style.top = `${top}px`;
       this.marqueeBox.style.width = `${width}px`;
       this.marqueeBox.style.height = `${height}px`;
     });
-    
+
     document.addEventListener('mouseup', (e) => {
       if (!this.marqueeActive) return;
-      
+
       this.marqueeActive = false;
       this.isMarqueeSelecting = false;
-      
+
       // Hide marquee box
       if (this.marqueeBox) {
         this.marqueeBox.style.display = 'none';
       }
-      
+
       // Calculate final selection rectangle in node coordinate system
       const scrollLeft = scrollArea ? scrollArea.scrollLeft : 0;
       const scrollTop = scrollArea ? scrollArea.scrollTop : 0;
-      
+
       // Get the transform offset of nodesContainer
       const nodesContainerTransform = this.getNodesContainerTransform();
-      
+
       // Calculate end position in canvas coordinates
       const canvasRect = this.canvas.getBoundingClientRect();
       const canvasX = e.clientX - canvasRect.left + scrollLeft;
       const canvasY = e.clientY - canvasRect.top + scrollTop;
-      
+
       // Convert to node coordinate system (accounting for transform)
       const endX = canvasX - nodesContainerTransform.x;
       const endY = canvasY - nodesContainerTransform.y;
-      
+
       const left = Math.min(startX, endX);
       const top = Math.min(startY, endY);
       const right = Math.max(startX, endX);
       const bottom = Math.max(startY, endY);
-      
+
       // Find all nodes that intersect with selection rectangle
       const selectedNodesInBox = [];
       const nodeElements = this.canvas.querySelectorAll('.flow-node:not(.temp-node)');
-      
+
       nodeElements.forEach(nodeEl => {
         const nodeX = parseInt(nodeEl.style.left) || 0;
         const nodeY = parseInt(nodeEl.style.top) || 0;
         const nodeWidth = nodeEl.offsetWidth || 140;
         const nodeHeight = nodeEl.offsetHeight || 80;
-        
+
         const nodeLeft = nodeX;
         const nodeRight = nodeX + nodeWidth;
         const nodeTop = nodeY;
         const nodeBottom = nodeY + nodeHeight;
-        
+
         // Check if node intersects with selection rectangle
         if (!(nodeRight < left || nodeLeft > right || nodeBottom < top || nodeTop > bottom)) {
           const nodeId = nodeEl.dataset.nodeId;
@@ -2538,10 +2591,10 @@ const XyflowEditorHook = {
           }
         }
       });
-      
+
       // Update selection based on Shift key
       const isMultiSelect = e.shiftKey;
-      
+
       if (isMultiSelect) {
         // Add to existing selection
         selectedNodesInBox.forEach(nodeId => {
@@ -2553,10 +2606,10 @@ const XyflowEditorHook = {
         // Replace selection
         this.selectedNodes = selectedNodesInBox;
       }
-      
+
       // Notify backend
       this.pushEvent('nodes_selected', { node_ids: this.selectedNodes });
-      
+
       // Re-render to show selection highlights
       this.renderNodes();
     });
@@ -2565,7 +2618,7 @@ const XyflowEditorHook = {
   clearSelection() {
     // Clear all node selections
     this.selectedNodes = [];
-    
+
     // Update all node checkboxes and visual states
     const nodeElements = this.canvas.querySelectorAll('.flow-node');
     nodeElements.forEach(nodeEl => {
@@ -2580,10 +2633,10 @@ const XyflowEditorHook = {
       nodeEl.style.background = getCategoryBackground(category);
       nodeEl.style.boxShadow = '2px 2px 0 rgba(0,0,0,0.3)';
     });
-    
+
     // Clear edge selections
     this.clearEdgeSelection();
-    
+
     this.updateSelectionCount();
   },
 
@@ -2593,12 +2646,12 @@ const XyflowEditorHook = {
     if (!this.nodesContainer) {
       return { x: 0, y: 0 };
     }
-    
+
     const transform = this.nodesContainer.style.transform || '';
     if (!transform) {
       return { x: 0, y: 0 };
     }
-    
+
     // Parse translate(x, y) format
     const match = transform.match(/translate\(([^,]+)px,\s*([^)]+)px\)/);
     if (match) {
@@ -2607,7 +2660,7 @@ const XyflowEditorHook = {
         y: parseFloat(match[2]) || 0
       };
     }
-    
+
     return { x: 0, y: 0 };
   },
 
@@ -2619,19 +2672,19 @@ const XyflowEditorHook = {
       deleteBtn.addEventListener('click', () => {
         const nodeCount = this.selectedNodes ? this.selectedNodes.length : 0;
         const edgeCount = this.selectedEdges ? this.selectedEdges.size : 0;
-        
+
         if (nodeCount === 0 && edgeCount === 0) {
           alert('No nodes or edges selected');
           return;
         }
-        
+
         // Delete selected nodes
         if (nodeCount > 0) {
           this.pushEvent('nodes_deleted', {
             node_ids: this.selectedNodes
           });
         }
-        
+
         // Delete selected edges
         if (edgeCount > 0) {
           this.pushEvent('edges_deleted', {
@@ -2702,7 +2755,7 @@ const XyflowEditorHook = {
         const selectedArray = this.selectedNodes;
         const sourceId = selectedArray[0];
         const targetId = selectedArray[1];
-        
+
         // Push event to server to create edge
         this.pushEvent('edge_added', {
           source_id: sourceId,
@@ -2713,7 +2766,7 @@ const XyflowEditorHook = {
 
     // Store connect button reference for state updates
     this.connectBtn = connectBtn;
-    
+
     // Save as System button - handled by LiveView phx-click
     // The button has phx-click="show_save_system_dialog" which will handle the dialog
     // We just need to ensure the button state is updated based on selection
@@ -2735,7 +2788,7 @@ const XyflowEditorHook = {
     this.handleEvent('suggestions_loaded', ({ suggestions }) => {
       this.showSuggestionsPanel(suggestions || []);
     });
-    
+
     // Initial button state update
     this.updateConnectButtonState();
     this.updateSaveAsSystemButtonState();
@@ -2786,7 +2839,7 @@ const XyflowEditorHook = {
       if (e.target.classList.contains('draggable-project-item')) {
         const projectId = e.target.dataset.projectId;
         const compositeId = e.target.dataset.compositeId;
-        
+
         if (projectId) {
           // Drag project node
           e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'project', id: projectId }));
@@ -2813,8 +2866,8 @@ const XyflowEditorHook = {
   setupServerEvents() {
     // Listen for successful node addition
     this.handleEvent('node_added_success', (payload) => {
-      console.log('Server created node successfully:', payload);
-      
+      DEBUG && console.log('Server created node successfully:', payload);
+
       // Remove temporary node
       if (payload.temp_id) {
         const tempNode = document.getElementById(payload.temp_id);
@@ -2829,8 +2882,8 @@ const XyflowEditorHook = {
 
     // Listen for composite node addition success
     this.handleEvent('composite_node_added_success', (payload) => {
-      console.log('Server created composite node successfully:', payload);
-      
+      DEBUG && console.log('Server created composite node successfully:', payload);
+
       // Remove temporary node
       if (payload.temp_id) {
         const tempNode = document.getElementById(payload.temp_id);
@@ -2845,76 +2898,76 @@ const XyflowEditorHook = {
 
     // Listen for composite expansion success
     this.handleEvent('composite_expanded_success', (payload) => {
-      console.log('[Composite] Expansion success event received:', payload);
-      console.log('[Composite] Payload nodes count:', Object.keys(payload.nodes || {}).length);
-      console.log('[Composite] Payload edges count:', Object.keys(payload.edges || {}).length);
-      console.log('[Composite] First few nodes:', Object.entries(payload.nodes || {}).slice(0, 5));
-      
+      DEBUG && console.log('[Composite] Expansion success event received:', payload);
+      DEBUG && console.log('[Composite] Payload nodes count:', Object.keys(payload.nodes || {}).length);
+      DEBUG && console.log('[Composite] Payload edges count:', Object.keys(payload.edges || {}).length);
+      DEBUG && console.log('[Composite] First few nodes:', Object.entries(payload.nodes || {}).slice(0, 5));
+
       const compositeNodeId = payload.node_id;
-      
+
       // Track expanded composite
       if (!this.expandedComposites.includes(compositeNodeId)) {
         this.expandedComposites.push(compositeNodeId);
       }
-      
+
       // Fade out composite node with animation
       const compositeNode = this.canvas?.querySelector(`[data-node-id="${compositeNodeId}"]`);
       if (compositeNode) {
         compositeNode.style.transition = 'opacity 0.2s ease-out';
         compositeNode.style.opacity = '0';
       }
-      
+
       // Reload nodes and edges from server after fade
       setTimeout(() => {
         if (payload.nodes && payload.edges) {
-          console.log('[Composite] Normalizing nodes...');
+          DEBUG && console.log('[Composite] Normalizing nodes...');
           const normalizedNodes = this.normalizeNodes(payload.nodes);
-          console.log('[Composite] Normalized nodes count:', normalizedNodes.length);
-          
+          DEBUG && console.log('[Composite] Normalized nodes count:', normalizedNodes.length);
+
           // Filter out hidden nodes
           const visibleNodes = normalizedNodes.filter(node => {
             // Filter out expanded composite nodes (they're hidden)
             if (this.expandedComposites.includes(node.id)) {
-              console.log('[Composite] Filtering out expanded composite node:', node.id);
+              DEBUG && console.log('[Composite] Filtering out expanded composite node:', node.id);
               return false;
             }
-            
+
             // Filter out hidden nodes
             if (node.hidden === true) {
-              console.log('[Composite] Filtering out hidden node:', node.id);
+              DEBUG && console.log('[Composite] Filtering out hidden node:', node.id);
               return false;
             }
-            
+
             return true;
           });
-          
-          console.log('[Composite] Visible nodes after filtering:', visibleNodes.length);
-          
+
+          DEBUG && console.log('[Composite] Visible nodes after filtering:', visibleNodes.length);
+
           this.nodes = visibleNodes;
-          
+
           // Filter edges to only include edges connected to visible nodes
           const visibleNodeIds = new Set(visibleNodes.map(n => n.id));
           const visibleEdges = {};
           Object.entries(payload.edges || {}).forEach(([edgeId, edge]) => {
             const sourceId = edge.source_id || edge.source;
             const targetId = edge.target_id || edge.target;
-            
+
             // Only include edge if both source and target are visible
             if (visibleNodeIds.has(sourceId) && visibleNodeIds.has(targetId)) {
               visibleEdges[edgeId] = edge;
             } else {
-              console.log('[Composite] Filtering out edge:', edgeId, 'source:', sourceId, 'target:', targetId);
+              DEBUG && console.log('[Composite] Filtering out edge:', edgeId, 'source:', sourceId, 'target:', targetId);
             }
           });
-          
+
           this.edges = visibleEdges;
-          console.log('[Composite] Visible edges after filtering:', Object.keys(visibleEdges).length);
-          
-          console.log('[Composite] Calling renderNodes...');
+          DEBUG && console.log('[Composite] Visible edges after filtering:', Object.keys(visibleEdges).length);
+
+          DEBUG && console.log('[Composite] Calling renderNodes...');
           this.renderNodes();
-          console.log('[Composite] Calling renderEdges...');
+          DEBUG && console.log('[Composite] Calling renderEdges...');
           this.renderEdges();
-          
+
           // Fade in child nodes with stagger effect
           const childNodes = this.canvas?.querySelectorAll(`[data-parent-composite-id="${compositeNodeId}"]`);
           if (childNodes && childNodes.length > 0) {
@@ -2922,16 +2975,16 @@ const XyflowEditorHook = {
               node.style.opacity = '0';
               node.style.transform = 'scale(0.95)';
               node.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
-              
+
               setTimeout(() => {
                 node.style.opacity = '1';
                 node.style.transform = 'scale(1)';
               }, index * 30); // Stagger by 30ms each
             });
           }
-          
-          console.log('[Composite] Render complete. DOM nodes:', document.querySelectorAll('.flow-node').length);
-          console.log('[Composite] Expanded nodes:', document.querySelectorAll('[data-parent-composite-id]').length);
+
+          DEBUG && console.log('[Composite] Render complete. DOM nodes:', document.querySelectorAll('.flow-node').length);
+          DEBUG && console.log('[Composite] Expanded nodes:', document.querySelectorAll('[data-parent-composite-id]').length);
         } else {
           console.error('[Composite] Missing nodes or edges in payload:', payload);
         }
@@ -2940,12 +2993,12 @@ const XyflowEditorHook = {
 
     // Listen for composite collapse success
     this.handleEvent('composite_collapsed_success', (payload) => {
-      console.log('Composite node collapsed:', payload);
+      DEBUG && console.log('Composite node collapsed:', payload);
       const compositeNodeId = payload.node_id;
-      
+
       // Remove from expanded composites list
       this.expandedComposites = this.expandedComposites.filter(id => id !== compositeNodeId);
-      
+
       // Fade out child nodes with animation
       const childNodes = this.canvas?.querySelectorAll(`[data-parent-composite-id="${compositeNodeId}"]`);
       if (childNodes && childNodes.length > 0) {
@@ -2955,47 +3008,47 @@ const XyflowEditorHook = {
           node.style.transform = 'scale(0.95)';
         });
       }
-      
+
       // Reload nodes and edges from server after fade
       setTimeout(() => {
         if (payload.nodes && payload.edges) {
           const normalizedNodes = this.normalizeNodes(payload.nodes);
-          
+
           // Filter out hidden nodes and expanded composites
           const visibleNodes = normalizedNodes.filter(node => {
             // Filter out expanded composite nodes
             if (this.expandedComposites.includes(node.id)) {
-              console.log('[Composite] Filtering out expanded composite node:', node.id);
+              DEBUG && console.log('[Composite] Filtering out expanded composite node:', node.id);
               return false;
             }
-            
+
             // Filter out hidden nodes
             if (node.hidden === true) {
-              console.log('[Composite] Filtering out hidden node:', node.id);
+              DEBUG && console.log('[Composite] Filtering out hidden node:', node.id);
               return false;
             }
-            
+
             return true;
           });
-          
+
           this.nodes = visibleNodes;
-          
+
           // Filter edges to only include edges connected to visible nodes
           const visibleNodeIds = new Set(visibleNodes.map(n => n.id));
           const visibleEdges = {};
           Object.entries(payload.edges || {}).forEach(([edgeId, edge]) => {
             const sourceId = edge.source_id || edge.source;
             const targetId = edge.target_id || edge.target;
-            
+
             if (visibleNodeIds.has(sourceId) && visibleNodeIds.has(targetId)) {
               visibleEdges[edgeId] = edge;
             }
           });
-          
+
           this.edges = visibleEdges;
           this.renderNodes();
           this.renderEdges();
-          
+
           // Fade in composite node
           const newCompositeNode = this.canvas?.querySelector(`[data-node-id="${compositeNodeId}"]`);
           if (newCompositeNode) {
@@ -3011,37 +3064,37 @@ const XyflowEditorHook = {
 
     // Listen for composite system saved
     this.handleEvent('composite_system_saved', (payload) => {
-      console.log('Composite system saved:', payload);
-      
+      DEBUG && console.log('Composite system saved:', payload);
+
       // Close the modal if it's still open
       if (this.currentSaveOverlay && this.currentSaveOverlay.parentNode) {
         try {
           document.body.removeChild(this.currentSaveOverlay);
         } catch (e) {
-          console.warn('Could not remove save overlay:', e);
+          if (LOG_LEVEL === 'debug') console.warn('Could not remove save overlay:', e);
         }
         this.currentSaveOverlay = null;
       }
-      
+
       if (payload.success) {
         // Show success message without navigation
         alert(payload.message);
-        
+
         // Update canvas if nodes and edges are provided
         if (payload.nodes && payload.edges) {
           this.nodes = this.normalizeNodes(payload.nodes);
           this.edges = payload.edges;
-          
+
           // Clear selection
           if (this.selectedNodes) {
             this.selectedNodes = [];
           }
-          
+
           // Re-render the canvas
           this.renderNodes();
           this.renderEdges();
           this.updateCanvasBounds();
-          
+
           // Update selection count
           if (this.updateSelectionCount) {
             this.updateSelectionCount();
@@ -3055,20 +3108,20 @@ const XyflowEditorHook = {
     // Listen for node addition errors
     this.handleEvent('node_add_error', (payload) => {
       console.error('Server failed to create node:', payload);
-      
+
       if (payload.temp_id) {
         const tempNode = document.getElementById(payload.temp_id);
         if (tempNode) {
           tempNode.remove();
         }
       }
-      
+
       alert('Failed to add node: ' + (payload.message || 'Unknown error'));
     });
   },
 
   addRealNode(nodeData) {
-    console.log("Creating node (addRealNode):", nodeData);
+    DEBUG && console.log("Creating node (addRealNode):", nodeData);
     const nodeEl = document.createElement('div');
     const category = (nodeData.category || '').toLowerCase();
     const categoryClass = category ? `node-${category}` : '';
@@ -3165,16 +3218,16 @@ const XyflowEditorHook = {
     nameDiv.style.lineHeight = '1.3';
     nameDiv.style.cursor = 'text';
     nameDiv.title = 'Double-click to rename';
-    
+
     // Store nodeId for event handling
     nameDiv.dataset.nodeId = nodeData.id;
-    
+
     // Double-click to edit
     nameDiv.addEventListener('dblclick', (e) => {
       e.stopPropagation(); // Prevent node dragging
       this.enableNodeNameEdit(nameDiv, nodeData.id, projectName);
     });
-    
+
     nodeEl.appendChild(nameDiv);
 
     // Add inputs/outputs display
@@ -3183,7 +3236,7 @@ const XyflowEditorHook = {
       const outputs = nodeData.outputs || {};
       const inputKeys = Object.keys(inputs);
       const outputKeys = Object.keys(outputs);
-      
+
       if (inputKeys.length > 0 || outputKeys.length > 0) {
         const ioContainer = document.createElement('div');
         ioContainer.style.marginTop = '8px';
@@ -3191,20 +3244,20 @@ const XyflowEditorHook = {
         ioContainer.style.borderTop = '1px solid #666';
         ioContainer.style.fontSize = '9px';
         ioContainer.style.lineHeight = '1.3';
-        
+
         if (inputKeys.length > 0) {
           const inputsDiv = document.createElement('div');
           inputsDiv.style.marginBottom = '4px';
           inputsDiv.innerHTML = `<strong>IN:</strong> ${inputKeys.join(', ')}`;
           ioContainer.appendChild(inputsDiv);
         }
-        
+
         if (outputKeys.length > 0) {
           const outputsDiv = document.createElement('div');
           outputsDiv.innerHTML = `<strong>OUT:</strong> ${outputKeys.join(', ')}`;
           ioContainer.appendChild(outputsDiv);
         }
-        
+
         nodeEl.appendChild(ioContainer);
       }
     }
@@ -3231,7 +3284,7 @@ const XyflowEditorHook = {
       x: nodeData.position?.x || nodeData.x || parseInt(nodeEl.style.left) || 0,
       y: nodeData.position?.y || nodeData.y || parseInt(nodeEl.style.top) || 0
     };
-    
+
     if (existingNodeIndex >= 0) {
       // Update existing node
       this.nodes[existingNodeIndex] = nodeEntry;
@@ -3245,9 +3298,9 @@ const XyflowEditorHook = {
   },
 
   addRealCompositeNode(nodeData) {
-    console.log("Creating composite node (addRealCompositeNode):", nodeData);
+    DEBUG && console.log("Creating composite node (addRealCompositeNode):", nodeData);
     const nodeEl = document.createElement('div');
-    
+
     nodeEl.className = 'flow-node node-composite';
     nodeEl.style.position = 'absolute';
     nodeEl.style.left = `${nodeData.position.x}px`;
@@ -3255,7 +3308,7 @@ const XyflowEditorHook = {
     nodeEl.style.width = '160px';
     nodeEl.style.minHeight = '100px';
     nodeEl.style.height = 'auto';
-    
+
     // Outer border (2px black)
     nodeEl.style.border = '2px solid #000';
     nodeEl.style.borderRadius = '0';
@@ -3353,7 +3406,7 @@ const XyflowEditorHook = {
     // Input/Output counts
     const inputCount = Object.keys(nodeData.external_inputs || {}).length;
     const outputCount = Object.keys(nodeData.external_outputs || {}).length;
-    
+
     const ioDiv = document.createElement('div');
     ioDiv.style.fontSize = '8px';
     ioDiv.style.opacity = '0.6';
@@ -3370,7 +3423,7 @@ const XyflowEditorHook = {
     // Double-click to expand/collapse
     nodeEl.addEventListener('dblclick', (e) => {
       e.stopPropagation();
-      console.log('Double-click on composite node, requesting expand');
+      DEBUG && console.log('Double-click on composite node, requesting expand');
       this.pushEvent('expand_composite_node', { node_id: nodeData.node_id });
     });
 
@@ -3381,7 +3434,7 @@ const XyflowEditorHook = {
     } else {
       this.canvas.appendChild(nodeEl);
     }
-    
+
     this.syncCheckboxState(nodeEl);
 
     // Track in nodes array
@@ -3394,7 +3447,7 @@ const XyflowEditorHook = {
       x: nodeData.position?.x || 0,
       y: nodeData.position?.y || 0
     };
-    
+
     if (existingNodeIndex >= 0) {
       this.nodes[existingNodeIndex] = nodeEntry;
     } else {
@@ -3406,25 +3459,25 @@ const XyflowEditorHook = {
 
   updateCanvasBounds() {
     const scrollArea = this.container.closest('.canvas-scroll-area');
-    
+
     // Preserve scroll position to prevent viewport snapping
     // Use pending scroll position if set (from recent drag), otherwise use current
     let scrollLeft = this.pendingScrollLeft !== undefined ? this.pendingScrollLeft : (scrollArea ? scrollArea.scrollLeft : 0);
     let scrollTop = this.pendingScrollTop !== undefined ? this.pendingScrollTop : (scrollArea ? scrollArea.scrollTop : 0);
-    
+
     // Clear pending scroll positions after use
     if (this.pendingScrollLeft !== undefined) {
       this.pendingScrollLeft = undefined;
       this.pendingScrollTop = undefined;
     }
-    
+
     // If currently dragging, don't update bounds (wait until drag completes)
     if (this.isDraggingNode) {
       return;
     }
-    
+
     // Debug: Log container hierarchy
-    console.log('Container hierarchy:', {
+    DEBUG && console.log('Container hierarchy:', {
       container: this.container,
       containerId: this.container?.id,
       containerHeight: this.container?.style?.height,
@@ -3432,7 +3485,7 @@ const XyflowEditorHook = {
       canvas: this.canvas,
       canvasHeight: this.canvas?.style?.height
     });
-    
+
     if (!this.canvas || !this.nodes || this.nodes.length === 0) {
       // If no nodes, set canvas to viewport size (no scrollbars)
       if (scrollArea) {
@@ -3444,7 +3497,7 @@ const XyflowEditorHook = {
         const viewport = scrollArea || this.container;
         const viewportWidth = viewport.clientWidth || 800;
         const viewportHeight = viewport.clientHeight || 600;
-        
+
         // Also reset parent container to match
         if (this.container) {
           this.container.style.setProperty('width', `${viewportWidth}px`, 'important');
@@ -3452,10 +3505,10 @@ const XyflowEditorHook = {
           this.container.style.setProperty('min-width', `${viewportWidth}px`, 'important');
           this.container.style.setProperty('min-height', `${viewportHeight}px`, 'important');
         }
-        
+
         this.canvas.style.width = `${viewportWidth}px`;
         this.canvas.style.height = `${viewportHeight}px`;
-        
+
         // Update SVG dimensions to match canvas
         if (this.svgContainer) {
           this.svgContainer.setAttribute('width', `${viewportWidth}`);
@@ -3463,7 +3516,7 @@ const XyflowEditorHook = {
         }
         this.canvas.style.minWidth = `${viewportWidth}px`;
         this.canvas.style.minHeight = `${viewportHeight}px`;
-        
+
         // Update nodesContainer to match canvas size
         if (this.nodesContainer) {
           this.nodesContainer.style.width = `${viewportWidth}px`;
@@ -3487,7 +3540,7 @@ const XyflowEditorHook = {
         const viewport = scrollArea || this.container;
         const viewportWidth = viewport.clientWidth || 800;
         const viewportHeight = viewport.clientHeight || 600;
-        
+
         // Also reset parent container to match
         if (this.container) {
           this.container.style.setProperty('width', `${viewportWidth}px`, 'important');
@@ -3495,10 +3548,10 @@ const XyflowEditorHook = {
           this.container.style.setProperty('min-width', `${viewportWidth}px`, 'important');
           this.container.style.setProperty('min-height', `${viewportHeight}px`, 'important');
         }
-        
+
         this.canvas.style.width = `${viewportWidth}px`;
         this.canvas.style.height = `${viewportHeight}px`;
-        
+
         // Update SVG dimensions to match canvas
         if (this.svgContainer) {
           this.svgContainer.setAttribute('width', `${viewportWidth}`);
@@ -3506,7 +3559,7 @@ const XyflowEditorHook = {
         }
         this.canvas.style.minWidth = `${viewportWidth}px`;
         this.canvas.style.minHeight = `${viewportHeight}px`;
-        
+
         // Update nodesContainer to match canvas size
         if (this.nodesContainer) {
           this.nodesContainer.style.width = `${viewportWidth}px`;
@@ -3520,14 +3573,14 @@ const XyflowEditorHook = {
 
     // Calculate bounds from all nodes
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-    
+
     nodeElements.forEach(nodeEl => {
       const x = parseInt(nodeEl.style.left) || 0;
       const y = parseInt(nodeEl.style.top) || 0;
       const rect = nodeEl.getBoundingClientRect();
       const width = rect.width || 140; // Default node width
       const height = rect.height || 80; // Default node height
-      
+
       minX = Math.min(minX, x);
       minY = Math.min(minY, y);
       maxX = Math.max(maxX, x + width);
@@ -3536,43 +3589,43 @@ const XyflowEditorHook = {
 
     // Get the scroll area container (viewport)
     const viewport = scrollArea || this.container;
-    
+
     // Get viewport dimensions (visible area)
     const viewportWidth = viewport.clientWidth || 800;
     const viewportHeight = viewport.clientHeight || 600;
 
     // Small margin (20px) - scrollbars appear when nodes are this close to viewport edge
     const edgeMargin = 20;
-    
+
     // Calculate canvas dimensions based on node bounds
     // Handle negative positions by transforming the nodes container
     const canvasPadding = 50;
-    
+
     // If we have negative positions, calculate offset to shift nodes right/down
     // This makes negative-positioned nodes accessible via scroll
     const offsetX = minX < 0 ? -minX + canvasPadding : 0;
     const offsetY = minY < 0 ? -minY + canvasPadding : 0;
-    
+
     // Check if any nodes extend close to or beyond the visible viewport edges
     // Account for transform offset when checking positions
     let needsHorizontalScroll = false;
     let needsVerticalScroll = false;
-    
+
     nodeElements.forEach(nodeEl => {
       const x = parseInt(nodeEl.style.left) || 0;
       const y = parseInt(nodeEl.style.top) || 0;
       const rect = nodeEl.getBoundingClientRect();
       const width = rect.width || 140;
       const height = rect.height || 80;
-      
+
       // Account for transform offset - nodes at negative positions are shifted right/down
       const adjustedX = x + offsetX;
       const adjustedY = y + offsetY;
-      
+
       // Node edges in adjusted canvas coordinates
       const nodeRightEdge = adjustedX + width;
       const nodeBottomEdge = adjustedY + height;
-      
+
       // Check if node extends beyond right edge of viewport (with small margin)
       if (nodeRightEdge > viewportWidth - edgeMargin) {
         needsHorizontalScroll = true;
@@ -3590,31 +3643,31 @@ const XyflowEditorHook = {
         needsVerticalScroll = true;
       }
     });
-    
+
     // Transform the nodes container to shift nodes if needed
     // Only update transform if it actually changed to prevent visual jumps
     if (this.nodesContainer) {
       const currentTransform = this.nodesContainer.style.transform || '';
       const newTransform = (offsetX > 0 || offsetY > 0) ? `translate(${offsetX}px, ${offsetY}px)` : '';
-      
+
       // Only apply transform if it's different from current to prevent unnecessary reflows
       if (currentTransform !== newTransform) {
         this.nodesContainer.style.transform = newTransform;
       }
     }
-    
+
     // Calculate canvas dimensions including offset space for negative positions
     // The canvas needs to be large enough to contain all nodes including the offset
     const adjustedMinX = offsetX > 0 ? 0 : minX;
     const adjustedMinY = offsetY > 0 ? 0 : minY;
     const adjustedMaxX = maxX + offsetX;
     const adjustedMaxY = maxY + offsetY;
-    
+
     const contentMinX = Math.min(0, adjustedMinX - canvasPadding);
     const contentMinY = Math.min(0, adjustedMinY - canvasPadding);
     const contentMaxX = adjustedMaxX + canvasPadding;
     const contentMaxY = adjustedMaxY + canvasPadding;
-    
+
     const contentWidth = contentMaxX - contentMinX;
     const contentHeight = contentMaxY - contentMinY;
 
@@ -3627,8 +3680,8 @@ const XyflowEditorHook = {
     const actualCanvasHeight = this.canvas ? this.canvas.offsetHeight : 0;
     const computedContainerHeight = this.container ? window.getComputedStyle(this.container).height : '0';
     const computedCanvasHeight = this.canvas ? window.getComputedStyle(this.canvas).height : '0';
-    
-    console.log('Canvas bounds calculation:', {
+
+    DEBUG && console.log('Canvas bounds calculation:', {
       viewportWidth,
       viewportHeight,
       contentWidth,
@@ -3654,7 +3707,7 @@ const XyflowEditorHook = {
       this.container.style.setProperty('position', 'relative', 'important');
       this.container.style.setProperty('right', 'auto', 'important');
       this.container.style.setProperty('bottom', 'auto', 'important');
-      
+
       // Set explicit dimensions that override the 100% constraint
       this.container.style.setProperty('width', `${canvasWidth}px`, 'important');
       this.container.style.setProperty('height', `${canvasHeight}px`, 'important');
@@ -3662,12 +3715,12 @@ const XyflowEditorHook = {
       this.container.style.setProperty('min-height', `${canvasHeight}px`, 'important');
       this.container.style.setProperty('max-width', 'none', 'important');
       this.container.style.setProperty('max-height', 'none', 'important');
-      
+
       // Also apply background to container to ensure it's visible everywhere
       // Background is handled by .canvas-scroll-area CSS, container should be transparent
       this.container.style.setProperty('background', 'transparent', 'important');
-      
-      console.log('Updated container styles:', {
+
+      DEBUG && console.log('Updated container styles:', {
         setWidth: `${canvasWidth}px`,
         setHeight: `${canvasHeight}px`,
         computedWidth: window.getComputedStyle(this.container).width,
@@ -3676,7 +3729,7 @@ const XyflowEditorHook = {
         offsetHeight: this.container.offsetHeight
       });
     }
-    
+
     // Set canvas size - use explicit pixel values with !important to override CSS
     // This ensures the canvas expands beyond the viewport when needed
     // We need to use setProperty with important flag to override CSS rules
@@ -3690,12 +3743,12 @@ const XyflowEditorHook = {
     // Override position constraints that might limit expansion
     this.canvas.style.setProperty('bottom', 'auto', 'important');
     this.canvas.style.setProperty('right', 'auto', 'important');
-    
+
     // Ensure background is always visible and covers the full canvas
     // Re-apply background styles to ensure they persist after size changes
     // Force background to cover entire area with explicit attachment
     this.canvas.style.background = 'transparent'; // Background is on .canvas-scroll-area
-    
+
     // Update nodesContainer size to match canvas - it must cover the full canvas area
     // This ensures the background is always visible everywhere
     if (this.nodesContainer) {
@@ -3709,13 +3762,13 @@ const XyflowEditorHook = {
       // Set overflow based on whether scrollbars are needed
       scrollArea.style.overflowX = needsHorizontalScroll ? 'auto' : 'hidden';
       scrollArea.style.overflowY = needsVerticalScroll ? 'auto' : 'hidden';
-      
+
       // Also ensure scrollArea doesn't constrain the container
       // The scrollArea should allow its content (container) to expand
       scrollArea.style.setProperty('min-height', '0', 'important');
       scrollArea.style.setProperty('max-height', 'none', 'important');
     }
-    
+
     // Force a reflow to ensure styles are applied
     // Sometimes the browser needs a nudge to recalculate
     if (this.container) {
@@ -3724,7 +3777,7 @@ const XyflowEditorHook = {
     if (this.canvas) {
       void this.canvas.offsetHeight; // Trigger reflow
     }
-    
+
     // Restore scroll position to prevent viewport snapping
     // This ensures the user's view remains stable when nodes are moved
     // Use multiple restoration attempts to ensure it sticks
@@ -3732,12 +3785,12 @@ const XyflowEditorHook = {
       // Immediate restoration
       scrollArea.scrollLeft = scrollLeft;
       scrollArea.scrollTop = scrollTop;
-      
+
       // Delayed restoration after layout
       requestAnimationFrame(() => {
         scrollArea.scrollLeft = scrollLeft;
         scrollArea.scrollTop = scrollTop;
-        
+
         // One more after next frame to ensure it persists
         requestAnimationFrame(() => {
           scrollArea.scrollLeft = scrollLeft;
@@ -3749,7 +3802,7 @@ const XyflowEditorHook = {
 };
 
 // Sync checkbox and selected styling from this.selectedNodes after (re)render
-XyflowEditorHook.syncCheckboxState = function(nodeEl) {
+XyflowEditorHook.syncCheckboxState = function (nodeEl) {
   if (!nodeEl) return;
   const nodeId = nodeEl.dataset.nodeId;
   const checkbox = nodeEl.querySelector('.node-select-checkbox');
@@ -3773,13 +3826,13 @@ XyflowEditorHook.syncCheckboxState = function(nodeEl) {
 };
 
 // Update the toolbar selection counter based on current selection set
-XyflowEditorHook.updateSelectionCount = function() {
+XyflowEditorHook.updateSelectionCount = function () {
   const countEl = document.getElementById('selection-count');
   if (countEl) {
     const nodeCount = this.selectedNodes ? this.selectedNodes.size : 0;
     const edgeCount = this.selectedEdges ? this.selectedEdges.size : 0;
     const total = nodeCount + edgeCount;
-    
+
     let text = '';
     if (nodeCount > 0 && edgeCount > 0) {
       text = `${nodeCount} node${nodeCount !== 1 ? 's' : ''}, ${edgeCount} edge${edgeCount !== 1 ? 's' : ''} selected`;
@@ -3792,64 +3845,64 @@ XyflowEditorHook.updateSelectionCount = function() {
     }
     countEl.textContent = text;
   }
-  
+
   // Send selection to LiveView
   if (this.pushEvent) {
     const nodeIds = this.selectedNodes || [];
     this.pushEvent("nodes_selected", { node_ids: nodeIds });
   }
-  
+
   // Also update Connect button state and Save as System button state
   this.updateConnectButtonState();
   this.updateSaveAsSystemButtonState();
 };
 
 // Update Connect button enabled/disabled state based on selection
-XyflowEditorHook.updateConnectButtonState = function() {
+XyflowEditorHook.updateConnectButtonState = function () {
   if (!this.connectBtn) return;
-  
+
   const count = this.selectedNodes ? this.selectedNodes.length : 0;
   const isEnabled = count === 2;
-  
+
   this.connectBtn.disabled = !isEnabled;
   this.connectBtn.style.opacity = isEnabled ? '1' : '0.5';
   this.connectBtn.style.cursor = isEnabled ? 'pointer' : 'not-allowed';
 };
 
 // Update Save as System button enabled/disabled state based on selection
-XyflowEditorHook.updateSaveAsSystemButtonState = function() {
+XyflowEditorHook.updateSaveAsSystemButtonState = function () {
   const saveAsSystemBtn = document.getElementById('save-as-system-btn');
   if (!saveAsSystemBtn) return;
-  
+
   const count = this.selectedNodes ? this.selectedNodes.length : 0;
   const isEnabled = count >= 2;  // Need at least 2 nodes
-  
+
   saveAsSystemBtn.disabled = !isEnabled;
   saveAsSystemBtn.style.opacity = isEnabled ? '1' : '0.5';
   saveAsSystemBtn.style.cursor = isEnabled ? 'pointer' : 'not-allowed';
 };
 
 // Toggle edge selection
-XyflowEditorHook.toggleEdgeSelection = function(edgeId) {
+XyflowEditorHook.toggleEdgeSelection = function (edgeId) {
   if (!this.selectedEdges) {
     this.selectedEdges = new Set();
   }
-  
+
   if (this.selectedEdges.has(edgeId)) {
     this.selectedEdges.delete(edgeId);
   } else {
     this.selectedEdges.add(edgeId);
   }
-  
+
   // Re-render edges to update visual state
   this.renderEdges();
-  
+
   // Update selection count
   this.updateSelectionCount();
 };
 
 // Clear all edge selections
-XyflowEditorHook.clearEdgeSelection = function() {
+XyflowEditorHook.clearEdgeSelection = function () {
   if (this.selectedEdges) {
     this.selectedEdges.clear();
     this.renderEdges();
@@ -3858,10 +3911,10 @@ XyflowEditorHook.clearEdgeSelection = function() {
 };
 
 // Handle port click for connection creation (fallback method)
-XyflowEditorHook.handlePortClick = function(handle, portType) {
+XyflowEditorHook.handlePortClick = function (handle, portType) {
   const portName = handle.dataset.port;
   const nodeId = handle.dataset.nodeId;
-  
+
   // Initialize connection state if not exists
   if (!this.connectingPort) {
     if (portType === 'output') {
@@ -3873,12 +3926,12 @@ XyflowEditorHook.handlePortClick = function(handle, portType) {
       };
       handle.style.background = '#999';
       handle.style.border = '3px solid #000';
-      console.log(`[Port] Started connection from ${portType} port "${portName}" on node ${nodeId}`);
-      
+      DEBUG && console.log(`[Port] Started connection from ${portType} port "${portName}" on node ${nodeId}`);
+
       // Highlight compatible inputs
       this.highlightCompatibleInputs(portName);
     } else {
-      console.log('[Port] Click on input port - waiting for output port to be selected first');
+      DEBUG && console.log('[Port] Click on input port - waiting for output port to be selected first');
     }
   } else {
     // Complete connection
@@ -3888,7 +3941,7 @@ XyflowEditorHook.handlePortClick = function(handle, portType) {
     const targetNodeId = nodeId;
     const targetPort = portName;
     const targetType = portType;
-    
+
     // Validate connection (output -> input)
     if (sourceType === 'output' && targetType === 'input') {
       // Check if ports are compatible (same name)
@@ -3907,27 +3960,27 @@ XyflowEditorHook.handlePortClick = function(handle, portType) {
 };
 
 // Handle port drop (for drag-and-drop connections)
-XyflowEditorHook.handlePortDrop = function(handle, portType) {
+XyflowEditorHook.handlePortDrop = function (handle, portType) {
   const portName = handle.dataset.port;
   const nodeId = handle.dataset.nodeId;
-  
+
   if (!this.connectingPort || this.connectingPort.type !== 'output') {
-    console.log('[Port] Drop rejected - no active output connection');
+    DEBUG && console.log('[Port] Drop rejected - no active output connection');
     return;
   }
-  
+
   // Prevent drop on the same node
   if (this.connectingPort.nodeId === nodeId) {
-    console.log('[Port] Drop rejected - cannot connect to same node');
+    DEBUG && console.log('[Port] Drop rejected - cannot connect to same node');
     this.cancelConnection();
     return;
   }
-  
+
   const sourceNodeId = this.connectingPort.nodeId;
   const sourcePort = this.connectingPort.port;
   const targetNodeId = nodeId;
   const targetPort = portName;
-  
+
   // Validate connection (ports must match)
   if (sourcePort === targetPort) {
     this.createConnection(sourceNodeId, targetNodeId, sourcePort, targetPort);
@@ -3938,14 +3991,14 @@ XyflowEditorHook.handlePortDrop = function(handle, portType) {
 };
 
 // Create connection between ports
-XyflowEditorHook.createConnection = function(sourceNodeId, targetNodeId, sourcePort, targetPort) {
+XyflowEditorHook.createConnection = function (sourceNodeId, targetNodeId, sourcePort, targetPort) {
   // Validate: don't create self-loops
   if (sourceNodeId === targetNodeId) {
-    console.log('[Port] Cannot create self-loop connection');
+    DEBUG && console.log('[Port] Cannot create self-loop connection');
     this.cancelConnection();
     return;
   }
-  
+
   // Create edge
   this.pushEvent('edge_added', {
     source_id: sourceNodeId,
@@ -3954,14 +4007,14 @@ XyflowEditorHook.createConnection = function(sourceNodeId, targetNodeId, sourceP
     target_handle: targetPort,
     label: sourcePort.replace(/_/g, ' ') // Convert underscores to spaces for display
   });
-  console.log(`[Port] Created connection: ${sourcePort} from ${sourceNodeId} to ${targetNodeId}`);
-  
+  DEBUG && console.log(`[Port] Created connection: ${sourcePort} from ${sourceNodeId} to ${targetNodeId}`);
+
   // Reset connection state
   this.cancelConnection();
 };
 
 // Cancel current connection attempt
-XyflowEditorHook.cancelConnection = function() {
+XyflowEditorHook.cancelConnection = function () {
   if (this.connectingPort) {
     const sourceHandle = this.connectingPort.handle;
     if (sourceHandle) {
@@ -3975,7 +4028,7 @@ XyflowEditorHook.cancelConnection = function() {
 };
 
 // Highlight compatible input handles
-XyflowEditorHook.highlightCompatibleInputs = function(portName) {
+XyflowEditorHook.highlightCompatibleInputs = function (portName) {
   const allInputHandles = this.canvas.querySelectorAll('.input-handle[data-port="' + portName + '"]');
   allInputHandles.forEach(handle => {
     handle.style.border = '3px solid #999';
@@ -3984,7 +4037,7 @@ XyflowEditorHook.highlightCompatibleInputs = function(portName) {
 };
 
 // Clear input handle highlights
-XyflowEditorHook.clearInputHighlights = function() {
+XyflowEditorHook.clearInputHighlights = function () {
   const allInputHandles = this.canvas.querySelectorAll('.input-handle');
   allInputHandles.forEach(handle => {
     handle.style.border = '2px solid #000';
@@ -3994,9 +4047,9 @@ XyflowEditorHook.clearInputHighlights = function() {
 };
 
 // Show modal for saving composite system
-XyflowEditorHook.showSaveSystemModal = function() {
+XyflowEditorHook.showSaveSystemModal = function () {
   const selectedArray = this.selectedNodes;
-  
+
   // Create modal overlay
   const overlay = document.createElement('div');
   overlay.style.position = 'fixed';
@@ -4009,7 +4062,7 @@ XyflowEditorHook.showSaveSystemModal = function() {
   overlay.style.display = 'flex';
   overlay.style.alignItems = 'center';
   overlay.style.justifyContent = 'center';
-  
+
   // Create modal content
   const modal = document.createElement('div');
   modal.style.background = '#FFF';
@@ -4020,7 +4073,7 @@ XyflowEditorHook.showSaveSystemModal = function() {
   modal.style.fontFamily = "'Chicago', 'Geneva', 'Monaco', monospace";
   modal.style.fontSize = '12px';
   modal.style.boxShadow = '4px 4px 0 rgba(0,0,0,0.3)';
-  
+
   modal.innerHTML = `
     <div style="margin-bottom: 15px; font-weight: bold; font-size: 14px;">Save as System</div>
     <div style="margin-bottom: 10px;">
@@ -4040,43 +4093,43 @@ XyflowEditorHook.showSaveSystemModal = function() {
       <button id="save-system-submit" style="padding: 6px 12px; background: #FFF; border: 2px solid #000; border-radius: 0; cursor: pointer; font-family: inherit; font-size: 11px; font-weight: bold;">Save</button>
     </div>
   `;
-  
+
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
-  
+
   // Focus on name input
   const nameInput = modal.querySelector('#system-name-input');
   nameInput.focus();
-  
+
   // Cancel handler
   const cancelBtn = modal.querySelector('#save-system-cancel');
   cancelBtn.addEventListener('click', () => {
     document.body.removeChild(overlay);
   });
-  
+
   // Submit handler
   const submitBtn = modal.querySelector('#save-system-submit');
   submitBtn.addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     const name = nameInput.value.trim();
     if (!name) {
       alert('Please enter a name for the system');
       return;
     }
-    
+
     const description = modal.querySelector('#system-description-input').value.trim();
     const iconName = modal.querySelector('#system-icon-input').value.trim();
-    
+
     // Disable button to prevent double-clicks
     submitBtn.disabled = true;
     submitBtn.textContent = 'Saving...';
-    
+
     try {
       // Store overlay reference for the response handler
       this.currentSaveOverlay = overlay;
-      
+
       // Push event to server
       this.pushEvent('save_composite_system', {
         name: name,
@@ -4084,9 +4137,9 @@ XyflowEditorHook.showSaveSystemModal = function() {
         icon_name: iconName || null,
         node_ids: selectedArray
       });
-      
-      console.log('Save composite system event sent successfully');
-      
+
+      DEBUG && console.log('Save composite system event sent successfully');
+
       // Modal will be closed by the response handler
     } catch (error) {
       console.error('Error saving composite system:', error);
@@ -4095,14 +4148,14 @@ XyflowEditorHook.showSaveSystemModal = function() {
       submitBtn.textContent = 'Save';
     }
   });
-  
+
   // Close on overlay click (but not modal click)
   overlay.addEventListener('click', (e) => {
     if (e.target === overlay) {
       document.body.removeChild(overlay);
     }
   });
-  
+
   // Close on Escape key
   const escapeHandler = (e) => {
     if (e.key === 'Escape') {
@@ -4114,7 +4167,7 @@ XyflowEditorHook.showSaveSystemModal = function() {
 };
 
 // Show suggestions panel
-XyflowEditorHook.showSuggestionsPanel = function(suggestions) {
+XyflowEditorHook.showSuggestionsPanel = function (suggestions) {
   // Remove existing panel if present
   const existing = document.getElementById('suggestions-panel');
   if (existing) {
@@ -4162,7 +4215,7 @@ XyflowEditorHook.showSuggestionsPanel = function(suggestions) {
   `;
 
   const listDiv = panel.querySelector('#suggestions-list');
-  
+
   suggestions.forEach((suggestion, index) => {
     const priorityColor = suggestion.priority === 'high' ? '#000' : (suggestion.priority === 'medium' ? '#333' : '#666');
     const item = document.createElement('div');
@@ -4171,7 +4224,7 @@ XyflowEditorHook.showSuggestionsPanel = function(suggestions) {
     item.style.border = '1px solid #000';
     item.style.background = '#FFF';
     item.style.borderLeft = `4px solid ${priorityColor}`;
-    
+
     item.innerHTML = `
       <div style="margin-bottom: 5px; font-weight: bold; color: ${priorityColor};">
         [${suggestion.priority.toUpperCase()}] ${suggestion.type}
@@ -4183,7 +4236,7 @@ XyflowEditorHook.showSuggestionsPanel = function(suggestions) {
         Apply
       </button>
     `;
-    
+
     const applyBtn = item.querySelector('.apply-suggestion-btn');
     applyBtn.addEventListener('click', () => {
       this.pushEvent('apply_suggestion', {
@@ -4192,7 +4245,7 @@ XyflowEditorHook.showSuggestionsPanel = function(suggestions) {
       });
       overlay.remove();
     });
-    
+
     listDiv.appendChild(item);
   });
 
@@ -4223,9 +4276,9 @@ XyflowEditorHook.showSuggestionsPanel = function(suggestions) {
 };
 
 // Enable inline editing for node name
-XyflowEditorHook.enableNodeNameEdit = function(nameDiv, nodeId, defaultName) {
+XyflowEditorHook.enableNodeNameEdit = function (nameDiv, nodeId, defaultName) {
   const currentText = nameDiv.textContent.trim();
-  
+
   // Create input field
   const input = document.createElement('input');
   input.type = 'text';
@@ -4240,30 +4293,30 @@ XyflowEditorHook.enableNodeNameEdit = function(nameDiv, nodeId, defaultName) {
   input.style.fontSize = '11px';
   input.style.fontWeight = 'bold';
   input.style.boxShadow = 'inset 1px 1px 0 rgba(0,0,0,0.3)';
-  
+
   // Replace nameDiv with input
   nameDiv.style.display = 'none';
   nameDiv.parentNode.insertBefore(input, nameDiv);
   input.focus();
   input.select();
-  
+
   // Save on blur or Enter
   const saveName = () => {
     const newName = input.value.trim();
     const finalName = newName || defaultName;
-    
+
     // Update nameDiv content
     nameDiv.textContent = finalName;
     nameDiv.style.display = '';
     input.remove();
-    
+
     // Only push event if name changed
     if (finalName !== currentText && finalName !== defaultName) {
       this.pushEvent('node_renamed', {
         node_id: nodeId,
         custom_name: finalName
       });
-      
+
       // Update local node data
       const node = this.nodes.find(n => n.id === nodeId);
       if (node) {
@@ -4275,20 +4328,20 @@ XyflowEditorHook.enableNodeNameEdit = function(nameDiv, nodeId, defaultName) {
         node_id: nodeId,
         custom_name: null
       });
-      
+
       const node = this.nodes.find(n => n.id === nodeId);
       if (node) {
         delete node.custom_name;
       }
     }
   };
-  
+
   // Cancel on Escape
   const cancelEdit = () => {
     nameDiv.style.display = '';
     input.remove();
   };
-  
+
   input.addEventListener('blur', saveName);
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
@@ -4318,7 +4371,7 @@ function getCategoryIcon(node) {
 }
 
 // Add keyboard shortcuts and zoom methods to hook
-XyflowEditorHook.setupKeyboardShortcuts = function() {
+XyflowEditorHook.setupKeyboardShortcuts = function () {
   // Global keyboard listener
   this.keyboardHandler = (e) => {
     // Don't trigger if typing in input field
@@ -4340,38 +4393,38 @@ XyflowEditorHook.setupKeyboardShortcuts = function() {
       return;
     }
 
-      // Delete/Backspace = Delete selected
-      if ((e.key === 'Delete' || e.key === 'Backspace') && this.selectedNodes && this.selectedNodes.length > 0) {
-        e.preventDefault();
-        this.pushEvent('bulk_delete', { node_ids: this.selectedNodes });
-        return;
-      }
+    // Delete/Backspace = Delete selected
+    if ((e.key === 'Delete' || e.key === 'Backspace') && this.selectedNodes && this.selectedNodes.length > 0) {
+      e.preventDefault();
+      this.pushEvent('bulk_delete', { node_ids: this.selectedNodes });
+      return;
+    }
 
-      // PART 2: Fix Escape Key - Complete rewrite
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        
-        // Close detail sidebar
-        this.pushEvent("close_detail_panel", {});
-        
-        // Clear selection
-        this.selectedNodes = [];
-        this.pushEvent("deselect_all", {});
-        
-        // Force re-render
-        this.renderNodes();
-        this.renderEdges();
-        return;
-      }
+    // PART 2: Fix Escape Key - Complete rewrite
+    if (e.key === 'Escape') {
+      e.preventDefault();
 
-      // Ctrl/Cmd + A = Select all visible nodes
-      if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
-        e.preventDefault();
-        this.selectedNodes = this.nodes.map(n => n.id);
-        this.renderNodes();
-        this.pushEvent('nodes_selected', { node_ids: this.selectedNodes });
-        return;
-      }
+      // Close detail sidebar
+      this.pushEvent("close_detail_panel", {});
+
+      // Clear selection
+      this.selectedNodes = [];
+      this.pushEvent("deselect_all", {});
+
+      // Force re-render
+      this.renderNodes();
+      this.renderEdges();
+      return;
+    }
+
+    // Ctrl/Cmd + A = Select all visible nodes
+    if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
+      e.preventDefault();
+      this.selectedNodes = this.nodes.map(n => n.id);
+      this.renderNodes();
+      this.pushEvent('nodes_selected', { node_ids: this.selectedNodes });
+      return;
+    }
 
     // ? = Show keyboard shortcuts help
     if (e.key === '?') {
@@ -4386,22 +4439,22 @@ XyflowEditorHook.setupKeyboardShortcuts = function() {
       e.preventDefault();
       const panAmount = e.shiftKey ? 50 : 10;
 
-      switch(e.key) {
-        case 'ArrowUp': 
-          this.panY += panAmount; 
+      switch (e.key) {
+        case 'ArrowUp':
+          this.panY += panAmount;
           break;
-        case 'ArrowDown': 
-          this.panY -= panAmount; 
+        case 'ArrowDown':
+          this.panY -= panAmount;
           break;
-        case 'ArrowLeft': 
-          this.panX += panAmount; 
+        case 'ArrowLeft':
+          this.panX += panAmount;
           break;
-        case 'ArrowRight': 
-          this.panX -= panAmount; 
+        case 'ArrowRight':
+          this.panX -= panAmount;
           break;
       }
 
-      console.log('Panning:', this.panX, this.panY);
+      DEBUG && console.log('Panning:', this.panX, this.panY);
       this.applyZoomTransform(); // CRITICAL: Must call this!
       return;
     }
@@ -4410,7 +4463,7 @@ XyflowEditorHook.setupKeyboardShortcuts = function() {
     if (e.key === '+' || e.key === '=') {
       e.preventDefault();
       this.zoomLevel = Math.min(3, (this.zoomLevel || 1) * 1.1);
-      console.log('Zoom in:', this.zoomLevel);
+      DEBUG && console.log('Zoom in:', this.zoomLevel);
       this.applyZoomTransform(); // CRITICAL
       return;
     }
@@ -4419,7 +4472,7 @@ XyflowEditorHook.setupKeyboardShortcuts = function() {
     if (e.key === '-' || e.key === '_') {
       e.preventDefault();
       this.zoomLevel = Math.max(0.1, (this.zoomLevel || 1) * 0.9);
-      console.log('Zoom out:', this.zoomLevel);
+      DEBUG && console.log('Zoom out:', this.zoomLevel);
       this.applyZoomTransform(); // CRITICAL
       return;
     }
@@ -4429,7 +4482,7 @@ XyflowEditorHook.setupKeyboardShortcuts = function() {
       e.preventDefault();
       e.stopPropagation();
 
-      console.log('Reset zoom/pan triggered');
+      DEBUG && console.log('Reset zoom/pan triggered');
 
       this.zoomLevel = 1;
       this.panX = 0;
@@ -4442,14 +4495,14 @@ XyflowEditorHook.setupKeyboardShortcuts = function() {
         this.svgContainer.style.transform = 'scale(1) translate(0px, 0px)';
       }
 
-      const nodesContainer = this.nodesContainer || 
-                             this.el.querySelector('.nodes-container') || 
-                             this.el.querySelector('[data-nodes-container]');
+      const nodesContainer = this.nodesContainer ||
+        this.el.querySelector('.nodes-container') ||
+        this.el.querySelector('[data-nodes-container]');
       if (nodesContainer) {
         nodesContainer.style.transform = 'scale(1) translate(0px, 0px)';
       }
 
-      console.log('Zoom/pan reset complete');
+      DEBUG && console.log('Zoom/pan reset complete');
       return;
     }
   };
@@ -4457,7 +4510,7 @@ XyflowEditorHook.setupKeyboardShortcuts = function() {
   document.addEventListener('keydown', this.keyboardHandler);
 };
 
-XyflowEditorHook.setupZoomAndPan = function() {
+XyflowEditorHook.setupZoomAndPan = function () {
   // Zoom with Ctrl/Cmd + Mouse Wheel
   const canvasArea = this.el.querySelector('.canvas-area') || this.el;
 
@@ -4469,14 +4522,14 @@ XyflowEditorHook.setupZoomAndPan = function() {
       const zoomDelta = e.deltaY > 0 ? 0.9 : 1.1;
       this.zoomLevel = Math.max(0.1, Math.min(3, (this.zoomLevel || 1) * zoomDelta));
 
-      console.log('Zoom level:', this.zoomLevel);
+      DEBUG && console.log('Zoom level:', this.zoomLevel);
 
       this.applyZoomTransform();
     }
   }, { passive: false }); // Important: passive false allows preventDefault
 };
 
-XyflowEditorHook.applyZoomTransform = function() {
+XyflowEditorHook.applyZoomTransform = function () {
   const transform = `scale(${this.zoomLevel}) translate(${this.panX}px, ${this.panY}px)`;
 
   // Apply to SVG container (edges)
@@ -4486,27 +4539,34 @@ XyflowEditorHook.applyZoomTransform = function() {
   }
 
   // Apply to nodes container
-  const nodesContainer = this.nodesContainer || 
-                         this.el.querySelector('.nodes-container') || 
-                         this.el.querySelector('[data-nodes-container]');
+  const nodesContainer = this.nodesContainer ||
+    this.el.querySelector('.nodes-container') ||
+    this.el.querySelector('[data-nodes-container]');
 
   if (nodesContainer) {
     nodesContainer.style.transform = transform;
     nodesContainer.style.transformOrigin = '0 0';
   }
 
-  console.log('Applied zoom transform:', this.zoomLevel, 'pan:', this.panX, this.panY);
-  console.log('SVG container:', this.svgContainer);
-  console.log('Nodes container:', nodesContainer);
+  DEBUG && console.log('Applied zoom transform:', this.zoomLevel, 'pan:', this.panX, this.panY);
+  DEBUG && console.log('SVG container:', this.svgContainer);
+  DEBUG && console.log('Nodes container:', nodesContainer);
 };
 
 // Clean up on destroy
 if (!XyflowEditorHook.destroyed) {
-  const originalDestroyed = XyflowEditorHook.destroyed || function() {};
-  XyflowEditorHook.destroyed = function() {
+  const originalDestroyed = XyflowEditorHook.destroyed || function () { };
+  XyflowEditorHook.destroyed = function () {
     // Clean up keyboard listener
     if (this.keyboardHandler) {
       document.removeEventListener('keydown', this.keyboardHandler);
+    }
+    // Clean up global drag listeners
+    if (this.handleGlobalMouseMove) {
+      document.removeEventListener('mousemove', this.handleGlobalMouseMove);
+    }
+    if (this.handleGlobalMouseUp) {
+      document.removeEventListener('mouseup', this.handleGlobalMouseUp);
     }
     // Call original destroyed if it exists
     if (originalDestroyed) {
@@ -4549,7 +4609,7 @@ function isPositionOccupied(x, y, existingNodes, threshold = 50) {
   });
 }
 
-XyflowEditorHook.findAvailablePosition = function(initialX, initialY) {
+XyflowEditorHook.findAvailablePosition = function (initialX, initialY) {
   let finalX = initialX;
   let finalY = initialY;
   let attempts = 0;

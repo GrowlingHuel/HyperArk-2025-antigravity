@@ -30,7 +30,8 @@ defmodule GreenManTavernWeb.JournalPanelComponent do
 
     socket =
       if is_nil(socket.assigns[:journal_entries]) do
-        user_id = socket.assigns[:current_user].id
+        current_user = socket.assigns[:current_user]
+        user_id = if current_user, do: current_user.id, else: nil
         
         socket
         |> assign(:journal_entries, Journal.list_entries(user_id, limit: 1000))

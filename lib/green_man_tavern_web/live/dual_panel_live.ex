@@ -8,6 +8,9 @@ defmodule GreenManTavernWeb.DualPanelLive do
   alias GreenManTavern.{Conversations, Accounts, Sessions}
   alias GreenManTavern.AI.{OpenAIClient, CharacterContext, SessionProcessor}
   alias GreenManTavern.PlantingGuide
+  alias GreenManTavern.Inventory
+  alias GreenManTavern.Quests
+  alias GreenManTavern.Quests.QuestGenerator
 
 
   @pubsub GreenManTavern.PubSub
@@ -81,6 +84,9 @@ defmodule GreenManTavernWeb.DualPanelLive do
   def handle_params(params, _url, socket) do
     Logger.info("[DualPanel] 🔗 handle_params called with params: #{inspect(params)}")
     
+    # Store current params for URL construction
+    socket = assign(socket, :current_params, params)
+
     # Determine action from params or live_action
     action =
       case params["page"] do
@@ -95,23 +101,30 @@ defmodule GreenManTavernWeb.DualPanelLive do
     socket = assign(socket, :right_panel_action, action)
     socket = assign(socket, :last_action, "handle_params")
 
-    # Initialize planting guide if needed
-    socket =
-      if action == :planting_guide do
-        Logger.info("[DualPanel] 🌱 Initializing planting guide from handle_params...")
-        user_plants =
-          if socket.assigns[:current_user] do
-            PlantingGuide.list_user_plants(socket.assigns.current_user.id)
+    # Handle character selection from URL
+    socket = 
+      case params["character"] do
+        nil -> 
+          # If character param is missing but we have one selected, close it
+          if socket.assigns[:selected_character] do
+            close_character_session(socket)
           else
-            []
+            socket
           end
+        
+        slug ->
+          # If slug is different from current, load it
+          current_slug = socket.assigns[:selected_character] && Characters.name_to_slug(socket.assigns.selected_character.name)
           
-        socket
-        |> assign(:user_plants, user_plants || [])
-        |> assign(:initialize_planting_guide, true)
-      else
-        socket
+          if slug != current_slug do
+            load_character(socket, slug)
+          else
+            socket
+          end
       end
+
+    # Load data for the right panel action
+    socket = load_right_panel_data(socket, action, params)
 
     {:noreply, socket}
   end
@@ -142,7 +155,8 @@ defmodule GreenManTavernWeb.DualPanelLive do
 
   @impl true
   def handle_event("add_inventory_item", %{"item" => item_params}, socket) do
-    user_id = socket.assigns.current_user.id
+    if socket.assigns[:current_user] do
+      user_id = socket.assigns.current_user.id
 
     case Inventory.create_manual_item(user_id, item_params) do
       {:ok, _item} ->
@@ -159,12 +173,16 @@ defmodule GreenManTavernWeb.DualPanelLive do
       {:error, _changeset} ->
         {:noreply, put_flash(socket, :error, "Failed to add item")}
     end
+  else
+    {:noreply, put_flash(socket, :error, "You must be logged in to add items")}
+  end
   end
 
   @impl true
   def handle_event("delete_inventory_item", %{"id" => id}, socket) do
-    item = Inventory.get_inventory_item!(String.to_integer(id))
-    user_id = socket.assigns.current_user.id
+    if socket.assigns[:current_user] do
+      item = Inventory.get_inventory_item!(String.to_integer(id))
+      user_id = socket.assigns.current_user.id
 
     case Inventory.delete_inventory_item(item) do
       {:ok, _} ->
@@ -181,6 +199,9 @@ defmodule GreenManTavernWeb.DualPanelLive do
       {:error, _} ->
         {:noreply, put_flash(socket, :error, "Failed to delete item")}
     end
+  else
+    {:noreply, put_flash(socket, :error, "You must be logged in to delete items")}
+  end
   end
 
   @impl true
@@ -228,55 +249,138 @@ defmodule GreenManTavernWeb.DualPanelLive do
 
   @impl true
   # LEFT WINDOW: Character selection should only affect left-side chat state.
-  # - Loads character, conversation history, and clears input
-  # - DOES NOT touch right window state (current page or page_data)
+  # - Updates URL with character param (via push_patch)
+  # - State loading is handled by handle_params
   def handle_event("select_character", %{"character_slug" => slug}, socket) do
+    require Logger
+    Logger.info("[DualPanel] 🎯 select_character event - slug: #{inspect(slug)}, live_action: #{inspect(socket.assigns.live_action)}")
+    
+    # Construct new params with character slug
+    current_params = socket.assigns[:current_params] || %{}
+    new_params = Map.put(current_params, "character", slug)
+    
+    Logger.info("[DualPanel] 🎯 current_params: #{inspect(current_params)}, new_params: #{inspect(new_params)}")
+    
+    # Build path based on current live_action
+    path = build_current_path(socket, new_params)
+    
+    Logger.info("[DualPanel] 🎯 Built path: #{inspect(path)}")
+    
+    {:noreply, push_patch(socket, to: path)}
+  end
+
+  @impl true
+  def handle_event("show_tavern_home", _params, socket) do
+    # Remove character param from URL
+    current_params = socket.assigns[:current_params] || %{}
+    new_params = Map.delete(current_params, "character")
+    
+    # Build path based on current live_action
+    path = build_current_path(socket, new_params)
+    
+    {:noreply, push_patch(socket, to: path)}
+  end
+
+  # Helper to build path based on live_action and params
+  defp build_current_path(socket, params) do
+    require Logger
+    
+    path = 
+      case socket.assigns.live_action do
+        :home -> "/"
+        :living_web -> "/living-web"
+        :inventory -> "/inventory"
+        _ -> "/"
+      end
+    
+    Logger.info("[DualPanel] 🛤️ build_current_path - live_action: #{inspect(socket.assigns.live_action)}, base path: #{inspect(path)}, params: #{inspect(params)}")
+      
+    if map_size(params) > 0 do
+      full_path = "#{path}?#{URI.encode_query(params)}"
+      Logger.info("[DualPanel] 🛤️ Full path with params: #{inspect(full_path)}")
+      full_path
+    else
+      path
+    end
+  end
+
+  # Private helper to close character session
+  defp close_character_session(socket) do
+    require Logger
+
+    # Process current session before leaving character
+    if socket.assigns[:selected_character] && socket.assigns[:session_id] && socket.assigns[:current_user] do
+      Logger.info("[DualPanel] 📝 User returning to tavern - processing session...")
+
+      # Convert session_id to string (it might be a UUID struct from Ecto)
+      current_session_id =
+        case socket.assigns.session_id do
+          %{__struct__: Ecto.UUID} = uuid -> Ecto.UUID.cast!(uuid)
+          id when is_binary(id) -> id
+          other -> to_string(other)
+        end
+      user_id = socket.assigns.current_user.id
+
+      Logger.info("[DualPanel] Processing session_id: #{inspect(current_session_id)}")
+
+      Task.start(fn ->
+        process_session_end(current_session_id, user_id)
+      end)
+    end
+
+    socket
+    |> assign(:left_panel_view, :tavern_home)
+    |> assign(:selected_character, nil)
+    |> assign(:session_id, nil)
+  end
+
+  # Private helper to load character and setup session
+  defp load_character(socket, slug) do
     require Logger
     alias GreenManTavern.Sessions
 
     Logger.info("="<>String.duplicate("=", 70))
-    Logger.info("[DualPanel] select_character event START")
-    Logger.info("[DualPanel] Received slug: #{slug}")
-    Logger.info("[DualPanel] Current left_panel_view: #{inspect(socket.assigns[:left_panel_view])}")
-    Logger.info("[DualPanel] Current right_panel_action: #{inspect(socket.assigns[:right_panel_action])}")
-    Logger.info("[DualPanel] Current selected_character: #{inspect(socket.assigns[:selected_character] && socket.assigns[:selected_character].name)}")
+    Logger.info("[DualPanel] load_character START")
+    Logger.info("[DualPanel] Loading slug: #{slug}")
 
     case Characters.get_character_by_slug(slug) do
       nil ->
         Logger.warning("[DualPanel] Character not found for slug: #{slug}")
-        {:noreply, socket}
+        socket
 
       character ->
         Logger.info("[DualPanel] Found character: #{character.name} (ID: #{character.id})")
         user_id = socket.assigns.user_id
+        Logger.info("[DualPanel] Current user_id: #{inspect(user_id)}")
 
         # STEP 1: Process OLD session if switching away from another character
-        if socket.assigns[:selected_character] && socket.assigns[:session_id] && socket.assigns[:current_user] do
-          Logger.info("[DualPanel] 📝 User switching characters - processing current session...")
+        socket = 
+          if socket.assigns[:selected_character] && socket.assigns[:selected_character].id != character.id do
+            close_character_session(socket)
+          else
+            socket
+          end
 
-          # Convert session_id to string (it might be a UUID struct from Ecto)
-          current_session_id =
-            case socket.assigns.session_id do
-              %{__struct__: Ecto.UUID} = uuid -> Ecto.UUID.cast!(uuid)
-              id when is_binary(id) -> id
-              other -> to_string(other)
+        # STEP 2: Get or Create session_id
+        # Use get_or_create_session to resume recent sessions or start new one
+        session_id = 
+          if user_id do
+            case Conversations.get_or_create_session(user_id, character.id) do
+              {:ok, sid} -> 
+                Logger.info("[DualPanel] 🆕 Using session_id: #{inspect(sid)}")
+                sid
+              {:error, reason} ->
+                Logger.error("[DualPanel] ❌ Failed to get/create session: #{inspect(reason)}")
+                Sessions.generate_session_id() # Fallback
             end
-          current_user_id = socket.assigns.current_user.id
+          else
+            Logger.warning("[DualPanel] ⚠️ No user_id, generating temporary session_id")
+            Sessions.generate_session_id()
+          end
+        
+        Logger.info("[DualPanel] 🆕 Session for character: #{character.name}")
 
-          Logger.info("[DualPanel] Processing session_id: #{inspect(current_session_id)}")
-
-          Task.start(fn ->
-            process_session_end(current_session_id, current_user_id)
-          end)
-        end
-
-        # STEP 2: Generate NEW session_id for the new character conversation
-        # ALWAYS generate a new session_id, even if it's the first character selection
-        new_session_id = Sessions.generate_session_id()
-        Logger.info("[DualPanel] 🆕 Generated new session_id: #{inspect(new_session_id)}")
-        Logger.info("[DualPanel] 🆕 Starting new session: #{new_session_id} for character: #{character.name}")
-
-        # Store current messages for current character before switching
+        # Store current messages for current character before switching (if any)
         # This preserves any unsaved messages when switching between characters
         current_character = socket.assigns[:selected_character]
         current_messages = socket.assigns[:chat_messages] || []
@@ -325,76 +429,75 @@ defmodule GreenManTavernWeb.DualPanelLive do
               cached_messages
           end
 
-        # CRITICAL: Preserve right panel state - do NOT change right_panel_action
-        current_right_action = socket.assigns[:right_panel_action] || :home
-        Logger.info("[DualPanel] BEFORE assign - right_panel_action: #{inspect(current_right_action)}")
+        Logger.info("[DualPanel] load_character END")
+        Logger.info("="<>String.duplicate("=", 70))
 
-        # STEP 3: Assign new session_id to socket BEFORE returning
-        new_socket = socket
+        socket
          |> assign(:selected_character, character)
          |> assign(:left_panel_view, :character_chat)
          |> assign(:chat_messages, messages)
          |> assign(:character_messages, updated_character_messages)
          |> assign(:current_message, "")
-         |> assign(:right_panel_action, current_right_action)
-         |> assign(:session_id, new_session_id)  # CRITICAL: Assign new session_id here
-
-        Logger.info("[DualPanel] AFTER assign - left_panel_view: #{inspect(new_socket.assigns.left_panel_view)}")
-        Logger.info("[DualPanel] AFTER assign - right_panel_action: #{inspect(new_socket.assigns.right_panel_action)}")
-        Logger.info("[DualPanel] AFTER assign - selected_character: #{inspect(new_socket.assigns.selected_character.name)}")
-        Logger.info("[DualPanel] 🔍 Socket now has session_id: #{inspect(new_socket.assigns[:session_id])}")
-        Logger.info("[DualPanel] AFTER assign - session_id: #{inspect(new_socket.assigns.session_id)}")
-        Logger.info("[DualPanel] select_character event END")
-        Logger.info("="<>String.duplicate("=", 70))
-
-        {:noreply, new_socket}
+         |> assign(:session_id, session_id)
     end
+  rescue
+    e ->
+      Logger.error("[DualPanel] ❌ CRASH in load_character: #{inspect(e)}")
+      Logger.error(Exception.format(:error, e, __STACKTRACE__))
+      socket
   end
 
-  @impl true
-  def handle_event("show_tavern_home", _params, socket) do
+  # Private helper to load data for right panel actions
+  defp load_right_panel_data(socket, action, _params) do
     require Logger
+    alias GreenManTavern.Journal
+    
+    case action do
+      :journal ->
+        Logger.info("[DualPanel] 📖 Loading Journal data...")
+        user_id = if socket.assigns[:current_user], do: socket.assigns.current_user.id, else: nil
+        
+        socket
+        |> assign(:journal_entries, if(user_id, do: Journal.list_entries(user_id, limit: 1000), else: []))
+        |> assign(:journal_current_page, socket.assigns[:journal_current_page] || 1)
+        |> assign(:journal_entries_per_page, socket.assigns[:journal_entries_per_page] || 15)
+        |> assign(:journal_has_overflow, socket.assigns[:journal_has_overflow] || false)
+        |> assign(:journal_show_hidden, socket.assigns[:journal_show_hidden] || false)
+        |> assign(:journal_search_term, socket.assigns[:journal_search_term] || "")
+        |> assign(:characters, socket.assigns[:characters] || Characters.list_characters())
 
-    # Process current session before leaving character
-    if socket.assigns[:selected_character] && socket.assigns[:session_id] && socket.assigns[:current_user] do
-      Logger.info("[DualPanel] 📝 User returning to tavern - processing session...")
+      :planting_guide ->
+        Logger.info("[DualPanel] 🌱 Loading Planting Guide data...")
+        user_plants =
+          if socket.assigns[:current_user] do
+            PlantingGuide.list_user_plants(socket.assigns.current_user.id)
+          else
+            []
+          end
+          
+        socket
+        |> assign(:user_plants, user_plants || [])
+        |> assign(:initialize_planting_guide, true)
 
-      # Convert session_id to string (it might be a UUID struct from Ecto)
-      current_session_id =
-        case socket.assigns.session_id do
-          %{__struct__: Ecto.UUID} = uuid -> Ecto.UUID.cast!(uuid)
-          id when is_binary(id) -> id
-          other -> to_string(other)
-        end
-      user_id = socket.assigns.current_user.id
+      :living_web ->
+        # Add any living web specific data loading here
+        socket
 
-      Logger.info("[DualPanel] Processing session_id: #{inspect(current_session_id)}")
-
-      Task.start(fn ->
-        process_session_end(current_session_id, user_id)
-      end)
-
-      # Clear session_id since we're leaving character conversation
-      socket = assign(socket, :session_id, nil)
-      socket = assign(socket, :selected_character, nil)
+      _ ->
+        socket
     end
-
-    socket =
-      socket
-      |> assign(:left_panel_view, :tavern_home)
-      |> assign(:selected_character, nil)
-
-    {:noreply, socket}
   end
 
   # LEFT WINDOW CLEAR ONLY: HyperArk click clears chat state, preserves right page.
   def handle_event("navigate", %{"page" => "hyperark"}, socket) do
-    {:noreply,
-     socket
-     |> assign(:selected_character, nil)
-     |> assign(:chat_messages, [])
-     |> assign(:current_message, "")
-     |> assign(:left_panel_view, :tavern_home)}
+    # Just clear character param from URL
+    current_params = socket.assigns[:current_params] || %{}
+    new_params = Map.delete(current_params, "character")
+    
+    # Keep current page if any
+    path = build_current_path(socket, new_params)
+    
+    {:noreply, push_patch(socket, to: path)}
   end
 
   @impl true
@@ -404,90 +507,44 @@ defmodule GreenManTavernWeb.DualPanelLive do
   # - DOES NOT touch left window chat state
   def handle_event("navigate", %{"page" => "journal"}, socket) do
     require Logger
-
-    # Process current session before navigating to journal
-    if socket.assigns[:selected_character] && socket.assigns[:session_id] && socket.assigns[:current_user] do
-      Logger.info("[DualPanel] 📝 User navigating to journal - processing session...")
-
-      # Convert session_id to string (it might be a UUID struct from Ecto)
-      current_session_id =
-        case socket.assigns.session_id do
-          %{__struct__: Ecto.UUID} = uuid -> Ecto.UUID.cast!(uuid)
-          id when is_binary(id) -> id
-          other -> to_string(other)
-        end
-      user_id = socket.assigns.current_user.id
-
-      Logger.info("[DualPanel] Processing session_id: #{inspect(current_session_id)}")
-
-      Task.start(fn ->
-        process_session_end(current_session_id, user_id)
-      end)
-    end
-
-    # Ensure all journal-related assigns are properly initialized
-    user_id = if socket.assigns[:current_user], do: socket.assigns.current_user.id, else: nil
-
-    socket =
-      socket
-      |> assign(:right_panel_action, :journal)
-      |> assign(:journal_entries, if(user_id, do: Journal.list_entries(user_id, limit: 1000), else: []))
-      |> assign(:journal_current_page, socket.assigns[:journal_current_page] || 1)
-      |> assign(:journal_entries_per_page, socket.assigns[:journal_entries_per_page] || 15)
-      |> assign(:journal_has_overflow, socket.assigns[:journal_has_overflow] || false)
-      |> assign(:journal_show_hidden, socket.assigns[:journal_show_hidden] || false)
-      |> assign(:journal_search_term, socket.assigns[:journal_search_term] || "")
-      |> assign(:characters, socket.assigns[:characters] || Characters.list_characters())
-
-    {:noreply, socket}
+    
+    # Just update URL, let handle_params do the work
+    current_params = socket.assigns[:current_params] || %{}
+    new_params = Map.put(current_params, "page", "journal")
+    path = build_current_path(socket, new_params) # Note: build_current_path uses live_action, so we might need to adjust logic or just construct manually
+    
+    # Since we are changing "page", we should construct the path manually or update build_current_path
+    # But wait, build_current_path uses socket.assigns.live_action which hasn't changed yet.
+    # Actually, simpler to just push_patch to the target URL.
+    
+    # Preserve character param
+    char_slug = if socket.assigns.selected_character, do: Characters.name_to_slug(socket.assigns.selected_character.name), else: nil
+    
+    path = "/?page=journal"
+    path = if char_slug, do: path <> "&character=#{char_slug}", else: path
+    
+    {:noreply, push_patch(socket, to: path)}
   end
 
   def handle_event("navigate", %{"page" => page}, socket) do
     Logger.info("[DualPanel] 🧭 Navigate event received: page=#{page}")
     
-    page_atom =
+    # Preserve character param
+    char_slug = if socket.assigns.selected_character, do: Characters.name_to_slug(socket.assigns.selected_character.name), else: nil
+    
+    path = 
       case page do
-        "living_web" -> :living_web
-        "database" -> :database
-        "garden" -> :garden
-        "planting_guide" -> :planting_guide
-        "hyperark" -> :hyperark
-        other -> String.to_existing_atom(other)
+        "living_web" -> "/living-web"
+        "database" -> "/?page=database" # Assuming database is a page param? Or route?
+        "garden" -> "/?page=garden"
+        "planting_guide" -> "/?page=planting_guide"
+        "hyperark" -> "/"
+        _ -> "/"
       end
 
-    Logger.info("[DualPanel] 🧭 Page atom: #{inspect(page_atom)}")
+    path = if char_slug, do: path <> (if String.contains?(path, "?"), do: "&", else: "?") <> "character=#{char_slug}", else: path
 
-    # For planting guide, just set the action - component handles initialization
-    socket =
-      socket
-      |> assign(:right_panel_action, page_atom)
-
-    Logger.info("[DualPanel] 🧭 Set right_panel_action to: #{inspect(page_atom)}")
-
-    # Initialize user_plants for planting guide (component needs this)
-    socket =
-      if page_atom == :planting_guide do
-        Logger.info("[DualPanel] 🌱 Initializing planting guide...")
-        
-        user_plants =
-          if socket.assigns[:current_user] do
-            PlantingGuide.list_user_plants(socket.assigns.current_user.id)
-          else
-            []
-          end
-
-        Logger.info("[DualPanel] 🌱 User plants count: #{length(user_plants)}")
-
-        socket
-        |> assign(:user_plants, user_plants || [])
-        |> assign(:initialize_planting_guide, true)
-        |> assign(:last_action, "navigate")
-        |> tap(fn _ -> Logger.info("[DualPanel] 🌱 Set initialize_planting_guide=true") end)
-      else
-        assign(socket, :user_plants, [])
-      end
-
-    {:noreply, socket}
+    {:noreply, push_patch(socket, to: path)}
   end
 
   # Chat event handlers
@@ -837,7 +894,7 @@ defmodule GreenManTavernWeb.DualPanelLive do
 
   @impl true
   def handle_info({:journal_entry_created, user_id}, socket) do
-    if socket.assigns.current_user.id == user_id do
+    if socket.assigns[:current_user] && socket.assigns.current_user.id == user_id do
       send_update(GreenManTavernWeb.JournalPanelComponent, id: "journal-panel", action: :refresh_journal)
     end
     {:noreply, socket}
@@ -845,7 +902,7 @@ defmodule GreenManTavernWeb.DualPanelLive do
 
   @impl true
   def handle_info({:journal_updated, user_id}, socket) do
-    if socket.assigns.current_user.id == user_id do
+    if socket.assigns[:current_user] && socket.assigns.current_user.id == user_id do
       send_update(GreenManTavernWeb.JournalPanelComponent, id: "journal-panel", action: :refresh_journal)
     end
     {:noreply, socket}
@@ -853,10 +910,18 @@ defmodule GreenManTavernWeb.DualPanelLive do
 
   @impl true
   def handle_info({:quest_updated, user_id}, socket) do
-    if socket.assigns.current_user.id == user_id do
+    if socket.assigns[:current_user] && socket.assigns.current_user.id == user_id do
       send_update(GreenManTavernWeb.JournalPanelComponent, id: "journal-panel", action: :refresh_quests)
     end
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:select_character, slug}, socket) do
+    require Logger
+    Logger.info("[DualPanel] 📨 Received select_character message - slug: #{inspect(slug)}")
+    # Forward to handle_event
+    handle_event("select_character", %{"character_slug" => slug}, socket)
   end
 
   # Journal creation handlers
@@ -868,27 +933,31 @@ defmodule GreenManTavernWeb.DualPanelLive do
 
   @impl true
   def handle_event("accept_quest", %{"quest_id" => quest_id_str}, socket) do
-    quest_id = String.to_integer(quest_id_str)
-    user_id = socket.assigns.current_user.id
+    if socket.assigns[:current_user] do
+      quest_id = String.to_integer(quest_id_str)
+      user_id = socket.assigns.current_user.id
 
-    case Quests.get_user_quest!(quest_id) do
-      user_quest when user_quest.user_id == user_id ->
-        case Quests.accept_quest(user_quest) do
-          {:ok, _updated_quest} ->
-            send_update(GreenManTavernWeb.JournalPanelComponent, id: "journal-panel", action: :refresh_quests)
+      case Quests.get_user_quest!(quest_id) do
+        user_quest when user_quest.user_id == user_id ->
+          case Quests.accept_quest(user_quest) do
+            {:ok, _updated_quest} ->
+              send_update(GreenManTavernWeb.JournalPanelComponent, id: "journal-panel", action: :refresh_quests)
 
-            {:noreply,
-             socket
-             |> put_flash(:info, "Quest started!")}
+              {:noreply,
+               socket
+               |> put_flash(:info, "Quest started!")}
 
-          {:error, changeset} ->
-            {:noreply,
-             socket
-             |> put_flash(:error, "Failed to start quest: #{inspect(changeset.errors)}")}
-        end
+            {:error, changeset} ->
+              {:noreply,
+               socket
+               |> put_flash(:error, "Failed to start quest: #{inspect(changeset.errors)}")}
+          end
 
-      _ ->
-        {:noreply, put_flash(socket, :error, "Quest not found")}
+        _ ->
+          {:noreply, put_flash(socket, :error, "Quest not found")}
+      end
+    else
+      {:noreply, put_flash(socket, :error, "You must be logged in to accept quests")}
     end
   end
 

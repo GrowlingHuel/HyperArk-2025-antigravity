@@ -257,6 +257,37 @@ defmodule GreenManTavern.Conversations do
   end
 
   @doc """
+  Gets the active session ID for a user and character, or creates a new one.
+  
+  If a recent conversation exists (within the last 4 hours), returns that session ID.
+  Otherwise, generates a new session ID.
+  """
+  def get_or_create_session(user_id, character_id) do
+    # Look for the most recent message
+    last_message = from(ch in ConversationHistory,
+      where: ch.user_id == ^user_id and ch.character_id == ^character_id,
+      order_by: [desc: ch.inserted_at],
+      limit: 1
+    ) |> Repo.one()
+
+    case last_message do
+      %ConversationHistory{session_id: session_id, inserted_at: inserted_at} when not is_nil(session_id) ->
+        # Check if it's recent enough (4 hours)
+        cutoff = NaiveDateTime.utc_now() |> NaiveDateTime.add(-4 * 60 * 60, :second)
+        
+        if NaiveDateTime.compare(inserted_at, cutoff) == :gt do
+          {:ok, session_id}
+        else
+          {:ok, Ecto.UUID.generate()}
+        end
+      
+      _ ->
+        # No previous session or no session_id, generate new one
+        {:ok, Ecto.UUID.generate()}
+    end
+  end
+
+  @doc """
   Deletes old conversation entries older than the specified days.
 
   WARNING: This is an admin-only function that affects ALL users' data.

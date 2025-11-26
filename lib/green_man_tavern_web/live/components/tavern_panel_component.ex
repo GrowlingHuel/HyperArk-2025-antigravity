@@ -16,6 +16,17 @@ defmodule GreenManTavernWeb.TavernPanelComponent do
     {:noreply, update(socket, :show_logs, &(!&1))}
   end
 
+  @impl true
+  def handle_event("select_character", %{"character_slug" => slug}, socket) do
+    require Logger
+    Logger.info("[TavernPanel] 🎯 select_character event received - slug: #{inspect(slug)}")
+    Logger.info("[TavernPanel] 🎯 root_pid: #{inspect(socket.root_pid)}")
+    
+    # Send message to parent LiveView
+    send(socket.root_pid, {:select_character, slug})
+    {:noreply, socket}
+  end
+
   def render(assigns) do
     ~H"""
     <div class="dual-left-panel" style="margin: 0 !important; margin-left: 0 !important; margin-right: 0 !important; padding: 0 !important; padding-left: 0 !important; padding-top: 20px !important; left: 0 !important; position: relative !important;">
