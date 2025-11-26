@@ -7,7 +7,7 @@ defmodule GreenManTavern.Rack.Device do
   schema "devices" do
     field :name, :string
     field :position_index, :integer
-    field :settings, :map, default: %{}
+    field :settings, :map, default: %{inputs: [], outputs: []}
 
     belongs_to :user, GreenManTavern.Accounts.User, type: :id
     belongs_to :project, GreenManTavern.Projects.Project, type: :id
