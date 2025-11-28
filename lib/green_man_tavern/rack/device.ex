@@ -7,7 +7,9 @@ defmodule GreenManTavern.Rack.Device do
   schema "devices" do
     field :name, :string
     field :position_index, :integer
-    field :settings, :map, default: %{inputs: [], outputs: []}
+    field :settings, :map, default: %{"inputs" => [], "outputs" => []}
+    field :position_x, :float, default: 0.0
+    field :position_y, :float, default: 0.0
 
     belongs_to :user, GreenManTavern.Accounts.User, type: :id
     belongs_to :project, GreenManTavern.Projects.Project, type: :id
@@ -26,3 +28,4 @@ defmodule GreenManTavern.Rack.Device do
     |> validate_required([:name, :position_index, :user_id, :project_id])
   end
 end
+

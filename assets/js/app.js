@@ -20,9 +20,9 @@
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
 import "phoenix_html"
 // Establish Phoenix Socket and LiveView configuration.
-import {Socket} from "phoenix"
-import {LiveSocket} from "phoenix_live_view"
-import {hooks as colocatedHooks} from "phoenix-colocated/green_man_tavern"
+import { Socket } from "phoenix"
+import { LiveSocket } from "phoenix_live_view"
+import { hooks as colocatedHooks } from "phoenix-colocated/green_man_tavern"
 import ChatFormHook from "./hooks/chat_form_hook.js"
 import XyflowEditorHook from "./hooks/xyflow_editor.js"
 import PanelResizerHook from "./hooks/panel_resizer.js"
@@ -30,9 +30,9 @@ import PlantingGuideResizerHook from "./hooks/planting_guide_resizer.js"
 
 // Initialize topbar directly (inline to avoid import issues)
 const topbar = {
-  config: () => {},
-  show: () => {},
-  hide: () => {}
+  config: () => { },
+  show: () => { },
+  hide: () => { }
 };
 
 // Hook to stop event propagation (prevents parent click handlers from firing)
@@ -55,30 +55,30 @@ const CustomDropdownHook = {
   mounted() {
     this.initDropdown()
   },
-  
+
   updated() {
     // Re-initialize after update
     this.initDropdown()
   },
-  
+
   initDropdown() {
     this.dropdown = this.el
     this.trigger = this.el.querySelector('.dropdown-trigger')
     this.options = this.el.querySelector('.dropdown-options')
     this.hiddenInput = this.el.querySelector('input[type="hidden"]')
-    
+
     if (!this.trigger || !this.options || !this.hiddenInput) {
       console.warn('CustomDropdown: Missing required elements')
       return
     }
-    
+
     // Ensure dropdown starts closed
     this.options.style.display = 'none'
-    
+
     // Get form reference
     const formId = this.hiddenInput.getAttribute('form')
     this.form = formId ? document.getElementById(formId) : null
-    
+
     // Remove old listeners if they exist
     if (this.triggerClickHandler) {
       this.trigger.removeEventListener('click', this.triggerClickHandler)
@@ -86,7 +86,7 @@ const CustomDropdownHook = {
     if (this.optionClickHandler) {
       this.options.removeEventListener('click', this.optionClickHandler)
     }
-    
+
     // Toggle dropdown on trigger click
     this.triggerClickHandler = (e) => {
       e.preventDefault()
@@ -100,7 +100,7 @@ const CustomDropdownHook = {
       this.options.style.setProperty('display', isOpen ? 'none' : 'block', 'important')
     }
     this.trigger.addEventListener('click', this.triggerClickHandler, true)
-    
+
     // Handle option selection
     this.optionClickHandler = (e) => {
       const option = e.target.closest('.dropdown-option')
@@ -108,13 +108,13 @@ const CustomDropdownHook = {
         e.preventDefault()
         e.stopPropagation()
         const value = option.getAttribute('data-value') || ''
-        
+
         // Update hidden input value
         this.hiddenInput.value = value
-        
+
         // Close dropdown immediately
         this.options.style.display = 'none'
-        
+
         // Trigger form change event to submit to LiveView
         // This will cause LiveView to re-render with the new value
         const changeEvent = new Event('change', { bubbles: true, cancelable: true })
@@ -122,12 +122,12 @@ const CustomDropdownHook = {
       }
     }
     this.options.addEventListener('click', this.optionClickHandler)
-    
+
     // Close dropdown when clicking outside
     if (this.handleClickOutside) {
       document.removeEventListener('click', this.handleClickOutside)
     }
-    
+
     this.handleClickOutside = (e) => {
       if (this.dropdown && !this.dropdown.contains(e.target)) {
         this.options.style.display = 'none'
@@ -135,7 +135,7 @@ const CustomDropdownHook = {
     }
     document.addEventListener('click', this.handleClickOutside)
   },
-  
+
   destroyed() {
     if (this.handleClickOutside) {
       document.removeEventListener('click', this.handleClickOutside)
@@ -159,14 +159,14 @@ const CalendarDayHook = {
         const year = this.el.getAttribute('phx-value-year')
         const month = this.el.getAttribute('phx-value-month')
         const day = this.el.getAttribute('phx-value-day')
-        
+
         this.pushEvent('select_day_with_shift', {
           year: year,
           month: month,
           day: day,
           shift_key: 'true'
         })
-        
+
         e.preventDefault()
         e.stopPropagation()
       }
@@ -180,6 +180,34 @@ const CalendarDayHook = {
     }
   }
 };
+
+// Hook to track container resize and report width to server
+const RackResizeHook = {
+  mounted() {
+    this.handleResize = () => {
+      this.pushEvent("resize", { width: this.el.clientWidth });
+    };
+
+    // Initial size
+    this.handleResize();
+
+    // Resize observer for more robust tracking than window.resize
+    this.observer = new ResizeObserver(entries => {
+      for (let entry of entries) {
+        this.pushEvent("resize", { width: entry.contentRect.width });
+      }
+    });
+
+    this.observer.observe(this.el);
+    window.addEventListener("resize", this.handleResize);
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.handleResize);
+    if (this.observer) this.observer.disconnect();
+  }
+};
+
+let Hooks = {}
 
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 // Simple stepped animation hook for thinking dots (no smooth transitions)
@@ -220,10 +248,10 @@ const ScrollableContentHook = {
     if (this.el.classList.contains('living-web-container') || this.el.classList.contains('journal-container')) {
       return
     }
-    
+
     // Check if content actually overflows
     const needsScroll = this.el.scrollHeight > this.el.clientHeight
-    
+
     // Only enable scrolling if content overflows
     if (needsScroll) {
       this.el.style.overflowY = 'auto'
@@ -242,7 +270,7 @@ const JournalOverflowHook = {
     this._calculatedEntriesPerPage = null
     this._lastContainerHeight = null
     this._isCalculating = false
-    
+
     // Wait for DOM to be fully rendered before calculating
     // Use requestAnimationFrame to ensure layout is complete
     requestAnimationFrame(() => {
@@ -250,7 +278,7 @@ const JournalOverflowHook = {
         this.checkOverflow(true) // true = force calculation
       }, 100) // Small delay to ensure all styles are applied
     })
-    
+
     // Recheck on window resize (recalculate entries per page)
     this._resizeHandler = () => {
       // Only recalculate if container height actually changed significantly
@@ -263,7 +291,7 @@ const JournalOverflowHook = {
       }
     }
     window.addEventListener('resize', this._resizeHandler)
-    
+
     // Use MutationObserver ONLY to detect overflow, not to recalculate entries_per_page
     // Ignore mutations that are just attribute changes (like minimized state)
     this._observer = new MutationObserver((mutations) => {
@@ -303,27 +331,27 @@ const JournalOverflowHook = {
     if (this._isCalculating && forceCalculation) {
       return
     }
-    
+
     // Check if content height exceeds container height
     const hasOverflow = this.el.scrollHeight > this.el.clientHeight
-    
+
     // Only calculate entries_per_page on:
     // 1. Initial mount (forceCalculation = true)
     // 2. Window resize with significant height change (forceCalculation = true)
     // 3. First time (if not yet calculated)
     if (forceCalculation || !this._calculatedEntriesPerPage) {
       this._isCalculating = true
-      
+
       const entries = this.el.querySelectorAll('[data-journal-entry]')
       const containerHeight = this.el.clientHeight
-      
+
       if (containerHeight > 0 && entries.length > 0) {
         // Calculate based on average entry height for more stable results
         // This prevents issues when some entries are very tall or very short
         let totalHeight = 0
         let entryCount = 0
         const maxEntriesToSample = Math.min(entries.length, 10) // Sample up to 10 entries
-        
+
         // Calculate average height from first few entries
         const entryHeights = []
         for (let i = 0; i < maxEntriesToSample; i++) {
@@ -334,9 +362,9 @@ const JournalOverflowHook = {
             entryHeights.push(entryHeight)
           }
         }
-        
+
         let calculatedEntriesPerPage = 15 // Default fallback
-        
+
         if (entryCount > 0 && totalHeight > 0) {
           const averageEntryHeight = totalHeight / entryCount
           // Calculate median height as well (more robust than average for outliers)
@@ -344,24 +372,24 @@ const JournalOverflowHook = {
           const medianHeight = entryHeights.length % 2 === 0
             ? (entryHeights[entryHeights.length / 2 - 1] + entryHeights[entryHeights.length / 2]) / 2
             : entryHeights[Math.floor(entryHeights.length / 2)]
-          
+
           // Use the smaller of average or median (more conservative, but accounts for tall entries)
           const representativeHeight = Math.min(averageEntryHeight, medianHeight * 1.2)
-          
+
           // Be more aggressive with available space - entries have margin-bottom: 10px
           // So we account for spacing between entries
           // Use 95% of container height to leave small margin
           const availableHeight = containerHeight * 0.95
-          
+
           // Calculate based on representative height, accounting for spacing (10px margin per entry)
           const entriesFromHeight = Math.floor(availableHeight / (representativeHeight + 10))
-          
+
           // Also do a direct count as a sanity check - be more aggressive
           // Allow entries to slightly overflow (use 98% of container)
           let directCount = 0
           let cumulativeHeight = 0
           const maxHeight = containerHeight * 0.98
-          
+
           for (let entry of entries) {
             const entryHeight = entry.offsetHeight
             // Include the margin-bottom in the height check
@@ -378,10 +406,10 @@ const JournalOverflowHook = {
               break
             }
           }
-          
+
           // Use the higher of the two calculations
           calculatedEntriesPerPage = Math.max(entriesFromHeight, directCount)
-          
+
           // Ensure minimum of 5 entries per page if container is reasonable size
           // This prevents too few entries from showing
           if (containerHeight > 300) {
@@ -392,45 +420,45 @@ const JournalOverflowHook = {
             // For very small containers, use at least 1 entry
             calculatedEntriesPerPage = Math.max(1, Math.min(50, calculatedEntriesPerPage))
           }
-          
+
           // IMPORTANT: Don't cap by entries.length on first page!
           // The calculation should be based on container size and entry heights,
           // not limited by how many entries happen to be on the current page.
           // This allows proper pagination even when there are fewer entries on page 1
           // than would actually fit in the container.
         }
-        
+
         this._calculatedEntriesPerPage = calculatedEntriesPerPage
         this._lastContainerHeight = containerHeight
-        
+
         // Enhanced logging for debugging
         const avgHeight = entryCount > 0 ? (totalHeight / entryCount).toFixed(1) : 'N/A'
-        const medianHeight = entryHeights.length > 0 
+        const medianHeight = entryHeights.length > 0
           ? (entryHeights.length % 2 === 0
-              ? ((entryHeights[entryHeights.length / 2 - 1] + entryHeights[entryHeights.length / 2]) / 2).toFixed(1)
-              : entryHeights[Math.floor(entryHeights.length / 2)].toFixed(1))
+            ? ((entryHeights[entryHeights.length / 2 - 1] + entryHeights[entryHeights.length / 2]) / 2).toFixed(1)
+            : entryHeights[Math.floor(entryHeights.length / 2)].toFixed(1))
           : 'N/A'
-        
-        console.log('[JournalOverflow] Calculated entries per page:', this._calculatedEntriesPerPage, 
-                    '\n  Container height:', containerHeight,
-                    '\n  Available height (95%):', (containerHeight * 0.95).toFixed(1),
-                    '\n  Entries sampled:', entryCount,
-                    '\n  Average entry height:', avgHeight,
-                    '\n  Median entry height:', medianHeight,
-                    '\n  Total entries on page:', entries.length)
+
+        console.log('[JournalOverflow] Calculated entries per page:', this._calculatedEntriesPerPage,
+          '\n  Container height:', containerHeight,
+          '\n  Available height (95%):', (containerHeight * 0.95).toFixed(1),
+          '\n  Entries sampled:', entryCount,
+          '\n  Average entry height:', avgHeight,
+          '\n  Median entry height:', medianHeight,
+          '\n  Total entries on page:', entries.length)
       } else {
         // Fallback if calculation can't be done yet
         this._calculatedEntriesPerPage = this._calculatedEntriesPerPage || 15
         console.log('[JournalOverflow] Using fallback entries per page:', this._calculatedEntriesPerPage,
-                    'containerHeight:', containerHeight, 'entries.length:', entries.length)
+          'containerHeight:', containerHeight, 'entries.length:', entries.length)
       }
-      
+
       this._isCalculating = false
     }
-    
+
     // Push event to LiveView with overflow state and STABLE entries per page
     // Always use the calculated value, never recalculate based on current page
-    this.pushEvent("journal_overflow_detected", { 
+    this.pushEvent("journal_overflow_detected", {
       has_overflow: hasOverflow,
       entries_per_page: this._calculatedEntriesPerPage || 15
     })
@@ -493,17 +521,17 @@ const PreserveFocusHook = {
 const CharacterLinkHook = {
   mounted() {
     console.log("[CharacterLinkHook] Mounted on element", this.el.id)
-    
+
     this.el.addEventListener("click", (e) => {
       e.preventDefault() // Prevent default link navigation
       e.stopPropagation() // Stop parent edit mode from firing
-      
+
       const slug = this.el.getAttribute("data-character-slug")
       console.log("[CharacterLinkHook] Character link clicked, slug:", slug)
-      
+
       if (slug) {
         // Manually push the event to LiveView (this bypasses DOM event system)
-        this.pushEvent("select_character", {character_slug: slug})
+        this.pushEvent("select_character", { character_slug: slug })
         console.log("[CharacterLinkHook] Pushed select_character event to LiveView")
       } else {
         console.warn("[CharacterLinkHook] No character_slug attribute found")
@@ -517,11 +545,11 @@ const KnowledgeTermHook = {
   mounted() {
     this.popup = null
     this.pendingTerm = null
-    
+
     // Listen for term summary events from LiveView using hook's handleEvent
     // This is the CORRECT way to receive push_event from LiveView
     this.handleEvent("term_summary_received", (payload) => {
-      console.log("[KnowledgeTermHook] Received term_summary_received event", {payload, pendingTerm: this.pendingTerm})
+      console.log("[KnowledgeTermHook] Received term_summary_received event", { payload, pendingTerm: this.pendingTerm })
       if (payload && payload.summary && this.pendingTerm) {
         console.log("[KnowledgeTermHook] Creating popup with summary")
         this.createPopup(payload.summary, this.pendingTerm)
@@ -530,14 +558,14 @@ const KnowledgeTermHook = {
         console.warn("[KnowledgeTermHook] Error fetching summary:", payload.error)
         this.pendingTerm = null
       } else {
-        console.log("[KnowledgeTermHook] Event received but no valid summary", {payload, pendingTerm: this.pendingTerm})
+        console.log("[KnowledgeTermHook] Event received but no valid summary", { payload, pendingTerm: this.pendingTerm })
       }
     })
-    
+
     // Click to toggle popup (show/hide)
     this.el.addEventListener("click", (e) => {
       e.stopPropagation() // Prevent click from bubbling to document
-      
+
       // If popup is already showing for this term, hide it
       if (this.popup) {
         console.log("[KnowledgeTermHook] Hiding popup (clicked again)")
@@ -549,24 +577,24 @@ const KnowledgeTermHook = {
       }
     })
   },
-  
+
   showPopup() {
     const term = this.el.getAttribute("data-term")
     if (!term) {
       console.warn("[KnowledgeTermHook] No data-term attribute")
       return
     }
-    
+
     // Store term for the reply handler
     this.pendingTerm = term
     console.log("[KnowledgeTermHook] Requesting summary for term:", term)
-    
+
     // Push event to LiveView using hook's pushEvent method
     // This is the CORRECT way to send events from a hook
-    this.pushEvent("fetch_term_summary", {term: term})
+    this.pushEvent("fetch_term_summary", { term: term })
     console.log("[KnowledgeTermHook] Pushed fetch_term_summary event via hook.pushEvent")
   },
-  
+
   createPopup(summary, term) {
     // IMPORTANT: Remove ANY existing popup in the document first
     // This ensures only ONE popup is shown at a time across all term instances
@@ -574,12 +602,12 @@ const KnowledgeTermHook = {
     if (existingPopup) {
       existingPopup.remove()
     }
-    
+
     // Also clear this instance's popup reference
     if (this.popup) {
       this.popup.remove()
     }
-    
+
     // Create popup element
     this.popup = document.createElement("div")
     this.popup.id = "term-popup"
@@ -598,45 +626,45 @@ const KnowledgeTermHook = {
     this.popup.style.zIndex = "10000"
     this.popup.style.pointerEvents = "auto"
     this.popup.style.cursor = "default"
-    
+
     this.popup.innerHTML = `
       <div style="font-weight: bold; margin-bottom: 6px; color: #000;">${term.charAt(0).toUpperCase() + term.slice(1)}</div>
       <div>${summary}</div>
     `
-    
+
     // Position popup near the element, but keep it in viewport
     const rect = this.el.getBoundingClientRect()
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop
     const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft
-    
+
     let top = rect.bottom + scrollTop + 8
     let left = rect.left + scrollLeft
-    
+
     // Adjust if popup would go off screen
     const viewportWidth = window.innerWidth
     const popupWidth = 400
     if (left + popupWidth > viewportWidth) {
       left = viewportWidth - popupWidth - 10
     }
-    
+
     this.popup.style.top = top + "px"
     this.popup.style.left = left + "px"
-    
+
     document.body.appendChild(this.popup)
-    
+
     // Stop propagation on popup clicks so it doesn't close itself
     this.popup.addEventListener("click", (e) => {
       e.stopPropagation()
     })
   },
-  
+
   hidePopup() {
     if (this.popup) {
       this.popup.remove()
       this.popup = null
     }
   },
-  
+
   destroyed() {
     this.hidePopup()
     if (this.timeout) {
@@ -647,7 +675,7 @@ const KnowledgeTermHook = {
 
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
-  params: {_csrf_token: csrfToken},
+  params: { _csrf_token: csrfToken },
   hooks: {
     ...colocatedHooks,
     ChatForm: ChatFormHook,
@@ -664,6 +692,7 @@ const liveSocket = new LiveSocket("/live", Socket, {
     StopPropagation: StopPropagationHook,
     CustomDropdown: CustomDropdownHook,
     CalendarDay: CalendarDayHook,
+    RackResize: RackResizeHook,
     redirect: {
       mounted() {
         this.handleEvent("redirect", (data) => {
@@ -707,7 +736,7 @@ document.addEventListener('click', (event) => {
   if (dropdown && button && !dropdown.contains(event.target) && !button.contains(event.target)) {
     dropdown.style.display = 'none'
   }
-  
+
   // Close knowledge term popup when clicking outside
   const popup = document.getElementById('term-popup')
   if (popup && !popup.contains(event.target)) {
@@ -734,7 +763,7 @@ window.liveSocket = liveSocket
 //     2. click on elements to jump to their definitions in your code editor
 //
 if (process.env.NODE_ENV === "development") {
-  window.addEventListener("phx:live_reload:attached", ({detail: reloader}) => {
+  window.addEventListener("phx:live_reload:attached", ({ detail: reloader }) => {
     // Enable server log streaming to client.
     // Disable with reloader.disableServerLogs()
     reloader.enableServerLogs()
@@ -747,11 +776,11 @@ if (process.env.NODE_ENV === "development") {
     window.addEventListener("keydown", e => keyDown = e.key)
     window.addEventListener("keyup", e => keyDown = null)
     window.addEventListener("click", e => {
-      if(keyDown === "c"){
+      if (keyDown === "c") {
         e.preventDefault()
         e.stopImmediatePropagation()
         reloader.openEditorAtCaller(e.target)
-      } else if(keyDown === "d"){
+      } else if (keyDown === "d") {
         e.preventDefault()
         e.stopImmediatePropagation()
         reloader.openEditorAtDef(e.target)

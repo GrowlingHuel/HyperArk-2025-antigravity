@@ -7,6 +7,8 @@ defmodule GreenManTavern.Rack.RackSystemBuilder do
   alias GreenManTavern.Rack.Device
   alias GreenManTavern.Rack.PatchCable
 
+  alias GreenManTavern.Diagrams
+
   def create_composite_system(name, device_ids, user_id, project_id) do
     # 1. Fetch all devices and cables
     devices = Rack.list_devices() |> Enum.filter(&(&1.id in device_ids))
@@ -55,7 +57,7 @@ defmodule GreenManTavern.Rack.RackSystemBuilder do
         }
       end)
 
-    # 4. Create the Composite Device
+    # 4. Create the Composite Device (in the Rack)
     device_attrs = %{
       name: name,
       user_id: user_id,
@@ -66,13 +68,57 @@ defmodule GreenManTavern.Rack.RackSystemBuilder do
         "inputs" => composite_inputs,
         "outputs" => composite_outputs,
         "internal_devices" => Enum.map(devices, & &1.id),
-        "internal_cables" => Enum.map(internal_cables, & &1.id)
+        "internal_cables" => Enum.map(internal_cables, & &1.id),
+        "composite_system_id" => nil # Will be updated after system creation
       }
     }
 
     {:ok, composite_device} = Rack.create_device(device_attrs)
 
-    # 5. Re-route external cables to the new composite device
+    # 5. Create the Composite System (in the Library)
+    # Serialize internal structure
+    nodes_data = 
+      devices 
+      |> Map.new(fn d -> 
+        {to_string(d.id), %{
+          name: d.name,
+          project_id: d.project_id,
+          settings: d.settings,
+          position_index: d.position_index
+        }} 
+      end)
+
+    edges_data = 
+      internal_cables
+      |> Map.new(fn c -> 
+        {to_string(c.id), %{
+          source_device_id: c.source_device_id,
+          source_jack_id: c.source_jack_id,
+          target_device_id: c.target_device_id,
+          target_jack_id: c.target_jack_id,
+          cable_color: c.cable_color
+        }} 
+      end)
+
+    system_attrs = %{
+      name: name,
+      description: "Created from Rack selection",
+      user_id: user_id,
+      internal_node_ids: Enum.map(devices, &to_string(&1.id)),
+      internal_edge_ids: Enum.map(internal_cables, &to_string(&1.id)),
+      internal_nodes_data: nodes_data,
+      internal_edges_data: edges_data,
+      external_inputs: Map.new(composite_inputs, &{&1["id"], &1}),
+      external_outputs: Map.new(composite_outputs, &{&1["id"], &1})
+    }
+    
+    {:ok, composite_system} = Diagrams.create_composite_system(system_attrs)
+    
+    # Update composite device to reference the system
+    Rack.update_device(composite_device, %{settings: Map.put(composite_device.settings, "composite_system_id", composite_system.id)})
+
+
+    # 6. Re-route external cables to the new composite device
     
     # Update external inputs (cables coming IN to the system)
     Enum.each(Enum.with_index(external_inputs), fn {cable, idx} ->
@@ -90,16 +136,9 @@ defmodule GreenManTavern.Rack.RackSystemBuilder do
       })
     end)
 
-    # 6. Hide/Delete original devices?
-    # For now, let's just delete them from the rack view (delete from DB)
-    # BUT we need to keep their definitions if we want to "expand" later.
-    # Actually, for a true "Composite System", we should probably serialize them into the `settings` 
-    # and then delete the rows.
-    
-    # For this MVP, we will DELETE the original devices.
-    # Note: This deletes internal cables too due to cascade delete.
+    # 7. Delete original devices
     Enum.each(devices, &Rack.delete_device(&1))
 
-    {:ok, composite_device}
+    {:ok, composite_device, composite_system}
   end
 end
