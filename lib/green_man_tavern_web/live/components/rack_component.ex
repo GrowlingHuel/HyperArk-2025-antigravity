@@ -19,7 +19,9 @@ defmodule GreenManTavernWeb.RackComponent do
      |> assign_new(:composite_systems, fn -> Diagrams.list_composite_systems(user_id) end)
      |> assign(:patching_state, nil) # nil, {:source, device_id, jack_id}
      |> assign(:editing_device, nil) # nil or %Device{}
-     |> assign(:selected_devices, MapSet.new())} # Set of device IDs
+     |> assign(:selected_devices, MapSet.new())
+     |> assign(:container_width, 800) # Default width, updated by JS hook
+     |> assign(:save_system_modal, false)} # Modal state
   end
 
   @impl true
@@ -32,35 +34,18 @@ defmodule GreenManTavernWeb.RackComponent do
           <h2 class="font-bold text-lg text-[#333]">Library</h2>
         </div>
         
-        <!-- Nodes (Projects) -->
-        <div class="p-4">
-          <h3 class="font-semibold text-sm text-[#666] mb-2 uppercase tracking-wider">Nodes</h3>
-          <div class="flex flex-col gap-2">
-            <%= for project <- @projects do %>
-              <div class="node-item p-2 bg-white rounded shadow-sm border border-[#ddd] hover:border-[#999] cursor-pointer flex items-center gap-2 transition-colors"
-                   phx-click="add_device"
-                   phx-value-type="project"
-                   phx-value-id={project.id}
-                   phx-target={@myself}>
-                <div class="w-2 h-2 rounded-full bg-[#666]"></div>
-                <span class="text-sm text-[#333]"><%= project.name %></span>
-              </div>
-            <% end %>
-          </div>
-        </div>
-
         <!-- My Systems (Composite Systems) -->
-        <div class="p-4 border-t border-[#ccc]">
+        <div class="p-4 border-b border-[#ccc]">
           <h3 class="font-semibold text-sm text-[#666] mb-2 uppercase tracking-wider">My Systems</h3>
           <div class="flex flex-col gap-2">
             <%= for system <- @composite_systems do %>
-              <div class="system-item p-2 bg-white rounded shadow-sm border border-[#ddd] hover:border-[#999] cursor-pointer flex items-center gap-2 transition-colors"
+              <div class="system-item p-2 hover:bg-white/50 rounded cursor-pointer flex items-center gap-2 transition-colors group"
                    phx-click="add_device"
                    phx-value-type="composite"
                    phx-value-id={system.id}
                    phx-target={@myself}>
-                <div class="w-2 h-2 rounded-sm bg-[#444]"></div>
-                <span class="text-sm text-[#333]"><%= system.name %></span>
+                <span class="text-lg">📦</span>
+                <span class="text-sm text-[#333] group-hover:text-black"><%= system.name %></span>
               </div>
             <% end %>
             <%= if Enum.empty?(@composite_systems) do %>
@@ -68,12 +53,31 @@ defmodule GreenManTavernWeb.RackComponent do
             <% end %>
           </div>
         </div>
+
+        <!-- Nodes (Projects) -->
+        <div class="p-4">
+          <h3 class="font-semibold text-sm text-[#666] mb-2 uppercase tracking-wider">Basic Nodes</h3>
+          <div class="flex flex-col gap-2">
+            <%= for project <- @projects do %>
+              <div class="node-item p-2 hover:bg-white/50 rounded cursor-pointer flex items-center gap-2 transition-colors group"
+                   phx-click="add_device"
+                   phx-value-type="project"
+                   phx-value-id={project.id}
+                   phx-target={@myself}>
+                <span class="text-lg">📄</span>
+                <span class="text-sm text-[#333] group-hover:text-black"><%= project.name %></span>
+              </div>
+            <% end %>
+          </div>
+        </div>
       </div>
 
       <!-- Main Rack Area -->
-      <div class="rack-container flex-1 h-full relative overflow-hidden flex flex-col items-center p-4 bg-[#f0f0f0]">
+      <div class="rack-container flex-1 h-full relative overflow-y-auto flex flex-col w-full bg-[#f0f0f0]"
+           id="rack-container"
+           phx-hook="RackResize">
         <!-- Toolbar -->
-        <div class="w-full max-w-2xl mb-4 flex justify-between items-center">
+        <div class="w-full mb-4 flex justify-between items-center">
           <div class="text-sm text-gray-600">
             <%= if MapSet.size(@selected_devices) > 0 do %>
               <%= MapSet.size(@selected_devices) %> devices selected
@@ -91,7 +95,7 @@ defmodule GreenManTavernWeb.RackComponent do
         </div>
 
         <!-- Rack Rails -->
-        <div class="rack-frame w-full max-w-2xl h-full border-x-8 border-[#ccc] bg-[#fff] relative shadow-2xl overflow-y-auto">
+        <div class="rack-frame w-full h-full border-x-8 border-[#ccc] bg-[#fff] relative shadow-2xl overflow-y-auto">
           
           <!-- Devices -->
           <div class="devices-container flex flex-col w-full relative z-10">
@@ -137,33 +141,38 @@ defmodule GreenManTavernWeb.RackComponent do
                    Inputs: Left of Outputs
                    Gap: 32px (gap-8)
                 -->
-                <div class="patch-bay absolute right-4 top-0 h-full flex items-center gap-8">
-                  <!-- Inputs (Left) -->
-                  <div class="inputs flex gap-2">
+                <!-- Patch Points (Jacks) - Top/Bottom Layout -->
+                <div class="patch-bay absolute inset-0 pointer-events-none">
+                  <!-- Inputs (Top) -->
+                  <div class="inputs absolute top-2 left-0 w-full flex justify-center gap-4 pointer-events-auto">
                     <%= for input <- (device.settings["inputs"] || [%{"id" => "in_1", "name" => "IN"}]) do %>
-                      <div class={"jack w-8 h-8 rounded-full bg-[#ddd] border-2 cursor-pointer relative transition-colors #{if is_selected?(@patching_state, device.id, input["id"]), do: "border-[#00f] shadow-[0_0_10px_#00f]", else: "border-[#999] hover:border-[#000]"}"}
-                           title={input["name"]}
-                           phx-click="jack_click"
-                           phx-value-device-id={device.id}
-                           phx-value-jack-id={input["id"]}
-                           phx-target={@myself}>
-                        <div class="absolute inset-0 m-auto w-4 h-4 rounded-full bg-[#333]"></div>
-                        <span class="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[9px] text-[#666] font-mono whitespace-nowrap"><%= input["name"] %></span>
+                      <div class="flex flex-col items-center group/jack">
+                        <div class={"jack w-6 h-6 rounded-full bg-[#ddd] border-2 cursor-pointer relative transition-colors #{if is_selected?(@patching_state, device.id, input["id"]), do: "border-[#00f] shadow-[0_0_10px_#00f]", else: "border-[#999] hover:border-[#000]"}"}
+                             title={input["name"]}
+                             phx-click="jack_click"
+                             phx-value-device-id={device.id}
+                             phx-value-jack-id={input["id"]}
+                             phx-target={@myself}>
+                          <div class="absolute inset-0 m-auto w-3 h-3 rounded-full bg-[#333]"></div>
+                        </div>
+                        <span class="text-[9px] text-[#666] font-mono mt-1 opacity-0 group-hover/jack:opacity-100 transition-opacity bg-white px-1 rounded border border-gray-200 absolute top-6 z-20 whitespace-nowrap"><%= input["name"] %></span>
                       </div>
                     <% end %>
                   </div>
 
-                  <!-- Outputs (Right) -->
-                  <div class="outputs flex gap-2">
+                  <!-- Outputs (Bottom) -->
+                  <div class="outputs absolute bottom-2 left-0 w-full flex justify-center gap-4 pointer-events-auto">
                     <%= for output <- (device.settings["outputs"] || [%{"id" => "out_1", "name" => "OUT"}]) do %>
-                      <div class={"jack w-8 h-8 rounded-full bg-[#ddd] border-2 cursor-pointer relative transition-colors #{if is_selected?(@patching_state, device.id, output["id"]), do: "border-[#00f] shadow-[0_0_10px_#00f]", else: "border-[#999] hover:border-[#000]"}"}
-                           title={output["name"]}
-                           phx-click="jack_click"
-                           phx-value-device-id={device.id}
-                           phx-value-jack-id={output["id"]}
-                           phx-target={@myself}>
-                        <div class="absolute inset-0 m-auto w-4 h-4 rounded-full bg-[#333]"></div>
-                        <span class="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[9px] text-[#666] font-mono whitespace-nowrap"><%= output["name"] %></span>
+                      <div class="flex flex-col items-center group/jack">
+                        <span class="text-[9px] text-[#666] font-mono mb-1 opacity-0 group-hover/jack:opacity-100 transition-opacity bg-white px-1 rounded border border-gray-200 absolute bottom-6 z-20 whitespace-nowrap"><%= output["name"] %></span>
+                        <div class={"jack w-6 h-6 rounded-full bg-[#ddd] border-2 cursor-pointer relative transition-colors #{if is_selected?(@patching_state, device.id, output["id"]), do: "border-[#00f] shadow-[0_0_10px_#00f]", else: "border-[#999] hover:border-[#000]"}"}
+                             title={output["name"]}
+                             phx-click="jack_click"
+                             phx-value-device-id={device.id}
+                             phx-value-jack-id={output["id"]}
+                             phx-target={@myself}>
+                          <div class="absolute inset-0 m-auto w-3 h-3 rounded-full bg-[#333]"></div>
+                        </div>
                       </div>
                     <% end %>
                   </div>
@@ -172,16 +181,14 @@ defmodule GreenManTavernWeb.RackComponent do
               </div>
             <% end %>
             
-            <!-- Empty Slot Placeholder -->
-            <div class="empty-slot w-full h-24 border-b border-[#eee] opacity-20 bg-[url('/images/rack_pattern_light.png')]"></div>
           </div>
 
           <!-- Cables Layer (SVG) -->
           <svg class="cables-layer absolute inset-0 w-full h-full pointer-events-none z-20 overflow-visible">
             <%= for cable <- @cables do %>
               <%
-                {x1, y1} = get_jack_coordinates(cable.source_device_id, cable.source_jack_id, @devices)
-                {x2, y2} = get_jack_coordinates(cable.target_device_id, cable.target_jack_id, @devices)
+                {x1, y1} = get_jack_coordinates(cable.source_device_id, cable.source_jack_id, @devices, @container_width)
+                {x2, y2} = get_jack_coordinates(cable.target_device_id, cable.target_jack_id, @devices, @container_width)
                 
                 # Bezier control points
                 cp1x = x1
@@ -208,14 +215,18 @@ defmodule GreenManTavernWeb.RackComponent do
 
       <!-- Edit Device Modal -->
       <%= if @editing_device do %>
-        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
           <div class="bg-white rounded-lg shadow-xl p-6 w-[500px] max-h-[90vh] overflow-y-auto">
             <h2 class="text-xl font-bold mb-4">Edit Device</h2>
             
             <form phx-submit="save_device" phx-target={@myself}>
               <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700">Name</label>
-                <input type="text" name="name" value={@editing_device.name} class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+                <input type="text" name="name" value={@editing_device.name} 
+                       phx-blur="update_device_name" 
+                       phx-value-name={@editing_device.name}
+                       phx-target={@myself}
+                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
               </div>
 
               <!-- Inputs Config -->
@@ -227,7 +238,13 @@ defmodule GreenManTavernWeb.RackComponent do
                 <div class="space-y-2">
                   <%= for {input, idx} <- Enum.with_index(@editing_device.settings["inputs"] || []) do %>
                     <div class="flex gap-2">
-                      <input type="text" name={"inputs[#{idx}][name]"} value={input["name"]} class="block w-full text-sm rounded-md border-gray-300" />
+                      <input type="text" name={"inputs[#{idx}][name]"} value={input["name"]}
+                             phx-blur="update_port_name"
+                             phx-value-type="input"
+                             phx-value-idx={idx}
+                             phx-value-name={input["name"]}
+                             phx-target={@myself}
+                             class="block w-full text-sm rounded-md border-gray-300" />
                       <input type="hidden" name={"inputs[#{idx}][id]"} value={input["id"]} />
                       <button type="button" phx-click="remove_port" phx-value-type="input" phx-value-idx={idx} phx-target={@myself} class="text-red-500 hover:text-red-700">×</button>
                     </div>
@@ -244,7 +261,13 @@ defmodule GreenManTavernWeb.RackComponent do
                 <div class="space-y-2">
                   <%= for {output, idx} <- Enum.with_index(@editing_device.settings["outputs"] || []) do %>
                     <div class="flex gap-2">
-                      <input type="text" name={"outputs[#{idx}][name]"} value={output["name"]} class="block w-full text-sm rounded-md border-gray-300" />
+                      <input type="text" name={"outputs[#{idx}][name]"} value={output["name"]}
+                             phx-blur="update_port_name"
+                             phx-value-type="output"
+                             phx-value-idx={idx}
+                             phx-value-name={output["name"]}
+                             phx-target={@myself}
+                             class="block w-full text-sm rounded-md border-gray-300" />
                       <input type="hidden" name={"outputs[#{idx}][id]"} value={output["id"]} />
                       <button type="button" phx-click="remove_port" phx-value-type="output" phx-value-idx={idx} phx-target={@myself} class="text-red-500 hover:text-red-700">×</button>
                     </div>
@@ -260,8 +283,37 @@ defmodule GreenManTavernWeb.RackComponent do
           </div>
         </div>
       <% end %>
+
+      <!-- Save System Modal -->
+      <%= if @save_system_modal do %>
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div class="bg-white rounded-lg shadow-xl p-6 w-[400px]">
+            <h2 class="text-xl font-bold mb-4">Save as System</h2>
+            <p class="text-sm text-gray-600 mb-4">
+              Create a reusable system from the <%= MapSet.size(@selected_devices) %> selected devices.
+            </p>
+            
+            <form phx-submit="confirm_save_system" phx-target={@myself}>
+              <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700">System Name</label>
+                <input type="text" name="name" placeholder="e.g. My Custom Filter" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500" />
+              </div>
+              
+              <div class="flex justify-end gap-2 mt-6">
+                <button type="button" phx-click="cancel_save_system" phx-target={@myself} class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">Cancel</button>
+                <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">Save System</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      <% end %>
     </div>
     """
+  end
+
+  @impl true
+  def handle_event("resize", %{"width" => width}, socket) do
+    {:noreply, assign(socket, :container_width, width)}
   end
 
   @impl true
@@ -280,14 +332,46 @@ defmodule GreenManTavernWeb.RackComponent do
 
   @impl true
   def handle_event("save_as_system", _params, socket) do
-    # Placeholder for now - logic will be complex
-    # 1. Gather selected devices
-    # 2. Identify internal vs external connections
-    # 3. Create new "Composite Device"
-    # 4. Delete old devices (or hide them)
-    # 5. Create CompositeSystem record (for sidebar)
+    {:noreply, assign(socket, :save_system_modal, true)}
+  end
+
+  @impl true
+  def handle_event("cancel_save_system", _params, socket) do
+    {:noreply, assign(socket, :save_system_modal, false)}
+  end
+
+  @impl true
+  def handle_event("confirm_save_system", %{"name" => name}, socket) do
+    # Create composite system
+    selected_ids = MapSet.to_list(socket.assigns.selected_devices)
     
-    {:noreply, put_flash(socket, :info, "System creation logic to be implemented")}
+    # In a real implementation, we would:
+    # 1. Infer external I/O from connections
+    # 2. Save the internal structure
+    # 3. Create the CompositeSystem record
+    
+    # For now, we'll create a basic record
+    attrs = %{
+      name: name,
+      user_id: socket.assigns.current_user.id,
+      description: "Created from rack selection",
+      internal_node_ids: selected_ids
+    }
+    
+    case Diagrams.create_composite_system(attrs) do
+      {:ok, system} ->
+        socket = 
+          socket
+          |> update(:composite_systems, fn systems -> [system | systems] end)
+          |> assign(:save_system_modal, false)
+          |> assign(:selected_devices, MapSet.new()) # Clear selection
+          |> put_flash(:info, "System saved successfully")
+          
+        {:noreply, socket}
+        
+      {:error, _changeset} ->
+        {:noreply, put_flash(socket, :error, "Failed to save system")}
+    end
   end
 
   @impl true
@@ -337,6 +421,65 @@ defmodule GreenManTavernWeb.RackComponent do
   @impl true
   def handle_event("cancel_edit", _params, socket) do
     {:noreply, assign(socket, :editing_device, nil)}
+  end
+
+  @impl true
+  def handle_event("update_device_name", %{"value" => new_name}, socket) do
+    device = socket.assigns.editing_device
+    
+    # Update the editing device name in state
+    updated_device = Map.put(device, :name, new_name)
+    
+    # Also save to database immediately
+    case Rack.update_device(device, %{name: new_name}) do
+      {:ok, saved_device} ->
+        # Update both editing device and devices list
+        updated_devices = 
+          socket.assigns.devices
+          |> Enum.map(fn d -> if d.id == saved_device.id, do: saved_device, else: d end)
+        
+        socket = 
+          socket
+          |> assign(:editing_device, updated_device)
+          |> assign(:devices, updated_devices)
+          
+        {:noreply, socket}
+        
+      {:error, _changeset} ->
+        {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_event("update_port_name", %{"value" => new_name, "type" => type, "idx" => idx_str}, socket) do
+    idx = String.to_integer(idx_str)
+    device = socket.assigns.editing_device
+    key = "#{type}s"
+    ports = device.settings[key] || []
+    
+    # Update the port name at the given index
+    updated_ports = List.update_at(ports, idx, fn port -> Map.put(port, "name", new_name) end)
+    updated_settings = Map.put(device.settings, key, updated_ports)
+    updated_device = Map.put(device, :settings, updated_settings)
+    
+    # Save to database immediately
+    case Rack.update_device(device, %{settings: updated_settings}) do
+      {:ok, saved_device} ->
+        # Update both editing device and devices list
+        updated_devices = 
+          socket.assigns.devices
+          |> Enum.map(fn d -> if d.id == saved_device.id, do: saved_device, else: d end)
+        
+        socket = 
+          socket
+          |> assign(:editing_device, updated_device)
+          |> assign(:devices, updated_devices)
+          
+        {:noreply, socket}
+        
+      {:error, _changeset} ->
+        {:noreply, socket}
+    end
   end
 
   @impl true
@@ -453,28 +596,66 @@ defmodule GreenManTavernWeb.RackComponent do
   end
   defp is_selected?(_, _, _), do: false
 
-  defp get_jack_coordinates(device_id, jack_id, devices) do
+  defp get_jack_coordinates(device_id, jack_id, devices, container_width) do
     # Find device index
     index = Enum.find_index(devices, fn d -> d.id == device_id end)
     
     if index do
       # Y coordinate: index * 96 + 48 (center of device)
-      y = index * 96 + 48
+      # Device height is 96px (h-24)
+      # Top is index * 96
+      # Center is + 48
+      
+      # Determine if it's an input or output to adjust Y
+      # Inputs are at top (top-2 + 12px center = 20px from top)
+      # Outputs are at bottom (bottom-2 + 12px center = 20px from bottom)
+      
+      device_top = index * 96
+      
+      y_offset = 
+        if String.starts_with?(jack_id, "in") do
+          20 # Top
+        else
+          76 # Bottom (96 - 20)
+        end
+        
+      y = device_top + y_offset
       
       # X coordinate:
-      # Rack width: 800
-      # Right padding: 16
-      # Output Jack center: 800 - 16 - 16 = 768
-      # Gap: 32
-      # Input Jack center: 768 - 32 - 32 = 704
+      # We need to match the CSS `justify-center gap-4` logic
+      # Jack width: 24px (w-6)
+      # Gap: 16px (gap-4)
       
-      x = case jack_id do
-        "in_1" -> 704
-        "out_1" -> 768
-        _ -> 0
+      settings = Enum.find(devices, &(&1.id == device_id)).settings || %{}
+      
+      {ports, type} = 
+        if String.starts_with?(jack_id, "in") do
+          {settings["inputs"] || [], :input}
+        else
+          {settings["outputs"] || [], :output}
+        end
+        
+      port_count = length(ports)
+      port_index = Enum.find_index(ports, fn p -> p["id"] == jack_id end) || 0
+      
+      if port_count > 0 do
+        # Total width of the group of jacks
+        # (count * 24) + ((count - 1) * 16)
+        total_group_width = (port_count * 24) + (max(0, port_count - 1) * 16)
+        
+        # Start X (left edge of the first jack) relative to container center
+        # Container is w-full, jacks are centered
+        center_x = container_width / 2
+        start_x = center_x - (total_group_width / 2)
+        
+        # X of this specific jack (center)
+        # Start + (index * (24 + 16)) + 12 (half jack width)
+        x = start_x + (port_index * 40) + 12
+        
+        {x, y}
+      else
+        {container_width / 2, y}
       end
-      
-      {x, y}
     else
       {0, 0}
     end
