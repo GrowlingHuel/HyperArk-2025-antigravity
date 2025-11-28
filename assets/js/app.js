@@ -27,7 +27,7 @@ import ChatFormHook from "./hooks/chat_form_hook.js"
 import XyflowEditorHook from "./hooks/xyflow_editor.js"
 import PanelResizerHook from "./hooks/panel_resizer.js"
 import PlantingGuideResizerHook from "./hooks/planting_guide_resizer.js"
-import { RackResize } from "./hooks/rack_resize.js"
+import { RackCables } from "./hooks/rack_cables.js"
 
 // Initialize topbar directly (inline to avoid import issues)
 const topbar = {
@@ -665,7 +665,7 @@ const liveSocket = new LiveSocket("/live", Socket, {
     StopPropagation: StopPropagationHook,
     CustomDropdown: CustomDropdownHook,
     CalendarDay: CalendarDayHook,
-    RackResize: RackResize,
+    RackCables: RackCables,
     redirect: {
       mounted() {
         this.handleEvent("redirect", (data) => {

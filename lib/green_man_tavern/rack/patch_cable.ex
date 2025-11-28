@@ -4,6 +4,7 @@ defmodule GreenManTavern.Rack.PatchCable do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
+  @derive {Jason.Encoder, only: [:id, :source_device_id, :source_jack_id, :target_device_id, :target_jack_id, :cable_color]}
   schema "patch_cables" do
     field :source_jack_id, :string
     field :target_jack_id, :string

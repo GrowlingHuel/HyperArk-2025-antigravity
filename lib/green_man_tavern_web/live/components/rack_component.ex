@@ -10,18 +10,23 @@ defmodule GreenManTavernWeb.RackComponent do
   def update(assigns, socket) do
     user_id = assigns.current_user.id
 
-    {:ok,
-     socket
-     |> assign(assigns)
-     |> assign_new(:devices, fn -> Rack.list_devices() end)
-     |> assign_new(:cables, fn -> Rack.list_patch_cables() end)
-     |> assign_new(:projects, fn -> Systems.list_projects() end)
-     |> assign_new(:composite_systems, fn -> Diagrams.list_composite_systems(user_id) end)
-     |> assign(:patching_state, nil) # nil, {:source, device_id, jack_id}
-     |> assign(:editing_device, nil) # nil or %Device{}
-     |> assign(:selected_devices, MapSet.new())
-     |> assign(:container_width, 800) # Default width, updated by JS hook
-     |> assign(:save_system_modal, false)} # Modal state
+    socket = 
+      socket
+      |> assign(assigns)
+      |> assign_new(:devices, fn -> Rack.list_devices() end)
+      |> assign_new(:cables, fn -> Rack.list_patch_cables() end)
+      |> assign_new(:projects, fn -> Systems.list_projects() end)
+      |> assign_new(:composite_systems, fn -> Diagrams.list_composite_systems(user_id) end)
+      |> assign(:patching_state, nil) # nil, {:source, device_id, jack_id}
+      |> assign(:editing_device, nil) # nil or %Device{}
+      |> assign(:selected_devices, MapSet.new())
+      |> assign(:container_width, 800) # Default width, updated by JS hook
+      |> assign(:save_system_modal, false) # Modal state
+
+    # Push initial cables to client
+    socket = push_event(socket, "update_cables", %{cables: socket.assigns.cables})
+
+    {:ok, socket}
   end
 
   @impl true
@@ -74,8 +79,7 @@ defmodule GreenManTavernWeb.RackComponent do
 
       <!-- Main Rack Area -->
       <div class="rack-container flex-1 h-full relative overflow-y-auto flex flex-col w-full bg-[#f0f0f0]"
-           id="rack-container"
-           phx-hook="RackResize">
+           id="rack-container">
         <!-- Toolbar -->
         <div class="w-full mb-4 flex justify-between items-center">
           <div class="text-sm text-gray-600">
@@ -147,8 +151,9 @@ defmodule GreenManTavernWeb.RackComponent do
                   <div class="inputs absolute top-2 left-0 w-full flex justify-center gap-4 pointer-events-auto">
                     <%= for input <- (device.settings["inputs"] || [%{"id" => "in_1", "name" => "IN"}]) do %>
                       <div class="flex flex-col items-center group/jack">
-                        <div class={"jack w-6 h-6 rounded-full bg-[#ddd] border-2 cursor-pointer relative transition-colors #{if is_selected?(@patching_state, device.id, input["id"]), do: "border-[#00f] shadow-[0_0_10px_#00f]", else: "border-[#999] hover:border-[#000]"}"}
+                        <div class={"jack rack-jack w-6 h-6 rounded-full bg-[#ddd] border-2 cursor-pointer relative transition-colors #{if is_selected?(@patching_state, device.id, input["id"]), do: "border-[#00f] shadow-[0_0_10px_#00f]", else: "border-[#999] hover:border-[#000]"}"}
                              title={input["name"]}
+                             data-jack-id={"#{device.id}-#{input["id"]}"}
                              phx-click="jack_click"
                              phx-value-device-id={device.id}
                              phx-value-jack-id={input["id"]}
@@ -165,8 +170,9 @@ defmodule GreenManTavernWeb.RackComponent do
                     <%= for output <- (device.settings["outputs"] || [%{"id" => "out_1", "name" => "OUT"}]) do %>
                       <div class="flex flex-col items-center group/jack">
                         <span class="text-[9px] text-[#666] font-mono mb-1 opacity-0 group-hover/jack:opacity-100 transition-opacity bg-white px-1 rounded border border-gray-200 absolute bottom-6 z-20 whitespace-nowrap"><%= output["name"] %></span>
-                        <div class={"jack w-6 h-6 rounded-full bg-[#ddd] border-2 cursor-pointer relative transition-colors #{if is_selected?(@patching_state, device.id, output["id"]), do: "border-[#00f] shadow-[0_0_10px_#00f]", else: "border-[#999] hover:border-[#000]"}"}
+                        <div class={"jack rack-jack w-6 h-6 rounded-full bg-[#ddd] border-2 cursor-pointer relative transition-colors #{if is_selected?(@patching_state, device.id, output["id"]), do: "border-[#00f] shadow-[0_0_10px_#00f]", else: "border-[#999] hover:border-[#000]"}"}
                              title={output["name"]}
+                             data-jack-id={"#{device.id}-#{output["id"]}"}
                              phx-click="jack_click"
                              phx-value-device-id={device.id}
                              phx-value-jack-id={output["id"]}
@@ -184,31 +190,13 @@ defmodule GreenManTavernWeb.RackComponent do
           </div>
 
           <!-- Cables Layer (SVG) -->
-          <svg class="cables-layer absolute inset-0 w-full h-full pointer-events-none z-20 overflow-visible">
-            <%= for cable <- @cables do %>
-              <%
-                {x1, y1} = get_jack_coordinates(cable.source_device_id, cable.source_jack_id, @devices, @container_width)
-                {x2, y2} = get_jack_coordinates(cable.target_device_id, cable.target_jack_id, @devices, @container_width)
-                
-                # Bezier control points
-                cp1x = x1
-                cp1y = y1 + 50
-                cp2x = x2
-                cp2y = y2 + 50
-              %>
-              <path d={"M #{x1} #{y1} C #{cp1x} #{cp1y}, #{cp2x} #{cp2y}, #{x2} #{y2}"}
-                    stroke={cable.cable_color || "#ff0000"}
-                    stroke-width="4"
-                    fill="none"
-                    stroke-linecap="round"
-                    class="opacity-80 hover:opacity-100 transition-opacity" />
-            <% end %>
-
-            <!-- Render active patching cable -->
-            <%= if @patching_state do %>
-              <!-- TODO: Render dynamic cable following cursor -->
-            <% end %>
-          </svg>
+            <!-- Cables Layer (SVG) - Client-side rendered -->
+            <svg id="rack-cables-layer" 
+                 class="cables-layer absolute inset-0 w-full h-full pointer-events-none z-20 overflow-visible"
+                 phx-hook="RackCables"
+                 data-cables={Jason.encode!(@cables)}>
+              <!-- Paths will be injected by JS -->
+            </svg>
 
         </div>
       </div>
@@ -311,10 +299,7 @@ defmodule GreenManTavernWeb.RackComponent do
     """
   end
 
-  @impl true
-  def handle_event("resize", %{"width" => width}, socket) do
-    {:noreply, assign(socket, :container_width, width)}
-  end
+
 
   @impl true
   def handle_event("toggle_selection", %{"id" => id}, socket) do
@@ -582,6 +567,7 @@ defmodule GreenManTavernWeb.RackComponent do
                 socket
                 |> update(:cables, fn cables -> cables ++ [cable] end)
                 |> assign(:patching_state, nil)
+                |> push_event("update_cables", %{cables: socket.assigns.cables ++ [cable]})
               {:noreply, socket}
             
             {:error, _changeset} ->
@@ -595,70 +581,5 @@ defmodule GreenManTavernWeb.RackComponent do
     s_dev == dev_id and s_jack == jack_id
   end
   defp is_selected?(_, _, _), do: false
-
-  defp get_jack_coordinates(device_id, jack_id, devices, container_width) do
-    # Find device index
-    index = Enum.find_index(devices, fn d -> d.id == device_id end)
-    
-    if index do
-      # Y coordinate: index * 96 + 48 (center of device)
-      # Device height is 96px (h-24)
-      # Top is index * 96
-      # Center is + 48
-      
-      # Determine if it's an input or output to adjust Y
-      # Inputs are at top (top-2 + 12px center = 20px from top)
-      # Outputs are at bottom (bottom-2 + 12px center = 20px from bottom)
-      
-      device_top = index * 96
-      
-      y_offset = 
-        if String.starts_with?(jack_id, "in") do
-          20 # Top
-        else
-          76 # Bottom (96 - 20)
-        end
-        
-      y = device_top + y_offset
-      
-      # X coordinate:
-      # We need to match the CSS `justify-center gap-4` logic
-      # Jack width: 24px (w-6)
-      # Gap: 16px (gap-4)
-      
-      settings = Enum.find(devices, &(&1.id == device_id)).settings || %{}
-      
-      {ports, type} = 
-        if String.starts_with?(jack_id, "in") do
-          {settings["inputs"] || [], :input}
-        else
-          {settings["outputs"] || [], :output}
-        end
-        
-      port_count = length(ports)
-      port_index = Enum.find_index(ports, fn p -> p["id"] == jack_id end) || 0
-      
-      if port_count > 0 do
-        # Total width of the group of jacks
-        # (count * 24) + ((count - 1) * 16)
-        total_group_width = (port_count * 24) + (max(0, port_count - 1) * 16)
-        
-        # Start X (left edge of the first jack) relative to container center
-        # Container is w-full, jacks are centered
-        center_x = container_width / 2
-        start_x = center_x - (total_group_width / 2)
-        
-        # X of this specific jack (center)
-        # Start + (index * (24 + 16)) + 12 (half jack width)
-        x = start_x + (port_index * 40) + 12
-        
-        {x, y}
-      else
-        {container_width / 2, y}
-      end
-    else
-      {0, 0}
-    end
-  end
 
 end
