@@ -856,7 +856,7 @@ defmodule GreenManTavernWeb.DualPanelLive do
   end
 
   defp page_title(:home), do: "Green Man Tavern"
-  defp page_title(:living_web), do: "Living Web"
+  defp page_title(:living_web), do: "Rack Architecture"
   defp page_title(:journal), do: "Journal & Quests"
   defp page_title(_), do: "Green Man Tavern"
 

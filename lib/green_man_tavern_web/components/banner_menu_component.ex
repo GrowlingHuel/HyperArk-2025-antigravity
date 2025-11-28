@@ -63,7 +63,7 @@ defmodule GreenManTavernWeb.BannerMenuComponent do
           style="margin-right: 10px !important; color: #000000 !important; text-decoration: none !important; display: inline-flex !important; align-items: center !important; padding: 0 !important; line-height: 1 !important; height: auto !important;"
         >
           <span class="banner-icon-emoji" style="filter: grayscale(100%) !important; display: inline-block !important; line-height: 1 !important; margin: 0 !important; padding: 0 !important;">🌀</span>
-          <span class="banner-text" style="display: inline-block !important; line-height: 1 !important; margin: 0 !important; padding: 0 !important;">Living Web</span>
+          <span class="banner-text" style="display: inline-block !important; line-height: 1 !important; margin: 0 !important; padding: 0 !important;">Rack Architecture</span>
         </.link>
         <.link
           navigate={build_path("/", @current_character, %{"page" => "planting_guide"})}

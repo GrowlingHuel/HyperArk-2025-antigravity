@@ -5,23 +5,17 @@ export const RackCables = {
 
         // Listen for server updates
         this.handleEvent("update_cables", ({ cables }) => {
-            // We can store cables in a data attribute or just pass them directly
-            // But since we want to redraw on resize without asking server, 
-            // we should store them locally.
             this.cables = cables;
             this.drawCables();
         });
 
-        // Redraw on window resize - PURE CLIENT SIDE, NO SERVER NOTIFICATION
+        // Redraw on window resize - PURE CLIENT SIDE
         this.resizeHandler = () => {
             if (this.cables) {
                 this.drawCables();
             }
         };
         window.addEventListener("resize", this.resizeHandler);
-
-        // Also observe the rack container for scroll/resize if needed
-        // But since SVG is inside the scrolling container, scroll is handled natively.
     },
 
     destroyed() {
@@ -31,7 +25,6 @@ export const RackCables = {
     },
 
     updated() {
-        // If data-cables attribute changes, update
         const cablesData = this.el.dataset.cables;
         if (cablesData) {
             try {
@@ -49,17 +42,12 @@ export const RackCables = {
         // Clear existing paths
         this.el.innerHTML = '';
 
-        // We need coordinates relative to the SVG container.
-        // The SVG is likely `absolute inset-0` inside `.rack-frame` or `.devices-container`.
-        // Let's assume the SVG is the `this.el`.
         const svgRect = this.el.getBoundingClientRect();
 
         this.cables.forEach(cable => {
             const sourceId = `${cable.source_device_id}-${cable.source_jack_id}`;
             const targetId = `${cable.target_device_id}-${cable.target_jack_id}`;
 
-            // Find jacks
-            // Note: We search document-wide or scoped to rack? Document is safer for now.
             const sourceEl = document.querySelector(`.rack-jack[data-jack-id="${sourceId}"]`);
             const targetEl = document.querySelector(`.rack-jack[data-jack-id="${targetId}"]`);
 
@@ -67,22 +55,15 @@ export const RackCables = {
                 const sourceRect = sourceEl.getBoundingClientRect();
                 const targetRect = targetEl.getBoundingClientRect();
 
-                // Calculate center points relative to the SVG
-                // x = (jack.left - svg.left) + (jack.width / 2)
-                // y = (jack.top - svg.top) + (jack.height / 2)
-
                 const x1 = (sourceRect.left - svgRect.left) + (sourceRect.width / 2);
                 const y1 = (sourceRect.top - svgRect.top) + (sourceRect.height / 2);
                 const x2 = (targetRect.left - svgRect.left) + (targetRect.width / 2);
                 const y2 = (targetRect.top - svgRect.top) + (targetRect.height / 2);
 
                 // Bezier Logic (Gravity)
-                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-
                 const yDiff = Math.abs(y2 - y1);
                 const sag = Math.min(100, yDiff * 0.5) + 50;
 
-                // Control points: slightly below the jacks to simulate gravity
                 const cp1x = x1;
                 const cp1y = y1 + sag;
                 const cp2x = x2;
@@ -90,14 +71,49 @@ export const RackCables = {
 
                 const d = `M ${x1} ${y1} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${x2} ${y2}`;
 
-                path.setAttribute("d", d);
-                path.setAttribute("stroke", cable.cable_color || "#333");
-                path.setAttribute("stroke-width", "4");
-                path.setAttribute("fill", "none");
-                path.setAttribute("stroke-linecap", "round");
-                path.setAttribute("class", "pointer-events-none drop-shadow-md opacity-80 hover:opacity-100 transition-opacity");
+                // Group for the cable
+                const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                group.style.cursor = "pointer";
 
-                this.el.appendChild(path);
+                // 1. Hit Area Path (Thicker, Transparent)
+                const hitPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                hitPath.setAttribute("d", d);
+                hitPath.setAttribute("stroke", "transparent");
+                hitPath.setAttribute("stroke-width", "20"); // Wide hit area
+                hitPath.setAttribute("fill", "none");
+                hitPath.style.pointerEvents = "stroke"; // Catch clicks on the stroke
+
+                // 2. Visible Path
+                const visiblePath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                visiblePath.setAttribute("d", d);
+                visiblePath.setAttribute("stroke", cable.cable_color || "#333");
+                visiblePath.setAttribute("stroke-width", "4");
+                visiblePath.setAttribute("fill", "none");
+                visiblePath.setAttribute("stroke-linecap", "round");
+                visiblePath.setAttribute("class", "pointer-events-none drop-shadow-md opacity-80 transition-all duration-200");
+
+                // Interactions
+                group.addEventListener("mouseenter", () => {
+                    visiblePath.setAttribute("stroke-width", "6");
+                    visiblePath.style.opacity = "1";
+                    visiblePath.style.filter = "brightness(1.2)";
+                });
+
+                group.addEventListener("mouseleave", () => {
+                    visiblePath.setAttribute("stroke-width", "4");
+                    visiblePath.style.opacity = "0.8";
+                    visiblePath.style.filter = "none";
+                });
+
+                group.addEventListener("dblclick", (e) => {
+                    e.stopPropagation();
+                    // Push event to server to delete
+                    this.pushEvent("delete_cable", { id: cable.id });
+                });
+
+                group.appendChild(hitPath);
+                group.appendChild(visiblePath);
+                this.el.appendChild(group);
             }
         });
     }

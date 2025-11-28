@@ -101,6 +101,15 @@ defmodule GreenManTavernWeb.RackComponent do
         <!-- Rack Rails -->
         <div class="rack-frame w-full h-full border-x-8 border-[#ccc] bg-[#fff] relative shadow-2xl overflow-y-auto">
           
+          <!-- Cables Layer (SVG) -->
+          <!-- Cables Layer (SVG) - Client-side rendered -->
+          <svg id="rack-cables-layer" 
+               class="cables-layer absolute inset-0 w-full h-full pointer-events-none z-20 overflow-visible"
+               phx-hook="RackCables"
+               data-cables={Jason.encode!(@cables)}>
+            <!-- Paths will be injected by JS -->
+          </svg>
+
           <!-- Devices -->
           <div class="devices-container flex flex-col w-full relative z-10">
             <%= for device <- @devices do %>
@@ -118,7 +127,7 @@ defmodule GreenManTavernWeb.RackComponent do
                 </div>
 
                 <!-- Device Faceplate -->
-                <div class="flex items-center gap-4 flex-1 ml-6">
+                  <div class={"flex items-center gap-4 ml-6"}>
                   <div class={"device-ears w-4 h-16 rounded-sm #{if device.settings["is_composite"], do: "bg-purple-400", else: "bg-[#bbb]"}"}></div>
                   <div>
                     <h3 class="text-[#000] font-mono text-sm tracking-wider uppercase flex items-center gap-2">
@@ -146,57 +155,49 @@ defmodule GreenManTavernWeb.RackComponent do
                    Gap: 32px (gap-8)
                 -->
                 <!-- Patch Points (Jacks) - Top/Bottom Layout -->
-                <div class="patch-bay absolute inset-0 pointer-events-none">
-                  <!-- Inputs (Top) -->
-                  <div class="inputs absolute top-2 left-0 w-full flex justify-center gap-4 pointer-events-auto">
-                    <%= for input <- (device.settings["inputs"] || [%{"id" => "in_1", "name" => "IN"}]) do %>
-                      <div class="flex flex-col items-center group/jack">
-                        <div class={"jack rack-jack w-6 h-6 rounded-full bg-[#ddd] border-2 cursor-pointer relative transition-colors #{if is_selected?(@patching_state, device.id, input["id"]), do: "border-[#00f] shadow-[0_0_10px_#00f]", else: "border-[#999] hover:border-[#000]"}"}
-                             title={input["name"]}
-                             data-jack-id={"#{device.id}-#{input["id"]}"}
-                             phx-click="jack_click"
-                             phx-value-device-id={device.id}
-                             phx-value-jack-id={input["id"]}
-                             phx-target={@myself}>
-                          <div class="absolute inset-0 m-auto w-3 h-3 rounded-full bg-[#333]"></div>
-                        </div>
-                        <span class="text-[9px] text-[#666] font-mono mt-1 opacity-0 group-hover/jack:opacity-100 transition-opacity bg-white px-1 rounded border border-gray-200 absolute top-6 z-20 whitespace-nowrap"><%= input["name"] %></span>
-                      </div>
-                    <% end %>
-                  </div>
-
-                  <!-- Outputs (Bottom) -->
-                  <div class="outputs absolute bottom-2 left-0 w-full flex justify-center gap-4 pointer-events-auto">
-                    <%= for output <- (device.settings["outputs"] || [%{"id" => "out_1", "name" => "OUT"}]) do %>
-                      <div class="flex flex-col items-center group/jack">
-                        <span class="text-[9px] text-[#666] font-mono mb-1 opacity-0 group-hover/jack:opacity-100 transition-opacity bg-white px-1 rounded border border-gray-200 absolute bottom-6 z-20 whitespace-nowrap"><%= output["name"] %></span>
-                        <div class={"jack rack-jack w-6 h-6 rounded-full bg-[#ddd] border-2 cursor-pointer relative transition-colors #{if is_selected?(@patching_state, device.id, output["id"]), do: "border-[#00f] shadow-[0_0_10px_#00f]", else: "border-[#999] hover:border-[#000]"}"}
-                             title={output["name"]}
-                             data-jack-id={"#{device.id}-#{output["id"]}"}
-                             phx-click="jack_click"
-                             phx-value-device-id={device.id}
-                             phx-value-jack-id={output["id"]}
-                             phx-target={@myself}>
-                          <div class="absolute inset-0 m-auto w-3 h-3 rounded-full bg-[#333]"></div>
-                        </div>
-                      </div>
-                    <% end %>
-                  </div>
-                </div>
+                <div class="ports flex flex-col items-end flex-1">
+  <!-- Inputs (Top) -->
+   <div class="inputs flex justify-between w-full gap-2">
+    <%= for input <- (device.settings["inputs"] || [%{"id" => "in_1", "name" => "IN"}]) do %>
+      <div class="flex flex-col items-center group/jack">
+        <div class={"jack rack-jack w-6 h-6 rounded-full bg-[#ddd] border-2 cursor-pointer relative z-30 transition-colors #{if is_selected?(@patching_state, device.id, input["id"]), do: "border-[#00f] shadow-[0_0_10px_#00f]", else: "border-[#999] hover:border-[#000]"}"}
+          title={input["name"]}
+          data-jack-id={"#{device.id}-#{input["id"]}"}
+          phx-click="jack_click"
+          phx-value-device-id={device.id}
+          phx-value-jack-id={input["id"]}
+          phx-target={@myself}>
+          <div class="absolute inset-0 m-auto w-3 h-3 rounded-full bg-[#333]"></div>
+        </div>
+        <span class="text-[9px] text-[#666] font-mono mt-1 opacity-0 group-hover/jack:opacity-100 transition-opacity bg-white px-1 rounded border border-gray-200 absolute top-6 z-20 whitespace-nowrap"><%= input["name"] %></span>
+      </div>
+    <% end %>
+  </div>
+  <!-- Outputs (Bottom) -->
+   <div class="outputs flex justify-between gap-2 mt-2">
+    <%= for output <- (device.settings["outputs"] || [%{"id" => "out_1", "name" => "OUT"}]) do %>
+      <div class="flex flex-col items-center group/jack">
+        <span class="text-[9px] text-[#666] font-mono mb-1 opacity-0 group-hover/jack:opacity-100 transition-opacity bg-white px-1 rounded border border-gray-200 absolute bottom-6 z-20 whitespace-nowrap"><%= output["name"] %></span>
+        <div class={"jack rack-jack w-6 h-6 rounded-full bg-[#ddd] border-2 cursor-pointer relative z-30 transition-colors #{if is_selected?(@patching_state, device.id, output["id"]), do: "border-[#00f] shadow-[0_0_10px_#00f]", else: "border-[#999] hover:border-[#000]"}"}
+          title={output["name"]}
+          data-jack-id={"#{device.id}-#{output["id"]}"}
+          phx-click="jack_click"
+          phx-value-device-id={device.id}
+          phx-value-jack-id={output["id"]}
+          phx-target={@myself}>
+          <div class="absolute inset-0 m-auto w-3 h-3 rounded-full bg-[#333]"></div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
 
               </div>
             <% end %>
             
           </div>
 
-          <!-- Cables Layer (SVG) -->
-            <!-- Cables Layer (SVG) - Client-side rendered -->
-            <svg id="rack-cables-layer" 
-                 class="cables-layer absolute inset-0 w-full h-full pointer-events-none z-20 overflow-visible"
-                 phx-hook="RackCables"
-                 data-cables={Jason.encode!(@cables)}>
-              <!-- Paths will be injected by JS -->
-            </svg>
+
 
         </div>
       </div>
@@ -326,68 +327,69 @@ defmodule GreenManTavernWeb.RackComponent do
   end
 
   @impl true
-  def handle_event("confirm_save_system", %{"name" => name}, socket) do
-    # Create composite system
+
+  def handle_event("confirm_save_system", %{"system_name" => name}, socket) do
     selected_ids = MapSet.to_list(socket.assigns.selected_devices)
-    
-    # In a real implementation, we would:
-    # 1. Infer external I/O from connections
-    # 2. Save the internal structure
-    # 3. Create the CompositeSystem record
-    
-    # For now, we'll create a basic record
-    attrs = %{
-      name: name,
-      user_id: socket.assigns.current_user.id,
-      description: "Created from rack selection",
-      internal_node_ids: selected_ids
-    }
-    
-    case Diagrams.create_composite_system(attrs) do
-      {:ok, system} ->
-        socket = 
-          socket
-          |> update(:composite_systems, fn systems -> [system | systems] end)
-          |> assign(:save_system_modal, false)
-          |> assign(:selected_devices, MapSet.new()) # Clear selection
-          |> put_flash(:info, "System saved successfully")
-          
-        {:noreply, socket}
-        
+    user_id = socket.assigns.current_user.id
+
+    case GreenManTavern.Rack.RackSystemBuilder.build_from_selection(name, selected_ids, user_id) do
+      {:ok, _system} ->
+        {:noreply,
+         socket
+         |> assign(:save_system_modal, false)
+         |> assign(:selected_devices, MapSet.new())
+         |> put_flash(:info, "System '#{name}' saved to library successfully.")}
+
       {:error, _changeset} ->
-        {:noreply, put_flash(socket, :error, "Failed to save system")}
+        {:noreply, put_flash(socket, :error, "Failed to save system.")}
     end
   end
 
   @impl true
-  def handle_event("add_device", %{"type" => type, "id" => id}, socket) do
-    # Determine name based on type
-    name = case type do
-      "project" ->
-        project = Enum.find(socket.assigns.projects, &(&1.id == String.to_integer(id)))
-        project.name
-      "composite" ->
-        system = Enum.find(socket.assigns.composite_systems, &(&1.id == String.to_integer(id)))
-        system.name
+  def handle_event("add_device", %{"type" => "composite", "id" => system_id}, socket) do
+    user_id = socket.assigns.current_user.id
+    # TODO: Get current project ID if applicable
+    project_id = nil 
+
+    case GreenManTavern.Rack.RackSystemBuilder.instantiate(system_id, user_id, project_id) do
+      {:ok, _device} ->
+        # Refresh devices
+        devices = Rack.list_devices()
+        {:noreply, assign(socket, :devices, devices)}
+      
+      {:error, _reason} ->
+        {:noreply, put_flash(socket, :error, "Failed to add system.")}
     end
+  end
 
-    # Create new device
-    device_attrs = %{
-      name: name,
-      user_id: socket.assigns.current_user.id,
-      project_id: if(type == "project", do: String.to_integer(id), else: 1), # Default to project 1 for composites for now
-      position_index: length(socket.assigns.devices),
-      settings: %{
-        "inputs" => [%{"id" => "in_1", "name" => "IN"}],
-        "outputs" => [%{"id" => "out_1", "name" => "OUT"}]
+  @impl true
+  def handle_event("add_device", %{"type" => "project", "id" => project_id}, socket) do
+    project = Enum.find(socket.assigns.projects, &(&1.id == String.to_integer(project_id)))
+    
+    if project do
+      # Create new device from project
+      device_attrs = %{
+        name: project.name,
+        user_id: socket.assigns.current_user.id,
+        project_id: project.id,
+        position_index: length(socket.assigns.devices),
+        settings: %{
+          "inputs" => Map.values(project.inputs || %{}) |> Enum.sort_by(& &1["id"]),
+          "outputs" => Map.values(project.outputs || %{}) |> Enum.sort_by(& &1["id"])
+        }
       }
-    }
-
-    case Rack.create_device(device_attrs) do
-      {:ok, device} ->
-        {:noreply, update(socket, :devices, fn devices -> devices ++ [device] end)}
-      {:error, _changeset} ->
-        {:noreply, put_flash(socket, :error, "Failed to create device")}
+      
+      case Rack.create_device(device_attrs) do
+        {:ok, _device} ->
+          # Refresh devices
+          devices = Rack.list_devices()
+          {:noreply, assign(socket, :devices, devices)}
+          
+        {:error, _changeset} ->
+          {:noreply, put_flash(socket, :error, "Failed to add device")}
+      end
+    else
+      {:noreply, socket}
     end
   end
 
@@ -582,4 +584,18 @@ defmodule GreenManTavernWeb.RackComponent do
   end
   defp is_selected?(_, _, _), do: false
 
+  @impl true
+  def handle_event("delete_cable", %{"id" => cable_id}, socket) do
+    case Rack.delete_patch_cable(cable_id) do
+      {:ok, _} ->
+        cables = Rack.list_patch_cables()
+        {:noreply, 
+         socket 
+         |> assign(:cables, cables)
+         |> push_event("update_cables", %{cables: cables})}
+         
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, "Failed to delete cable.")}
+    end
+  end
 end
