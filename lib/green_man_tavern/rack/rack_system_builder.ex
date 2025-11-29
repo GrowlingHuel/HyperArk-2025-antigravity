@@ -55,9 +55,14 @@ defmodule GreenManTavern.Rack.RackSystemBuilder do
         }}
       end)
 
-    # 4. Serialize Internal Data
-    internal_nodes_data = Map.new(devices, fn d -> {d.id, Map.from_struct(d)} end)
-    internal_edges_data = Map.new(internal_cables, fn c -> {c.id, Map.from_struct(c)} end)
+    # 4. Serialize Internal Data (exclude unloaded associations)
+    internal_nodes_data = Map.new(devices, fn d -> 
+      {d.id, d |> Map.from_struct() |> Map.drop([:__meta__, :user, :project, :user_plant, :source_cables, :target_cables])} 
+    end)
+    
+    internal_edges_data = Map.new(internal_cables, fn c -> 
+      {c.id, c |> Map.from_struct() |> Map.drop([:__meta__, :user, :source_device, :target_device])} 
+    end)
 
     # 5. Create the Composite System Record
     attrs = %{

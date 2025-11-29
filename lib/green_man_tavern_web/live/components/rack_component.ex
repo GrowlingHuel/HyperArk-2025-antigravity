@@ -89,13 +89,22 @@ defmodule GreenManTavernWeb.RackComponent do
               Select devices to create a system
             <% end %>
           </div>
-          <%= if MapSet.size(@selected_devices) > 1 do %>
-            <button class="px-3 py-1 bg-purple-600 text-white rounded text-sm hover:bg-purple-700 shadow-sm"
-                    phx-click="save_as_system"
-                    phx-target={@myself}>
-              Save as System
-            </button>
-          <% end %>
+          <div class="flex gap-2">
+            <%= if MapSet.size(@selected_devices) > 0 do %>
+              <button class="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700 shadow-sm"
+                      phx-click="remove_selected_devices"
+                      phx-target={@myself}>
+                Remove Selected
+              </button>
+            <% end %>
+            <%= if MapSet.size(@selected_devices) > 1 do %>
+              <button class="px-3 py-1 bg-purple-600 text-white rounded text-sm hover:bg-purple-700 shadow-sm"
+                      phx-click="save_as_system"
+                      phx-target={@myself}>
+                Save as System
+              </button>
+            <% end %>
+          </div>
         </div>
 
         <!-- Rack Rails -->
@@ -309,7 +318,7 @@ defmodule GreenManTavernWeb.RackComponent do
 
       <!-- Save System Modal -->
       <%= if @save_system_modal do %>
-        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
           <div class="bg-white rounded-lg shadow-xl p-6 w-[400px]">
             <h2 class="text-xl font-bold mb-4">Save as System</h2>
             <p class="text-sm text-gray-600 mb-4">
@@ -362,21 +371,58 @@ defmodule GreenManTavernWeb.RackComponent do
 
   @impl true
 
-  def handle_event("confirm_save_system", %{"system_name" => name}, socket) do
+  def handle_event("confirm_save_system", %{"name" => name}, socket) do
     selected_ids = MapSet.to_list(socket.assigns.selected_devices)
     user_id = socket.assigns.current_user.id
 
+    IO.puts("=== SAVE SYSTEM DEBUG ===")
+    IO.puts("Name: #{name}")
+    IO.puts("Selected IDs: #{inspect(selected_ids)}")
+    IO.puts("User ID: #{user_id}")
+
     case GreenManTavern.Rack.RackSystemBuilder.build_from_selection(name, selected_ids, user_id) do
-      {:ok, _system} ->
+      {:ok, system} ->
+        IO.puts("System created successfully: #{inspect(system.id)}")
+        
+        # Refresh the composite systems list
+        composite_systems = Diagrams.list_composite_systems(user_id)
+        IO.puts("Composite systems count: #{length(composite_systems)}")
+        
         {:noreply,
          socket
          |> assign(:save_system_modal, false)
          |> assign(:selected_devices, MapSet.new())
+         |> assign(:composite_systems, composite_systems)
          |> put_flash(:info, "System '#{name}' saved to library successfully.")}
 
-      {:error, _changeset} ->
+      {:error, changeset} ->
+        IO.puts("Failed to save system: #{inspect(changeset)}")
         {:noreply, put_flash(socket, :error, "Failed to save system.")}
     end
+  end
+
+  @impl true
+  def handle_event("remove_selected_devices", _params, socket) do
+    selected_ids = MapSet.to_list(socket.assigns.selected_devices)
+    
+    # Delete each selected device
+    Enum.each(selected_ids, fn device_id ->
+      case Rack.get_device!(device_id) do
+        device -> Rack.delete_device(device)
+      end
+    end)
+    
+    # Refresh devices and cables (cables may be deleted via cascade)
+    devices = Rack.list_devices()
+    cables = Rack.list_patch_cables()
+    
+    {:noreply,
+     socket
+     |> assign(:devices, devices)
+     |> assign(:cables, cables)
+     |> assign(:selected_devices, MapSet.new())
+     |> push_event("update_cables", %{cables: cables})
+     |> put_flash(:info, "#{length(selected_ids)} device(s) removed successfully.")}
   end
 
   @impl true
@@ -408,8 +454,16 @@ defmodule GreenManTavernWeb.RackComponent do
         project_id: project.id,
         position_index: length(socket.assigns.devices),
         settings: %{
-          "inputs" => Map.values(project.inputs || %{}) |> Enum.sort_by(& &1["id"]),
-          "outputs" => Map.values(project.outputs || %{}) |> Enum.sort_by(& &1["id"])
+          "inputs" => 
+            (project.inputs || %{})
+            |> Map.values()
+            |> Enum.filter(&is_map/1)
+            |> Enum.sort_by(& &1["id"]),
+          "outputs" => 
+            (project.outputs || %{})
+            |> Map.values()
+            |> Enum.filter(&is_map/1)
+            |> Enum.sort_by(& &1["id"])
         }
       }
       
