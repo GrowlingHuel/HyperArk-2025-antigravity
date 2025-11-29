@@ -101,17 +101,8 @@ defmodule GreenManTavernWeb.RackComponent do
         <!-- Rack Rails -->
         <div class="rack-frame w-full h-full border-x-8 border-[#ccc] bg-[#fff] relative shadow-2xl overflow-y-auto">
           
-          <!-- Cables Layer (SVG) -->
-          <!-- Cables Layer (SVG) - Client-side rendered -->
-          <svg id="rack-cables-layer" 
-               class="cables-layer absolute inset-0 w-full h-full pointer-events-none z-20 overflow-visible"
-               phx-hook="RackCables"
-               data-cables={Jason.encode!(@cables)}>
-            <!-- Paths will be injected by JS -->
-          </svg>
-
           <!-- Devices -->
-          <div class="devices-container flex flex-col w-full relative z-10">
+          <div class="devices-container flex flex-col w-full relative">
             <%= for device <- @devices do %>
               <div class={"device-unit w-full h-24 bg-[#e8e8e8] border-b border-[#ccc] relative flex items-center px-4 shadow-inner group #{if MapSet.member?(@selected_devices, device.id), do: "bg-blue-50 border-blue-200"}"}
                    id={"device-#{device.id}"}>
@@ -135,7 +126,7 @@ defmodule GreenManTavernWeb.RackComponent do
                       <%= if device.settings["is_composite"] do %>
                         <span class="text-[10px] bg-purple-100 text-purple-800 px-1 rounded border border-purple-200">SYSTEM</span>
                       <% end %>
-                      <button class="opacity-0 group-hover:opacity-100 transition-opacity text-xs text-blue-600 hover:text-blue-800"
+                      <button class="text-xs text-blue-600 hover:text-blue-800 ml-2"
                               phx-click="edit_device"
                               phx-value-id={device.id}
                               phx-target={@myself}>
@@ -160,7 +151,7 @@ defmodule GreenManTavernWeb.RackComponent do
    <div class="inputs flex justify-between w-full gap-2">
     <%= for input <- (device.settings["inputs"] || [%{"id" => "in_1", "name" => "IN"}]) do %>
       <div class="flex flex-col items-center group/jack">
-        <div class={"jack rack-jack w-6 h-6 rounded-full bg-[#ddd] border-2 cursor-pointer relative z-30 transition-colors #{if is_selected?(@patching_state, device.id, input["id"]), do: "border-[#00f] shadow-[0_0_10px_#00f]", else: "border-[#999] hover:border-[#000]"}"}
+        <div class={"jack rack-jack w-6 h-6 rounded-full bg-[#ddd] border-2 cursor-pointer relative z-20 transition-colors #{if is_selected?(@patching_state, device.id, input["id"]), do: "border-[#00f] shadow-[0_0_10px_#00f]", else: "border-[#999] hover:border-[#000]"}"}
           title={input["name"]}
           data-jack-id={"#{device.id}-#{input["id"]}"}
           phx-click="jack_click"
@@ -178,7 +169,7 @@ defmodule GreenManTavernWeb.RackComponent do
     <%= for output <- (device.settings["outputs"] || [%{"id" => "out_1", "name" => "OUT"}]) do %>
       <div class="flex flex-col items-center group/jack">
         <span class="text-[9px] text-[#666] font-mono mb-1 opacity-0 group-hover/jack:opacity-100 transition-opacity bg-white px-1 rounded border border-gray-200 absolute bottom-6 z-20 whitespace-nowrap"><%= output["name"] %></span>
-        <div class={"jack rack-jack w-6 h-6 rounded-full bg-[#ddd] border-2 cursor-pointer relative z-30 transition-colors #{if is_selected?(@patching_state, device.id, output["id"]), do: "border-[#00f] shadow-[0_0_10px_#00f]", else: "border-[#999] hover:border-[#000]"}"}
+        <div class={"jack rack-jack w-6 h-6 rounded-full bg-[#ddd] border-2 cursor-pointer relative z-20 transition-colors #{if is_selected?(@patching_state, device.id, output["id"]), do: "border-[#00f] shadow-[0_0_10px_#00f]", else: "border-[#999] hover:border-[#000]"}"}
           title={output["name"]}
           data-jack-id={"#{device.id}-#{output["id"]}"}
           phx-click="jack_click"
@@ -196,6 +187,15 @@ defmodule GreenManTavernWeb.RackComponent do
             <% end %>
             
           </div>
+
+          <!-- Cables Layer (SVG) -->
+          <!-- Cables Layer (SVG) - Client-side rendered -->
+          <svg id="rack-cables-layer" 
+               class="cables-layer absolute inset-0 w-full h-full pointer-events-none z-10 overflow-visible"
+               phx-hook="RackCables"
+               data-cables={Jason.encode!(@cables)}>
+            <!-- Paths will be injected by JS -->
+          </svg>
 
 
 
@@ -226,16 +226,33 @@ defmodule GreenManTavernWeb.RackComponent do
                 </div>
                 <div class="space-y-2">
                   <%= for {input, idx} <- Enum.with_index(@editing_device.settings["inputs"] || []) do %>
-                    <div class="flex gap-2">
-                      <input type="text" name={"inputs[#{idx}][name]"} value={input["name"]}
-                             phx-blur="update_port_name"
-                             phx-value-type="input"
-                             phx-value-idx={idx}
-                             phx-value-name={input["name"]}
-                             phx-target={@myself}
-                             class="block w-full text-sm rounded-md border-gray-300" />
-                      <input type="hidden" name={"inputs[#{idx}][id]"} value={input["id"]} />
-                      <button type="button" phx-click="remove_port" phx-value-type="input" phx-value-idx={idx} phx-target={@myself} class="text-red-500 hover:text-red-700">×</button>
+                    <div class="flex flex-col gap-1 p-2 border rounded bg-gray-50">
+                      <div class="flex gap-2">
+                        <input type="text" name={"inputs[#{idx}][name]"} value={input["name"]}
+                               phx-blur="update_port_name"
+                               phx-value-type="input"
+                               phx-value-idx={idx}
+                               phx-value-name={input["name"]}
+                               phx-target={@myself}
+                               class="block w-full text-sm rounded-md border-gray-300" />
+                        <input type="hidden" name={"inputs[#{idx}][id]"} value={input["id"]} />
+                        <button type="button" phx-click="remove_port" phx-value-type="input" phx-value-idx={idx} phx-target={@myself} class="text-red-500 hover:text-red-700">×</button>
+                      </div>
+                      
+                      <% connected_cable = get_connected_cable(@editing_device.id, input["id"], @cables) %>
+                      <%= if connected_cable do %>
+                        <div class="flex items-center justify-between text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded border border-blue-100">
+                          <span>🔗 Connected to: <strong><%= get_peer_device_name(connected_cable, @editing_device.id, @devices) %></strong></span>
+                          <button type="button" 
+                                  phx-click="delete_cable" 
+                                  phx-value-id={connected_cable.id}
+                                  phx-target={@myself}
+                                  class="text-red-500 hover:text-red-700 font-bold px-1"
+                                  title="Disconnect">
+                            Disconnect
+                          </button>
+                        </div>
+                      <% end %>
                     </div>
                   <% end %>
                 </div>
@@ -249,16 +266,33 @@ defmodule GreenManTavernWeb.RackComponent do
                 </div>
                 <div class="space-y-2">
                   <%= for {output, idx} <- Enum.with_index(@editing_device.settings["outputs"] || []) do %>
-                    <div class="flex gap-2">
-                      <input type="text" name={"outputs[#{idx}][name]"} value={output["name"]}
-                             phx-blur="update_port_name"
-                             phx-value-type="output"
-                             phx-value-idx={idx}
-                             phx-value-name={output["name"]}
-                             phx-target={@myself}
-                             class="block w-full text-sm rounded-md border-gray-300" />
-                      <input type="hidden" name={"outputs[#{idx}][id]"} value={output["id"]} />
-                      <button type="button" phx-click="remove_port" phx-value-type="output" phx-value-idx={idx} phx-target={@myself} class="text-red-500 hover:text-red-700">×</button>
+                    <div class="flex flex-col gap-1 p-2 border rounded bg-gray-50">
+                      <div class="flex gap-2">
+                        <input type="text" name={"outputs[#{idx}][name]"} value={output["name"]}
+                               phx-blur="update_port_name"
+                               phx-value-type="output"
+                               phx-value-idx={idx}
+                               phx-value-name={output["name"]}
+                               phx-target={@myself}
+                               class="block w-full text-sm rounded-md border-gray-300" />
+                        <input type="hidden" name={"outputs[#{idx}][id]"} value={output["id"]} />
+                        <button type="button" phx-click="remove_port" phx-value-type="output" phx-value-idx={idx} phx-target={@myself} class="text-red-500 hover:text-red-700">×</button>
+                      </div>
+
+                      <% connected_cable = get_connected_cable(@editing_device.id, output["id"], @cables) %>
+                      <%= if connected_cable do %>
+                        <div class="flex items-center justify-between text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded border border-blue-100">
+                          <span>🔗 Connected to: <strong><%= get_peer_device_name(connected_cable, @editing_device.id, @devices) %></strong></span>
+                          <button type="button" 
+                                  phx-click="delete_cable" 
+                                  phx-value-id={connected_cable.id}
+                                  phx-target={@myself}
+                                  class="text-red-500 hover:text-red-700 font-bold px-1"
+                                  title="Disconnect">
+                            Disconnect
+                          </button>
+                        </div>
+                      <% end %>
                     </div>
                   <% end %>
                 </div>
@@ -586,16 +620,59 @@ defmodule GreenManTavernWeb.RackComponent do
 
   @impl true
   def handle_event("delete_cable", %{"id" => cable_id}, socket) do
-    case Rack.delete_patch_cable(cable_id) do
-      {:ok, _} ->
-        cables = Rack.list_patch_cables()
-        {:noreply, 
-         socket 
-         |> assign(:cables, cables)
-         |> push_event("update_cables", %{cables: cables})}
-         
-      {:error, _} ->
-        {:noreply, put_flash(socket, :error, "Failed to delete cable.")}
+    try do
+      cable = Rack.get_patch_cable!(cable_id)
+      case Rack.delete_patch_cable(cable) do
+        {:ok, _} ->
+          cables = Rack.list_patch_cables()
+          {:noreply, 
+           socket 
+           |> assign(:cables, cables)
+           |> push_event("update_cables", %{cables: cables})}
+           
+        {:error, _} ->
+          {:noreply, put_flash(socket, :error, "Failed to delete cable.")}
+      end
+    rescue
+      Ecto.NoResultsError ->
+        {:noreply, put_flash(socket, :error, "Cable not found.")}
     end
+  end
+
+  defp get_connected_cable(device_id, jack_id, cables) do
+    Enum.find(cables, fn cable ->
+      (cable.source_device_id == device_id and cable.source_jack_id == jack_id) or
+      (cable.target_device_id == device_id and cable.target_jack_id == jack_id)
+    end)
+  end
+
+  defp get_peer_device_name(cable, current_device_id, devices) do
+    peer_id = 
+      if cable.source_device_id == current_device_id do
+        cable.target_device_id
+      else
+        cable.source_device_id
+      end
+
+    peer_jack_id =
+      if cable.source_device_id == current_device_id do
+        cable.target_jack_id
+      else
+        cable.source_jack_id
+      end
+      
+    device = Enum.find(devices, &(&1.id == peer_id))
+    
+    # Try to find port name
+    port_name = 
+      if device do
+        all_ports = (device.settings["inputs"] || []) ++ (device.settings["outputs"] || [])
+        port = Enum.find(all_ports, &(&1["id"] == peer_jack_id))
+        if port, do: port["name"], else: "?"
+      else
+        "?"
+      end
+
+    "#{if device, do: device.name, else: "Unknown"} [#{port_name}]"
   end
 end

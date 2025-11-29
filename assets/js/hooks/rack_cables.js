@@ -81,38 +81,53 @@ export const RackCables = {
                 hitPath.setAttribute("stroke", "transparent");
                 hitPath.setAttribute("stroke-width", "20"); // Wide hit area
                 hitPath.setAttribute("fill", "none");
-                hitPath.style.pointerEvents = "stroke"; // Catch clicks on the stroke
+                hitPath.style.pointerEvents = "all"; // Aggressive capture
+                hitPath.style.cursor = "pointer"; // Show pointer cursor
 
-                // 2. Visible Path
-                const visiblePath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                visiblePath.setAttribute("d", d);
-                visiblePath.setAttribute("stroke", cable.cable_color || "#333");
-                visiblePath.setAttribute("stroke-width", "4");
-                visiblePath.setAttribute("fill", "none");
-                visiblePath.setAttribute("stroke-linecap", "round");
-                visiblePath.setAttribute("class", "pointer-events-none drop-shadow-md opacity-80 transition-all duration-200");
+                // 2. Visible Cable Path
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                path.setAttribute("d", d);
+                path.setAttribute("stroke", cable.cable_color || "#333"); // Use cable.cable_color
+                path.setAttribute("stroke-width", "4");
+                path.setAttribute("fill", "none");
+                path.setAttribute("stroke-linecap", "round");
+                path.style.pointerEvents = "none"; // Let clicks pass through visual path to hit path
+                path.setAttribute("class", "drop-shadow-md opacity-80 transition-all duration-200"); // Keep original classes
 
-                // Interactions
-                group.addEventListener("mouseenter", () => {
-                    visiblePath.setAttribute("stroke-width", "6");
-                    visiblePath.style.opacity = "1";
-                    visiblePath.style.filter = "brightness(1.2)";
+                group.appendChild(hitPath);
+                group.appendChild(path);
+
+                // Hover effects - Attach to hitPath
+                hitPath.addEventListener("mouseenter", () => {
+                    console.log("Mouse enter cable:", cable.id);
+                    path.setAttribute("stroke-width", "6");
+                    path.style.opacity = "1";
+                    path.style.filter = "brightness(1.2)";
                 });
 
-                group.addEventListener("mouseleave", () => {
-                    visiblePath.setAttribute("stroke-width", "4");
-                    visiblePath.style.opacity = "0.8";
-                    visiblePath.style.filter = "none";
+                hitPath.addEventListener("mouseleave", () => {
+                    path.setAttribute("stroke-width", "4");
+                    path.style.opacity = "0.8";
+                    path.style.filter = "none";
                 });
 
-                group.addEventListener("dblclick", (e) => {
+                // Double-click to delete - Attach to hitPath
+                hitPath.addEventListener("dblclick", (e) => {
+                    console.log("Double-click detected on cable:", cable.id);
+                    e.preventDefault();
                     e.stopPropagation();
                     // Push event to server to delete
                     this.pushEvent("delete_cable", { id: cable.id });
                 });
 
+                // Debug click
+                hitPath.addEventListener("click", (e) => {
+                    console.log("Single click on cable:", cable.id);
+                    e.stopPropagation();
+                });
+
                 group.appendChild(hitPath);
-                group.appendChild(visiblePath);
+                group.appendChild(path);
                 this.el.appendChild(group);
             }
         });
