@@ -8,7 +8,6 @@ defmodule GreenManTavernWeb.DualPanelLive do
   alias GreenManTavern.{Conversations, Accounts, Sessions}
   alias GreenManTavern.AI.{OpenAIClient, CharacterContext, SessionProcessor}
   alias GreenManTavern.PlantingGuide
-  alias GreenManTavern.Inventory
   alias GreenManTavern.Quests
   alias GreenManTavern.Quests.QuestGenerator
 
@@ -48,7 +47,7 @@ defmodule GreenManTavernWeb.DualPanelLive do
 
     user_id = if current_user, do: current_user.id, else: nil
 
-    
+
     # Initialize user_plants (even if empty) - needed for planting guide
     user_plants = if current_user do
       PlantingGuide.list_user_plants(current_user.id)
@@ -59,17 +58,10 @@ defmodule GreenManTavernWeb.DualPanelLive do
 
     socket =
       socket
-
       |> assign(:user_plants, user_plants || [])
       |> assign(:history_stack, [])  # Undo/redo history
       |> assign(:history_index, -1)  # Current position in history
       |> assign(:max_history, 50)  # Maximum history entries
-      |> assign(:inventory_items, [])
-      |> assign(:inventory_category_counts, %{})
-      |> assign(:inventory_active_processes, [])
-      |> assign(:selected_inventory_category, "all")
-      |> assign(:selected_inventory_item, nil)
-      |> assign(:show_inventory_add_form, false)
       |> assign(:selected_living_web_node, nil)
       |> assign(:show_harvest_panel, false)
       |> assign(:show_opportunities_panel, false)
@@ -83,7 +75,7 @@ defmodule GreenManTavernWeb.DualPanelLive do
   @impl true
   def handle_params(params, _url, socket) do
     Logger.info("[DualPanel] 🔗 handle_params called with params: #{inspect(params)}")
-    
+
     # Store current params for URL construction
     socket = assign(socket, :current_params, params)
 
@@ -102,20 +94,20 @@ defmodule GreenManTavernWeb.DualPanelLive do
     socket = assign(socket, :last_action, "handle_params")
 
     # Handle character selection from URL
-    socket = 
+    socket =
       case params["character"] do
-        nil -> 
+        nil ->
           # If character param is missing but we have one selected, close it
           if socket.assigns[:selected_character] do
             close_character_session(socket)
           else
             socket
           end
-        
+
         slug ->
           # If slug is different from current, load it
           current_slug = socket.assigns[:selected_character] && Characters.name_to_slug(socket.assigns.selected_character.name)
-          
+
           if slug != current_slug do
             load_character(socket, slug)
           else
@@ -127,81 +119,6 @@ defmodule GreenManTavernWeb.DualPanelLive do
     socket = load_right_panel_data(socket, action, params)
 
     {:noreply, socket}
-  end
-
-  @impl true
-
-
-  @impl true
-  def handle_event("select_inventory_category", %{"category" => category}, socket) do
-    {:noreply, assign(socket, :selected_inventory_category, category)}
-  end
-
-  @impl true
-  def handle_event("select_inventory_item", %{"id" => id}, socket) do
-    item = Inventory.get_inventory_item!(String.to_integer(id))
-    {:noreply, assign(socket, :selected_inventory_item, item)}
-  end
-
-  @impl true
-  def handle_event("show_inventory_add_form", _params, socket) do
-    {:noreply, assign(socket, :show_inventory_add_form, true)}
-  end
-
-  @impl true
-  def handle_event("hide_inventory_add_form", _params, socket) do
-    {:noreply, assign(socket, :show_inventory_add_form, false)}
-  end
-
-  @impl true
-  def handle_event("add_inventory_item", %{"item" => item_params}, socket) do
-    if socket.assigns[:current_user] do
-      user_id = socket.assigns.current_user.id
-
-    case Inventory.create_manual_item(user_id, item_params) do
-      {:ok, _item} ->
-        items = Inventory.list_inventory_items(user_id)
-        category_counts = Inventory.count_by_category(user_id)
-
-        {:noreply,
-         socket
-         |> assign(:inventory_items, items)
-         |> assign(:inventory_category_counts, category_counts)
-         |> assign(:show_inventory_add_form, false)
-         |> put_flash(:info, "Item added successfully")}
-
-      {:error, _changeset} ->
-        {:noreply, put_flash(socket, :error, "Failed to add item")}
-    end
-  else
-    {:noreply, put_flash(socket, :error, "You must be logged in to add items")}
-  end
-  end
-
-  @impl true
-  def handle_event("delete_inventory_item", %{"id" => id}, socket) do
-    if socket.assigns[:current_user] do
-      item = Inventory.get_inventory_item!(String.to_integer(id))
-      user_id = socket.assigns.current_user.id
-
-    case Inventory.delete_inventory_item(item) do
-      {:ok, _} ->
-        items = Inventory.list_inventory_items(user_id)
-        category_counts = Inventory.count_by_category(user_id)
-
-        {:noreply,
-         socket
-         |> assign(:inventory_items, items)
-         |> assign(:inventory_category_counts, category_counts)
-         |> assign(:selected_inventory_item, nil)
-         |> put_flash(:info, "Item deleted")}
-
-      {:error, _} ->
-        {:noreply, put_flash(socket, :error, "Failed to delete item")}
-    end
-  else
-    {:noreply, put_flash(socket, :error, "You must be logged in to delete items")}
-  end
   end
 
   @impl true
@@ -254,18 +171,18 @@ defmodule GreenManTavernWeb.DualPanelLive do
   def handle_event("select_character", %{"character_slug" => slug}, socket) do
     require Logger
     Logger.info("[DualPanel] 🎯 select_character event - slug: #{inspect(slug)}, live_action: #{inspect(socket.assigns.live_action)}")
-    
+
     # Construct new params with character slug
     current_params = socket.assigns[:current_params] || %{}
     new_params = Map.put(current_params, "character", slug)
-    
+
     Logger.info("[DualPanel] 🎯 current_params: #{inspect(current_params)}, new_params: #{inspect(new_params)}")
-    
+
     # Build path based on current live_action
     path = build_current_path(socket, new_params)
-    
+
     Logger.info("[DualPanel] 🎯 Built path: #{inspect(path)}")
-    
+
     {:noreply, push_patch(socket, to: path)}
   end
 
@@ -274,27 +191,27 @@ defmodule GreenManTavernWeb.DualPanelLive do
     # Remove character param from URL
     current_params = socket.assigns[:current_params] || %{}
     new_params = Map.delete(current_params, "character")
-    
+
     # Build path based on current live_action
     path = build_current_path(socket, new_params)
-    
+
     {:noreply, push_patch(socket, to: path)}
   end
 
   # Helper to build path based on live_action and params
   defp build_current_path(socket, params) do
     require Logger
-    
-    path = 
+
+    path =
       case socket.assigns.live_action do
         :home -> "/"
         :living_web -> "/living-web"
         :inventory -> "/inventory"
         _ -> "/"
       end
-    
+
     Logger.info("[DualPanel] 🛤️ build_current_path - live_action: #{inspect(socket.assigns.live_action)}, base path: #{inspect(path)}, params: #{inspect(params)}")
-      
+
     if map_size(params) > 0 do
       full_path = "#{path}?#{URI.encode_query(params)}"
       Logger.info("[DualPanel] 🛤️ Full path with params: #{inspect(full_path)}")
@@ -354,7 +271,7 @@ defmodule GreenManTavernWeb.DualPanelLive do
         Logger.info("[DualPanel] Current user_id: #{inspect(user_id)}")
 
         # STEP 1: Process OLD session if switching away from another character
-        socket = 
+        socket =
           if socket.assigns[:selected_character] && socket.assigns[:selected_character].id != character.id do
             close_character_session(socket)
           else
@@ -363,10 +280,10 @@ defmodule GreenManTavernWeb.DualPanelLive do
 
         # STEP 2: Get or Create session_id
         # Use get_or_create_session to resume recent sessions or start new one
-        session_id = 
+        session_id =
           if user_id do
             case Conversations.get_or_create_session(user_id, character.id) do
-              {:ok, sid} -> 
+              {:ok, sid} ->
                 Logger.info("[DualPanel] 🆕 Using session_id: #{inspect(sid)}")
                 sid
               {:error, reason} ->
@@ -377,7 +294,7 @@ defmodule GreenManTavernWeb.DualPanelLive do
             Logger.warning("[DualPanel] ⚠️ No user_id, generating temporary session_id")
             Sessions.generate_session_id()
           end
-        
+
         Logger.info("[DualPanel] 🆕 Session for character: #{character.name}")
 
         # Store current messages for current character before switching (if any)
@@ -451,12 +368,12 @@ defmodule GreenManTavernWeb.DualPanelLive do
   defp load_right_panel_data(socket, action, _params) do
     require Logger
     alias GreenManTavern.Journal
-    
+
     case action do
       :journal ->
         Logger.info("[DualPanel] 📖 Loading Journal data...")
         user_id = if socket.assigns[:current_user], do: socket.assigns.current_user.id, else: nil
-        
+
         socket
         |> assign(:journal_entries, if(user_id, do: Journal.list_entries(user_id, limit: 1000), else: []))
         |> assign(:journal_current_page, socket.assigns[:journal_current_page] || 1)
@@ -474,7 +391,7 @@ defmodule GreenManTavernWeb.DualPanelLive do
           else
             []
           end
-          
+
         socket
         |> assign(:user_plants, user_plants || [])
         |> assign(:initialize_planting_guide, true)
@@ -493,10 +410,10 @@ defmodule GreenManTavernWeb.DualPanelLive do
     # Just clear character param from URL
     current_params = socket.assigns[:current_params] || %{}
     new_params = Map.delete(current_params, "character")
-    
+
     # Keep current page if any
     path = build_current_path(socket, new_params)
-    
+
     {:noreply, push_patch(socket, to: path)}
   end
 
@@ -507,32 +424,32 @@ defmodule GreenManTavernWeb.DualPanelLive do
   # - DOES NOT touch left window chat state
   def handle_event("navigate", %{"page" => "journal"}, socket) do
     require Logger
-    
+
     # Just update URL, let handle_params do the work
     current_params = socket.assigns[:current_params] || %{}
     new_params = Map.put(current_params, "page", "journal")
     path = build_current_path(socket, new_params) # Note: build_current_path uses live_action, so we might need to adjust logic or just construct manually
-    
+
     # Since we are changing "page", we should construct the path manually or update build_current_path
     # But wait, build_current_path uses socket.assigns.live_action which hasn't changed yet.
     # Actually, simpler to just push_patch to the target URL.
-    
+
     # Preserve character param
     char_slug = if socket.assigns.selected_character, do: Characters.name_to_slug(socket.assigns.selected_character.name), else: nil
-    
+
     path = "/?page=journal"
     path = if char_slug, do: path <> "&character=#{char_slug}", else: path
-    
+
     {:noreply, push_patch(socket, to: path)}
   end
 
   def handle_event("navigate", %{"page" => page}, socket) do
     Logger.info("[DualPanel] 🧭 Navigate event received: page=#{page}")
-    
+
     # Preserve character param
     char_slug = if socket.assigns.selected_character, do: Characters.name_to_slug(socket.assigns.selected_character.name), else: nil
-    
-    path = 
+
+    path =
       case page do
         "living_web" -> "/living-web"
         "database" -> "/?page=database" # Assuming database is a page param? Or route?
@@ -922,6 +839,11 @@ defmodule GreenManTavernWeb.DualPanelLive do
     Logger.info("[DualPanel] 📨 Received select_character message - slug: #{inspect(slug)}")
     # Forward to handle_event
     handle_event("select_character", %{"character_slug" => slug}, socket)
+  end
+
+  @impl true
+  def handle_info({:close_opportunities_panel}, socket) do
+    {:noreply, assign(socket, :show_opportunities_panel, false)}
   end
 
   # Journal creation handlers

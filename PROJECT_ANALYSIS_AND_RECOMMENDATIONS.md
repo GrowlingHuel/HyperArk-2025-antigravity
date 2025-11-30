@@ -1,8 +1,15 @@
 # Project Analysis & Recommendations
 
+> **Last Updated**: 2025-11-30
+> **Current Status**: Architecture needs modularization; some cleanup already completed
+
 ## 1. Executive Summary
 
-The Green Man Tavern project is an ambitious and functionally rich application that combines RPG elements with practical permaculture tools. It has successfully implemented a complex Dual-Panel architecture that allows for simultaneous interaction with character agents and system design tools. However, the rapid development of features has led to architectural debt, primarily centered around the `DualPanelLive` module, which has become a "God Object" managing too many responsibilities.
+The Green Man Tavern project is an ambitious and functionally rich application that combines RPG elements with practical permaculture tools. It has successfully implemented a complex Dual-Panel architecture that allows for simultaneous interaction with character agents and system design tools.
+
+**Good News**: Components exist and are being used (`TavernPanelComponent`, `LivingWebPanelComponent`, `PlantingGuidePanelComponent`, `JournalPanelComponent`).
+
+**Remaining Issue**: `DualPanelLive` (1221 lines) still handles too many responsibilities - it manages routing, global state, and event handling for features that could be delegated to components.
 
 ## 2. Project Structure Analysis
 
@@ -35,8 +42,8 @@ There is a heavy reliance on inline styles and `!important` overrides in `dual_p
 - **Context-Driven Updates**: Continue using PubSub for cross-component updates (e.g., when a quest is updated, the Journal component refreshes), which is already implemented and working well.
 
 ### C. Code Cleanup
-**Current State**: Several legacy files (`character_live.ex`, `living_web_live.ex`) exist but are unused.
-**Recommendation**: Delete these files to avoid confusion and reduce noise in the codebase.
+**Current State**: One remaining dead code file identified: `database_live.ex` (not referenced in router).
+**Recommendation**: Delete this file to reduce noise in the codebase.
 
 ### D. Testing
 **Current State**: Test coverage appears low for the complex interactions in `DualPanelLive`.
