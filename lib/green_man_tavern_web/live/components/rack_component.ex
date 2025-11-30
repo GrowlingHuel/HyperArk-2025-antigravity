@@ -10,7 +10,7 @@ defmodule GreenManTavernWeb.RackComponent do
   def update(assigns, socket) do
     user_id = assigns.current_user.id
 
-    socket = 
+    socket =
       socket
       |> assign(assigns)
       |> assign_new(:current_view_root_id, fn -> nil end) # Default to top level
@@ -21,7 +21,7 @@ defmodule GreenManTavernWeb.RackComponent do
     cables = Rack.list_patch_cables(root_id)
     current_view_device = if root_id, do: Rack.get_device!(root_id), else: nil
 
-    socket = 
+    socket =
       socket
       |> assign(:devices, devices)
       |> assign(:cables, cables)
@@ -45,43 +45,43 @@ defmodule GreenManTavernWeb.RackComponent do
     ~H"""
     <div class="rack-layout w-full h-full flex bg-[#f0f0f0]">
       <!-- Sidebar -->
-      <div class="sidebar w-64 h-full bg-[#e0e0e0] border-r border-[#ccc] flex flex-col overflow-y-auto shrink-0">
-        <div class="p-4 border-b border-[#ccc]">
-          <h2 class="font-bold text-lg text-[#333]">Library</h2>
+      <div class="sidebar w-56 h-full bg-[#e0e0e0] border-r border-[#ccc] flex flex-col overflow-y-auto shrink-0">
+        <div class="p-2.5 border-b border-[#ccc]">
+          <h2 class="font-bold text-base text-[#333]">Library</h2>
         </div>
-        
+
         <!-- My Systems (Composite Systems) -->
-        <div class="p-4 border-b border-[#ccc]">
-          <h3 class="font-semibold text-sm text-[#666] mb-2 uppercase tracking-wider">My Systems</h3>
-          <div class="flex flex-col gap-2">
+        <div class="p-2.5 border-b border-[#ccc]">
+          <h3 class="font-semibold text-xs text-[#666] mb-1.5 uppercase tracking-wider">My Systems</h3>
+          <div class="flex flex-col gap-1">
             <%= for system <- @composite_systems do %>
-              <div class="system-item p-2 hover:bg-white/50 rounded cursor-pointer flex items-center gap-2 transition-colors group"
+              <div class="system-item py-1 px-1.5 hover:bg-white/50 rounded cursor-pointer flex items-center gap-1.5 transition-colors group"
                    phx-click="add_device"
                    phx-value-type="composite"
                    phx-value-id={system.id}
                    phx-target={@myself}>
-                <span class="text-lg">📦</span>
-                <span class="text-sm text-[#333] group-hover:text-black"><%= system.name %></span>
+                <span class="text-sm">📦</span>
+                <span class="text-xs text-[#333] group-hover:text-black"><%= system.name %></span>
               </div>
             <% end %>
             <%= if Enum.empty?(@composite_systems) do %>
-              <div class="text-xs text-[#999] italic">No saved systems</div>
+              <div class="text-[10px] text-[#999] italic">No saved systems</div>
             <% end %>
           </div>
         </div>
 
         <!-- Nodes (Projects) -->
-        <div class="p-4">
-          <h3 class="font-semibold text-sm text-[#666] mb-2 uppercase tracking-wider">Basic Nodes</h3>
-          <div class="flex flex-col gap-2">
+        <div class="p-2.5">
+          <h3 class="font-semibold text-xs text-[#666] mb-1.5 uppercase tracking-wider">Basic Nodes</h3>
+          <div class="flex flex-col gap-1">
             <%= for project <- @projects do %>
-              <div class="node-item p-2 hover:bg-white/50 rounded cursor-pointer flex items-center gap-2 transition-colors group"
+              <div class="node-item py-1 px-1.5 hover:bg-white/50 rounded cursor-pointer flex items-center gap-1.5 transition-colors group"
                    phx-click="add_device"
                    phx-value-type="project"
                    phx-value-id={project.id}
                    phx-target={@myself}>
-                <span class="text-lg">📄</span>
-                <span class="text-sm text-[#333] group-hover:text-black"><%= project.name %></span>
+                <span class="text-sm">📄</span>
+                <span class="text-xs text-[#333] group-hover:text-black"><%= project.name %></span>
               </div>
             <% end %>
           </div>
@@ -91,7 +91,7 @@ defmodule GreenManTavernWeb.RackComponent do
       <!-- Main Rack Area -->
       <div class="rack-container flex-1 h-full relative overflow-y-auto flex flex-col w-full bg-[#f0f0f0]"
            id="rack-container">
-        
+
         <!-- Navigation / Toolbar -->
         <div class="w-full mb-4 flex justify-between items-center p-2 bg-white border-b border-[#ccc] sticky top-0 z-30">
           <div class="flex items-center gap-4">
@@ -117,7 +117,7 @@ defmodule GreenManTavernWeb.RackComponent do
                 <%= MapSet.size(@selected_devices) %> selected
               <% end %>
             </div>
-            
+
             <%= if MapSet.size(@selected_devices) > 0 do %>
               <button class="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700 shadow-sm"
                       phx-click="remove_selected_devices"
@@ -137,7 +137,7 @@ defmodule GreenManTavernWeb.RackComponent do
 
         <!-- Rack Frame (with Boundary Jacks if inside a system) -->
         <div class="flex flex-1 relative">
-          
+
           <!-- Left Boundary (System Inputs) -->
           <%= if @current_view_device do %>
             <div class="w-16 bg-[#ddd] border-r border-[#999] flex flex-col items-center py-8 gap-4 shadow-inner z-20">
@@ -161,16 +161,16 @@ defmodule GreenManTavernWeb.RackComponent do
 
           <!-- Rack Rails / Devices -->
           <div class="rack-frame flex-1 h-full border-x-8 border-[#ccc] bg-[#fff] relative shadow-2xl overflow-y-auto">
-            
+
             <!-- Devices -->
             <div class="devices-container flex flex-col w-full relative">
               <%= for device <- @devices do %>
                 <div class={"device-unit w-full h-24 bg-[#e8e8e8] border-b border-[#ccc] relative flex items-center px-4 shadow-inner group #{if MapSet.member?(@selected_devices, device.id), do: "bg-blue-50 border-blue-200"}"}
                      id={"device-#{device.id}"}>
-                  
+
                   <!-- Selection Checkbox -->
                   <div class="absolute left-2 top-1/2 -translate-y-1/2">
-                    <input type="checkbox" 
+                    <input type="checkbox"
                            checked={MapSet.member?(@selected_devices, device.id)}
                            phx-click="toggle_selection"
                            phx-value-id={device.id}
@@ -183,7 +183,13 @@ defmodule GreenManTavernWeb.RackComponent do
                     <div class={"device-ears w-4 h-16 rounded-sm #{if device.settings["is_composite"], do: "bg-purple-400", else: "bg-[#bbb]"}"}></div>
                     <div>
                       <h3 class="text-[#000] font-mono text-sm tracking-wider uppercase flex items-center gap-2">
-                        <%= device.name %>
+                        <span class="cursor-pointer hover:text-blue-600 transition-colors"
+                              phx-click="edit_device"
+                              phx-value-id={device.id}
+                              phx-target={@myself}
+                              title="Click to edit device">
+                          <%= device.name %>
+                        </span>
                         <%= if device.settings["is_composite"] do %>
                           <span class="text-[10px] bg-purple-100 text-purple-800 px-1 rounded border border-purple-200">SYSTEM</span>
                           <button class="text-xs bg-purple-600 text-white px-2 py-0.5 rounded hover:bg-purple-700 ml-2 shadow-sm"
@@ -193,12 +199,6 @@ defmodule GreenManTavernWeb.RackComponent do
                             FLIP ➜
                           </button>
                         <% end %>
-                        <button class="text-xs text-blue-600 hover:text-blue-800 ml-2"
-                                phx-click="edit_device"
-                                phx-value-id={device.id}
-                                phx-target={@myself}>
-                          [Edit]
-                        </button>
                       </h3>
                       <div class="text-[#666] text-xs font-mono">ID: <%= String.slice(to_string(device.id), 0, 8) %></div>
                     </div>
@@ -244,11 +244,11 @@ defmodule GreenManTavernWeb.RackComponent do
 
                 </div>
               <% end %>
-              
+
             </div>
 
             <!-- Cables Layer (SVG) -->
-            <svg id="rack-cables-layer" 
+            <svg id="rack-cables-layer"
                  class="cables-layer absolute inset-0 w-full h-full pointer-events-none z-10 overflow-visible"
                  phx-hook="RackCables"
                  data-cables={Jason.encode!(@cables)}>
@@ -295,13 +295,13 @@ defmodule GreenManTavernWeb.RackComponent do
                 </button>
               <% end %>
             </div>
-            
+
             <%= if @edit_mode == :front do %>
               <form phx-submit="save_device" phx-target={@myself}>
                 <div class="mb-4">
                   <label class="block text-sm font-medium text-gray-700">Name</label>
-                  <input type="text" name="name" value={@editing_device.name} 
-                         phx-blur="update_device_name" 
+                  <input type="text" name="name" value={@editing_device.name}
+                         phx-blur="update_device_name"
                          phx-value-name={@editing_device.name}
                          phx-target={@myself}
                          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
@@ -327,13 +327,13 @@ defmodule GreenManTavernWeb.RackComponent do
                           <input type="hidden" name={"inputs[#{idx}][id]"} value={input["id"]} />
                           <button type="button" phx-click="remove_port" phx-value-type="input" phx-value-idx={idx} phx-target={@myself} class="text-red-500 hover:text-red-700">×</button>
                         </div>
-                        
+
                         <% connected_cable = get_connected_cable(@editing_device.id, input["id"], @cables) %>
                         <%= if connected_cable do %>
                           <div class="flex items-center justify-between text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded border border-blue-100">
                             <span>🔗 Connected to: <strong><%= get_peer_device_name(connected_cable, @editing_device.id, @devices) %></strong></span>
-                            <button type="button" 
-                                    phx-click="delete_cable" 
+                            <button type="button"
+                                    phx-click="delete_cable"
                                     phx-value-id={connected_cable.id}
                                     phx-target={@myself}
                                     class="text-red-500 hover:text-red-700 font-bold px-1"
@@ -372,8 +372,8 @@ defmodule GreenManTavernWeb.RackComponent do
                         <%= if connected_cable do %>
                           <div class="flex items-center justify-between text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded border border-blue-100">
                             <span>🔗 Connected to: <strong><%= get_peer_device_name(connected_cable, @editing_device.id, @devices) %></strong></span>
-                            <button type="button" 
-                                    phx-click="delete_cable" 
+                            <button type="button"
+                                    phx-click="delete_cable"
                                     phx-value-id={connected_cable.id}
                                     phx-target={@myself}
                                     class="text-red-500 hover:text-red-700 font-bold px-1"
@@ -395,65 +395,112 @@ defmodule GreenManTavernWeb.RackComponent do
             <% else %>
               <!-- Back View: Internals -->
               <div class="space-y-4">
-                <div class="text-sm text-gray-500 mb-2">Internal Components & Connections</div>
-                
-                <%= if Enum.empty?(@editing_device_children) do %>
-                  <div class="text-center py-8 text-gray-400 italic">No internal components found.</div>
-                <% else %>
-                  <div class="space-y-4">
-                    <%= for child <- @editing_device_children do %>
-                      <div class="border rounded p-3 bg-gray-50">
-                        <div class="font-bold text-sm mb-2 flex items-center gap-2">
-                          <div class="w-2 h-2 rounded-full bg-gray-400"></div>
-                          <%= child.name %>
-                        </div>
-                        
-                        <!-- Child Inputs -->
-                        <%= if child.settings["inputs"] do %>
-                          <div class="ml-4 mb-2">
-                            <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Inputs</div>
-                            <%= for input <- child.settings["inputs"] do %>
-                              <% connected_cable = get_connected_cable(child.id, input["id"], @editing_device_cables) %>
-                              <div class="flex items-center gap-2 text-xs mb-1">
-                                <span class="font-mono text-gray-600"><%= input["name"] %>:</span>
-                                <%= if connected_cable do %>
-                                  <span class="text-blue-600">
-                                    🔗 <%= get_peer_device_name(connected_cable, child.id, @editing_device_children ++ [@editing_device]) %>
-                                  </span>
-                                <% else %>
-                                  <span class="text-gray-400 italic">Disconnected</span>
-                                <% end %>
-                              </div>
-                            <% end %>
-                          </div>
-                        <% end %>
+                <div class="flex items-center justify-between mb-4">
+                  <div class="text-sm font-semibold text-gray-700">Internal Components & Connections</div>
+                  <div class="text-xs text-gray-500">
+                    <%= length(@editing_device_children) %> component(s), <%= length(@editing_device_cables) %> connection(s)
+                  </div>
+                </div>
 
-                        <!-- Child Outputs -->
-                        <%= if child.settings["outputs"] do %>
-                          <div class="ml-4">
-                            <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Outputs</div>
-                            <%= for output <- child.settings["outputs"] do %>
-                              <% connected_cable = get_connected_cable(child.id, output["id"], @editing_device_cables) %>
-                              <div class="flex items-center gap-2 text-xs mb-1">
-                                <span class="font-mono text-gray-600"><%= output["name"] %>:</span>
-                                <%= if connected_cable do %>
-                                  <span class="text-blue-600">
-                                    🔗 <%= get_peer_device_name(connected_cable, child.id, @editing_device_children ++ [@editing_device]) %>
-                                  </span>
-                                <% else %>
-                                  <span class="text-gray-400 italic">Disconnected</span>
-                                <% end %>
+                <%= if Enum.empty?(@editing_device_children) do %>
+                  <div class="text-center py-8 text-gray-400 italic border border-dashed border-gray-300 rounded">
+                    <div class="text-2xl mb-2">📦</div>
+                    <div>No internal components found.</div>
+                    <div class="text-xs mt-1">This system is empty or hasn't been populated yet.</div>
+                  </div>
+                <% else %>
+                  <div class="space-y-3">
+                    <%= for {child, idx} <- Enum.with_index(@editing_device_children) do %>
+                      <div class="border-2 rounded-lg p-4 bg-gradient-to-br from-gray-50 to-white shadow-sm hover:shadow-md transition-shadow">
+                        <!-- Component Header -->
+                        <div class="flex items-start justify-between mb-3">
+                          <div>
+                            <div class="font-bold text-base mb-1 flex items-center gap-2">
+                              <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                              <%= child.name %>
+                            </div>
+                            <div class="text-[10px] text-gray-500 font-mono mb-1">
+                              ID: <%= String.slice(to_string(child.id), 0, 12) %>...
+                            </div>
+                            <%= if child.project_id do %>
+                              <div class="text-[10px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded inline-block">
+                                Project-based
                               </div>
                             <% end %>
                           </div>
-                        <% end %>
+                          <div class="text-xs bg-gray-100 px-2 py-1 rounded font-mono">
+                            #<%= idx + 1 %>
+                          </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                          <!-- Child Inputs -->
+                          <div class="bg-white rounded border border-gray-200 p-2">
+                            <div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1">
+                              <span>⬇</span> Inputs (<%= length(child.settings["inputs"] || []) %>)
+                            </div>
+                            <%= if child.settings["inputs"] && length(child.settings["inputs"]) > 0 do %>
+                              <div class="space-y-1.5">
+                                <%= for input <- child.settings["inputs"] do %>
+                                  <% connected_cable = get_connected_cable(child.id, input["id"], @editing_device_cables) %>
+                                  <div class="flex flex-col gap-1 p-1.5 rounded bg-gray-50 border border-gray-100">
+                                    <div class="flex items-center gap-1.5">
+                                      <div class={"w-2 h-2 rounded-full #{if connected_cable, do: "bg-green-500", else: "bg-gray-300"}"} title={if connected_cable, do: "Connected", else: "Disconnected"}></div>
+                                      <span class="font-mono text-xs font-semibold text-gray-700"><%= input["name"] %></span>
+                                    </div>
+                                    <%= if connected_cable do %>
+                                      <div class="text-[10px] text-blue-600 ml-3.5 flex items-start gap-1">
+                                        <span class="shrink-0">🔗</span>
+                                        <span class="break-all"><%= get_peer_device_name(connected_cable, child.id, @editing_device_children ++ [@editing_device]) %></span>
+                                      </div>
+                                    <% else %>
+                                      <div class="text-[10px] text-gray-400 italic ml-3.5">Not connected</div>
+                                    <% end %>
+                                  </div>
+                                <% end %>
+                              </div>
+                            <% else %>
+                              <div class="text-xs text-gray-400 italic">No inputs</div>
+                            <% end %>
+                          </div>
+
+                          <!-- Child Outputs -->
+                          <div class="bg-white rounded border border-gray-200 p-2">
+                            <div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1">
+                              <span>⬆</span> Outputs (<%= length(child.settings["outputs"] || []) %>)
+                            </div>
+                            <%= if child.settings["outputs"] && length(child.settings["outputs"]) > 0 do %>
+                              <div class="space-y-1.5">
+                                <%= for output <- child.settings["outputs"] do %>
+                                  <% connected_cable = get_connected_cable(child.id, output["id"], @editing_device_cables) %>
+                                  <div class="flex flex-col gap-1 p-1.5 rounded bg-gray-50 border border-gray-100">
+                                    <div class="flex items-center gap-1.5">
+                                      <div class={"w-2 h-2 rounded-full #{if connected_cable, do: "bg-green-500", else: "bg-gray-300"}"} title={if connected_cable, do: "Connected", else: "Disconnected"}></div>
+                                      <span class="font-mono text-xs font-semibold text-gray-700"><%= output["name"] %></span>
+                                    </div>
+                                    <%= if connected_cable do %>
+                                      <div class="text-[10px] text-blue-600 ml-3.5 flex items-start gap-1">
+                                        <span class="shrink-0">🔗</span>
+                                        <span class="break-all"><%= get_peer_device_name(connected_cable, child.id, @editing_device_children ++ [@editing_device]) %></span>
+                                      </div>
+                                    <% else %>
+                                      <div class="text-[10px] text-gray-400 italic ml-3.5">Not connected</div>
+                                    <% end %>
+                                  </div>
+                                <% end %>
+                              </div>
+                            <% else %>
+                              <div class="text-xs text-gray-400 italic">No outputs</div>
+                            <% end %>
+                          </div>
+                        </div>
                       </div>
                     <% end %>
                   </div>
                 <% end %>
 
-                <div class="flex justify-end gap-2 mt-6">
-                  <button type="button" phx-click="cancel_edit" phx-target={@myself} class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">Close</button>
+                <div class="flex justify-end gap-2 mt-6 pt-4 border-t">
+                  <button type="button" phx-click="cancel_edit" phx-target={@myself} class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors">Close</button>
                 </div>
               </div>
             <% end %>
@@ -469,13 +516,13 @@ defmodule GreenManTavernWeb.RackComponent do
             <p class="text-sm text-gray-600 mb-4">
               Create a reusable system from the <%= MapSet.size(@selected_devices) %> selected devices.
             </p>
-            
+
             <form phx-submit="confirm_save_system" phx-target={@myself}>
               <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700">System Name</label>
                 <input type="text" name="name" placeholder="e.g. My Custom Filter" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500" />
               </div>
-              
+
               <div class="flex justify-end gap-2 mt-6">
                 <button type="button" phx-click="cancel_save_system" phx-target={@myself} class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">Cancel</button>
                 <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">Save System</button>
@@ -490,20 +537,20 @@ defmodule GreenManTavernWeb.RackComponent do
 
   @impl true
   def handle_event("set_view_root", %{"id" => id_str}, socket) do
-    new_root_id = 
+    new_root_id =
       if id_str == "" or is_nil(id_str) do
         nil
       else
         id_str
       end
-    
+
     IO.puts("DEBUG: set_view_root to #{inspect(new_root_id)}")
 
     # Refresh devices and cables for the new view
     devices = Rack.list_devices(new_root_id)
     cables = Rack.list_patch_cables(new_root_id)
     current_view_device = if new_root_id, do: Rack.get_device!(new_root_id), else: nil
-    
+
     IO.puts("DEBUG: Found #{length(devices)} devices and #{length(cables)} cables in view.")
 
     {:noreply,
@@ -519,14 +566,14 @@ defmodule GreenManTavernWeb.RackComponent do
   @impl true
   def handle_event("toggle_selection", %{"id" => id}, socket) do
     selected = socket.assigns.selected_devices
-    
-    new_selected = 
+
+    new_selected =
       if MapSet.member?(selected, id) do
         MapSet.delete(selected, id)
       else
         MapSet.put(selected, id)
       end
-      
+
     {:noreply, assign(socket, :selected_devices, new_selected)}
   end
 
@@ -554,11 +601,11 @@ defmodule GreenManTavernWeb.RackComponent do
     case GreenManTavern.Rack.RackSystemBuilder.build_from_selection(name, selected_ids, user_id) do
       {:ok, system} ->
         IO.puts("System created successfully: #{inspect(system.id)}")
-        
+
         # Refresh the composite systems list
         composite_systems = Diagrams.list_composite_systems(user_id)
         IO.puts("Composite systems count: #{length(composite_systems)}")
-        
+
         {:noreply,
          socket
          |> assign(:save_system_modal, false)
@@ -575,18 +622,18 @@ defmodule GreenManTavernWeb.RackComponent do
   @impl true
   def handle_event("remove_selected_devices", _params, socket) do
     selected_ids = MapSet.to_list(socket.assigns.selected_devices)
-    
+
     # Delete each selected device
     Enum.each(selected_ids, fn device_id ->
       case Rack.get_device!(device_id) do
         device -> Rack.delete_device(device)
       end
     end)
-    
+
     # Refresh devices and cables (cables may be deleted via cascade)
     devices = Rack.list_devices()
     cables = Rack.list_patch_cables()
-    
+
     {:noreply,
      socket
      |> assign(:devices, devices)
@@ -599,7 +646,7 @@ defmodule GreenManTavernWeb.RackComponent do
   @impl true
   def handle_event("add_device", %{"type" => "composite", "id" => system_id}, socket) do
     user_id = socket.assigns.current_user.id
-    project_id = nil 
+    project_id = nil
 
     IO.puts("=== ADD SYSTEM DEBUG ===")
     IO.puts("System ID: #{system_id}")
@@ -611,7 +658,7 @@ defmodule GreenManTavernWeb.RackComponent do
         # Refresh devices
         devices = Rack.list_devices()
         {:noreply, assign(socket, :devices, devices)}
-      
+
       {:error, reason} ->
         IO.puts("Failed to instantiate system: #{inspect(reason)}")
         {:noreply, put_flash(socket, :error, "Failed to add system.")}
@@ -621,7 +668,7 @@ defmodule GreenManTavernWeb.RackComponent do
   @impl true
   def handle_event("add_device", %{"type" => "project", "id" => project_id}, socket) do
     project = Enum.find(socket.assigns.projects, &(&1.id == String.to_integer(project_id)))
-    
+
     if project do
       # Create new device from project
       device_attrs = %{
@@ -630,25 +677,25 @@ defmodule GreenManTavernWeb.RackComponent do
         project_id: project.id,
         position_index: length(socket.assigns.devices),
         settings: %{
-          "inputs" => 
+          "inputs" =>
             (project.inputs || %{})
             |> Map.values()
             |> Enum.filter(&is_map/1)
             |> Enum.sort_by(& &1["id"]),
-          "outputs" => 
+          "outputs" =>
             (project.outputs || %{})
             |> Map.values()
             |> Enum.filter(&is_map/1)
             |> Enum.sort_by(& &1["id"])
         }
       }
-      
+
       case Rack.create_device(device_attrs) do
         {:ok, _device} ->
           # Refresh devices
           devices = Rack.list_devices()
           {:noreply, assign(socket, :devices, devices)}
-          
+
         {:error, _changeset} ->
           {:noreply, put_flash(socket, :error, "Failed to add device")}
       end
@@ -661,16 +708,16 @@ defmodule GreenManTavernWeb.RackComponent do
   def handle_event("edit_device", %{"id" => id}, socket) do
     # ID is a UUID string
     device = Enum.find(socket.assigns.devices, &(&1.id == id))
-    
+
     if device do
       # Ensure settings has defaults
       settings = device.settings || %{}
       settings = Map.put_new(settings, "inputs", [%{"id" => "in_1", "name" => "IN"}])
       settings = Map.put_new(settings, "outputs", [%{"id" => "out_1", "name" => "OUT"}])
       device = Map.put(device, :settings, settings)
-      
+
       # If composite, fetch internals
-      {children, internal_cables} = 
+      {children, internal_cables} =
         if device.settings["is_composite"] do
           c = Rack.list_devices(device.id)
           w = Rack.list_patch_cables(device.id)
@@ -680,7 +727,7 @@ defmodule GreenManTavernWeb.RackComponent do
           {[], []}
         end
 
-      {:noreply, 
+      {:noreply,
        socket
        |> assign(:editing_device, device)
        |> assign(:edit_mode, :front) # :front or :back
@@ -706,25 +753,25 @@ defmodule GreenManTavernWeb.RackComponent do
   @impl true
   def handle_event("update_device_name", %{"value" => new_name}, socket) do
     device = socket.assigns.editing_device
-    
+
     # Update the editing device name in state
     updated_device = Map.put(device, :name, new_name)
-    
+
     # Also save to database immediately
     case Rack.update_device(device, %{name: new_name}) do
       {:ok, saved_device} ->
         # Update both editing device and devices list
-        updated_devices = 
+        updated_devices =
           socket.assigns.devices
           |> Enum.map(fn d -> if d.id == saved_device.id, do: saved_device, else: d end)
-        
-        socket = 
+
+        socket =
           socket
           |> assign(:editing_device, updated_device)
           |> assign(:devices, updated_devices)
-          
+
         {:noreply, socket}
-        
+
       {:error, _changeset} ->
         {:noreply, socket}
     end
@@ -736,27 +783,27 @@ defmodule GreenManTavernWeb.RackComponent do
     device = socket.assigns.editing_device
     key = "#{type}s"
     ports = device.settings[key] || []
-    
+
     # Update the port name at the given index
     updated_ports = List.update_at(ports, idx, fn port -> Map.put(port, "name", new_name) end)
     updated_settings = Map.put(device.settings, key, updated_ports)
     updated_device = Map.put(device, :settings, updated_settings)
-    
+
     # Save to database immediately
     case Rack.update_device(device, %{settings: updated_settings}) do
       {:ok, saved_device} ->
         # Update both editing device and devices list
-        updated_devices = 
+        updated_devices =
           socket.assigns.devices
           |> Enum.map(fn d -> if d.id == saved_device.id, do: saved_device, else: d end)
-        
-        socket = 
+
+        socket =
           socket
           |> assign(:editing_device, updated_device)
           |> assign(:devices, updated_devices)
-          
+
         {:noreply, socket}
-        
+
       {:error, _changeset} ->
         {:noreply, socket}
     end
@@ -767,13 +814,13 @@ defmodule GreenManTavernWeb.RackComponent do
     device = socket.assigns.editing_device
     key = "#{type}s" # inputs or outputs
     ports = device.settings[key] || []
-    
+
     new_id = "#{type}_#{length(ports) + 1}_#{System.unique_integer([:positive])}"
     new_port = %{"id" => new_id, "name" => String.upcase(type)}
-    
+
     updated_settings = Map.put(device.settings, key, ports ++ [new_port])
     updated_device = Map.put(device, :settings, updated_settings)
-    
+
     {:noreply, assign(socket, :editing_device, updated_device)}
   end
 
@@ -783,11 +830,11 @@ defmodule GreenManTavernWeb.RackComponent do
     device = socket.assigns.editing_device
     key = "#{type}s"
     ports = device.settings[key] || []
-    
+
     updated_ports = List.delete_at(ports, idx)
     updated_settings = Map.put(device.settings, key, updated_ports)
     updated_device = Map.put(device, :settings, updated_settings)
-    
+
     {:noreply, assign(socket, :editing_device, updated_device)}
   end
 
@@ -795,21 +842,21 @@ defmodule GreenManTavernWeb.RackComponent do
   def handle_event("save_device", params, socket) do
     device = socket.assigns.editing_device
     name = params["name"]
-    
+
     # Reconstruct inputs/outputs from form params
     # params looks like: {"name" => "...", "inputs" => %{"0" => %{"name" => "...", "id" => "..."}}, ...}
-    
-    inputs = 
+
+    inputs =
       (params["inputs"] || %{})
       |> Enum.sort_by(fn {k, _} -> String.to_integer(k) end)
       |> Enum.map(fn {_, v} -> v end)
 
-    outputs = 
+    outputs =
       (params["outputs"] || %{})
       |> Enum.sort_by(fn {k, _} -> String.to_integer(k) end)
       |> Enum.map(fn {_, v} -> v end)
 
-    updated_settings = 
+    updated_settings =
       device.settings
       |> Map.put("inputs", inputs)
       |> Map.put("outputs", outputs)
@@ -817,18 +864,18 @@ defmodule GreenManTavernWeb.RackComponent do
     case Rack.update_device(device, %{name: name, settings: updated_settings}) do
       {:ok, updated_device} ->
         # Update list
-        updated_devices = 
+        updated_devices =
           socket.assigns.devices
           |> Enum.map(fn d -> if d.id == updated_device.id, do: updated_device, else: d end)
-        
-        socket = 
+
+        socket =
           socket
           |> assign(:devices, updated_devices)
           |> assign(:editing_device, nil)
           |> put_flash(:info, "Device updated successfully")
-          
+
         {:noreply, socket}
-        
+
       {:error, _changeset} ->
         {:noreply, put_flash(socket, :error, "Failed to update device")}
     end
@@ -858,13 +905,13 @@ defmodule GreenManTavernWeb.RackComponent do
 
           case Rack.create_patch_cable(cable_attrs) do
             {:ok, cable} ->
-              socket = 
+              socket =
                 socket
                 |> update(:cables, fn cables -> cables ++ [cable] end)
                 |> assign(:patching_state, nil)
                 |> push_event("update_cables", %{cables: socket.assigns.cables ++ [cable]})
               {:noreply, socket}
-            
+
             {:error, _changeset} ->
               {:noreply, put_flash(socket, :error, "Failed to connect cable")}
           end
@@ -884,11 +931,11 @@ defmodule GreenManTavernWeb.RackComponent do
       case Rack.delete_patch_cable(cable) do
         {:ok, _} ->
           cables = Rack.list_patch_cables()
-          {:noreply, 
-           socket 
+          {:noreply,
+           socket
            |> assign(:cables, cables)
            |> push_event("update_cables", %{cables: cables})}
-           
+
         {:error, _} ->
           {:noreply, put_flash(socket, :error, "Failed to delete cable.")}
       end
@@ -906,7 +953,7 @@ defmodule GreenManTavernWeb.RackComponent do
   end
 
   defp get_peer_device_name(cable, current_device_id, devices) do
-    peer_id = 
+    peer_id =
       if cable.source_device_id == current_device_id do
         cable.target_device_id
       else
@@ -919,11 +966,11 @@ defmodule GreenManTavernWeb.RackComponent do
       else
         cable.source_jack_id
       end
-      
+
     device = Enum.find(devices, &(&1.id == peer_id))
-    
+
     # Try to find port name
-    port_name = 
+    port_name =
       if device do
         all_ports = (device.settings["inputs"] || []) ++ (device.settings["outputs"] || [])
         port = Enum.find(all_ports, &(&1["id"] == peer_jack_id))

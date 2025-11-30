@@ -21,7 +21,7 @@ defmodule GreenManTavernWeb.TavernPanelComponent do
     require Logger
     Logger.info("[TavernPanel] 🎯 select_character event received - slug: #{inspect(slug)}")
     Logger.info("[TavernPanel] 🎯 root_pid: #{inspect(socket.root_pid)}")
-    
+
     # Send message to parent LiveView
     send(socket.root_pid, {:select_character, slug})
     {:noreply, socket}
@@ -54,9 +54,11 @@ defmodule GreenManTavernWeb.TavernPanelComponent do
                     <div
                       phx-click="select_character"
                       phx-value-character_slug={Characters.name_to_slug(character.name)}
-                      style="border: 1px solid #000; background: #FFF; padding: 6px; cursor: pointer; display: flex; gap: 6px; align-items: center;"
+                      style="background: transparent; padding: 6px; cursor: pointer; display: flex; gap: 6px; align-items: center; transition: background-color 0.2s;"
+                      onmouseover="this.style.backgroundColor='rgba(0,0,0,0.05)'"
+                      onmouseout="this.style.backgroundColor='transparent'"
                     >
-                      <div class="char-card" style="width: 36px; height: 36px; flex-shrink: 0; border: 1px solid #000; display: flex; align-items: center; justify-content: center; background: #EEE;">
+                      <div class="char-card" style="width: 36px; height: 36px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: transparent;">
                         <img
                           src={TextFormattingHelpers.character_emoji(character.name)}
                           alt={character.name}
