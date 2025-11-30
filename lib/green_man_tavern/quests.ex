@@ -171,4 +171,9 @@ defmodule GreenManTavern.Quests do
   def list_user_quests_with_characters(user_id, filter \\ "all") do
     list_user_quests(user_id, filter)
   end
+
+  def get_user_quest_with_character!(id) do
+    Repo.get!(UserQuest, id)
+    |> Repo.preload(quest: :character)
+  end
 end

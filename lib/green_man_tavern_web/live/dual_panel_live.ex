@@ -859,7 +859,7 @@ defmodule GreenManTavernWeb.DualPanelLive do
       quest_id = String.to_integer(quest_id_str)
       user_id = socket.assigns.current_user.id
 
-      case Quests.get_user_quest!(quest_id) do
+      case Quests.get_user_quest_with_character!(quest_id) do
         user_quest when user_quest.user_id == user_id ->
           case Quests.accept_quest(user_quest) do
             {:ok, _updated_quest} ->

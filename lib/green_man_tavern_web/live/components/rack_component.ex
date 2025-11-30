@@ -27,7 +27,7 @@ defmodule GreenManTavernWeb.RackComponent do
       |> assign(:cables, cables)
       |> assign(:current_view_device, current_view_device)
       |> assign_new(:projects, fn -> Systems.list_projects() end)
-      |> assign_new(:composite_systems, fn -> Diagrams.list_composite_systems(user_id) end)
+      |> assign(:composite_systems, Diagrams.list_composite_systems(user_id))
       |> assign(:patching_state, nil)
       |> assign(:editing_device, nil)
       |> assign(:selected_devices, MapSet.new())
@@ -60,7 +60,7 @@ defmodule GreenManTavernWeb.RackComponent do
                    phx-value-type="composite"
                    phx-value-id={system.id}
                    phx-target={@myself}>
-                <span class="text-sm">📦</span>
+                <span class="text-sm grayscale">📦</span>
                 <span class="text-xs text-[#333] group-hover:text-black"><%= system.name %></span>
               </div>
             <% end %>
@@ -80,7 +80,7 @@ defmodule GreenManTavernWeb.RackComponent do
                    phx-value-type="project"
                    phx-value-id={project.id}
                    phx-target={@myself}>
-                <span class="text-sm">📄</span>
+                <span class="text-sm grayscale">📄</span>
                 <span class="text-xs text-[#333] group-hover:text-black"><%= project.name %></span>
               </div>
             <% end %>
@@ -96,14 +96,14 @@ defmodule GreenManTavernWeb.RackComponent do
         <div class="w-full mb-4 flex justify-between items-center p-2 bg-white border-b border-[#ccc] sticky top-0 z-30">
           <div class="flex items-center gap-4">
             <%= if @current_view_device do %>
-              <button class="flex items-center gap-1 text-blue-600 hover:text-blue-800 font-bold"
+              <button class="flex items-center gap-1 text-[#000] hover:text-[#444] font-bold transition-colors"
                       phx-click="set_view_root"
                       phx-value-id={@current_view_device.parent_device_id || ""}
                       phx-target={@myself}>
                 <span>⬅</span> Back to Parent
               </button>
               <span class="text-gray-400">|</span>
-              <span class="font-mono font-bold text-purple-700">
+              <span class="font-mono font-bold text-[#333]">
                 Inside: <%= @current_view_device.name %>
               </span>
             <% else %>
@@ -119,14 +119,14 @@ defmodule GreenManTavernWeb.RackComponent do
             </div>
 
             <%= if MapSet.size(@selected_devices) > 0 do %>
-              <button class="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700 shadow-sm"
+              <button class="px-3 py-1 bg-[#666] text-white rounded text-sm hover:bg-[#444] shadow-sm transition-colors"
                       phx-click="remove_selected_devices"
                       phx-target={@myself}>
                 Remove
               </button>
             <% end %>
             <%= if MapSet.size(@selected_devices) > 1 and is_nil(@current_view_root_id) do %>
-              <button class="px-3 py-1 bg-purple-600 text-white rounded text-sm hover:bg-purple-700 shadow-sm"
+              <button class="px-3 py-1 bg-[#888] text-white rounded text-sm hover:bg-[#666] shadow-sm transition-colors"
                       phx-click="save_as_system"
                       phx-target={@myself}>
                 Save as System
@@ -144,7 +144,7 @@ defmodule GreenManTavernWeb.RackComponent do
               <div class="text-[10px] font-bold text-[#666] -rotate-90 mb-4 whitespace-nowrap">SYS INPUTS</div>
               <%= for input <- (@current_view_device.settings["inputs"] || []) do %>
                 <div class="flex flex-col items-center group/jack relative">
-                  <div class={"jack rack-jack w-8 h-8 rounded-full bg-[#ccc] border-4 border-[#999] cursor-pointer relative z-20 transition-colors #{if is_selected?(@patching_state, @current_view_device.id, input["id"]), do: "border-[#00f] shadow-[0_0_10px_#00f]", else: "hover:border-[#666]"}"}
+                  <div class={"jack rack-jack w-8 h-8 rounded-full bg-[#ccc] border-4 border-[#999] cursor-pointer relative z-20 transition-colors #{if is_selected?(@patching_state, @current_view_device.id, input["id"]), do: "border-[#000] shadow-[0_0_8px_rgba(0,0,0,0.5)]", else: "hover:border-[#666]"}"}
                     title={input["name"]}
                     data-jack-id={"#{@current_view_device.id}-#{input["id"]}"}
                     phx-click="jack_click"
@@ -165,43 +165,34 @@ defmodule GreenManTavernWeb.RackComponent do
             <!-- Devices -->
             <div class="devices-container flex flex-col w-full relative">
               <%= for device <- @devices do %>
-                <div class={"device-unit w-full h-24 bg-[#e8e8e8] border-b border-[#ccc] relative flex items-center px-4 shadow-inner group #{if MapSet.member?(@selected_devices, device.id), do: "bg-blue-50 border-blue-200"}"}
+                <div class={"device-unit w-full h-24 bg-[#e8e8e8] border-b border-[#ccc] relative flex items-center px-4 shadow-inner group #{if MapSet.member?(@selected_devices, device.id), do: "bg-[#d8d8d8] border-[#999]"}"}
                      id={"device-#{device.id}"}>
 
-                  <!-- Selection Checkbox -->
-                  <div class="absolute left-2 top-1/2 -translate-y-1/2">
+                  <!-- Selection Checkbox - Top Left -->
+                  <div class="absolute left-2 top-2">
                     <input type="checkbox"
                            checked={MapSet.member?(@selected_devices, device.id)}
                            phx-click="toggle_selection"
                            phx-value-id={device.id}
                            phx-target={@myself}
-                           class="rounded border-gray-400 text-blue-600 focus:ring-blue-500" />
+                           class="rounded-none border-2 border-gray-800 text-[#000] focus:ring-gray-500 w-4 h-4" />
                   </div>
 
-                  <!-- Device Faceplate -->
-                    <div class={"flex items-center gap-4 ml-6"}>
-                    <div class={"device-ears w-4 h-16 rounded-sm #{if device.settings["is_composite"], do: "bg-purple-400", else: "bg-[#bbb]"}"}></div>
-                    <div>
-                      <h3 class="text-[#000] font-mono text-sm tracking-wider uppercase flex items-center gap-2">
-                        <span class="cursor-pointer hover:text-blue-600 transition-colors"
-                              phx-click="edit_device"
-                              phx-value-id={device.id}
-                              phx-target={@myself}
-                              title="Click to edit device">
-                          <%= device.name %>
-                        </span>
-                        <%= if device.settings["is_composite"] do %>
-                          <span class="text-[10px] bg-purple-100 text-purple-800 px-1 rounded border border-purple-200">SYSTEM</span>
-                          <button class="text-xs bg-purple-600 text-white px-2 py-0.5 rounded hover:bg-purple-700 ml-2 shadow-sm"
-                                  phx-click="set_view_root"
-                                  phx-value-id={device.id}
-                                  phx-target={@myself}>
-                            FLIP ➜
-                          </button>
-                        <% end %>
-                      </h3>
-                      <div class="text-[#666] text-xs font-mono">ID: <%= String.slice(to_string(device.id), 0, 8) %></div>
-                    </div>
+                  <!-- Device Info - Below Checkbox -->
+                  <div class="ml-6 flex-shrink-0">
+                    <h3 class="text-[#000] font-mono text-sm tracking-wider uppercase flex items-center gap-2">
+                      <span class="cursor-pointer hover:text-[#444] transition-colors"
+                            phx-click="edit_device"
+                            phx-value-id={device.id}
+                            phx-target={@myself}
+                            title="Click to edit device">
+                        <%= device.name %>
+                      </span>
+                      <%= if device.settings["is_composite"] do %>
+                        <span class="text-[10px] bg-[#e0e0e0] text-[#555] px-1 rounded border border-[#ccc]">SYSTEM</span>
+                      <% end %>
+                    </h3>
+                    <div class="text-[#666] text-xs font-mono">ID: <%= String.slice(to_string(device.id), 0, 8) %></div>
                   </div>
 
                   <!-- Patch Points (Jacks) -->
@@ -210,7 +201,7 @@ defmodule GreenManTavernWeb.RackComponent do
                      <div class="inputs flex justify-between w-full gap-2">
                       <%= for input <- (device.settings["inputs"] || [%{"id" => "in_1", "name" => "IN"}]) do %>
                         <div class="flex flex-col items-center group/jack">
-                          <div class={"jack rack-jack w-6 h-6 rounded-full bg-[#ddd] border-2 cursor-pointer relative z-20 transition-colors #{if is_selected?(@patching_state, device.id, input["id"]), do: "border-[#00f] shadow-[0_0_10px_#00f]", else: "border-[#999] hover:border-[#000]"}"}
+                          <div class={"jack rack-jack w-6 h-6 rounded-full bg-[#ddd] border-2 cursor-pointer relative z-20 transition-colors #{if is_selected?(@patching_state, device.id, input["id"]), do: "border-[#000] shadow-[0_0_8px_rgba(0,0,0,0.5)]", else: "border-[#999] hover:border-[#000]"}"}
                             title={input["name"]}
                             data-jack-id={"#{device.id}-#{input["id"]}"}
                             phx-click="jack_click"
@@ -228,7 +219,7 @@ defmodule GreenManTavernWeb.RackComponent do
                       <%= for output <- (device.settings["outputs"] || [%{"id" => "out_1", "name" => "OUT"}]) do %>
                         <div class="flex flex-col items-center group/jack">
                           <span class="text-[9px] text-[#666] font-mono mb-1 opacity-0 group-hover/jack:opacity-100 transition-opacity bg-white px-1 rounded border border-gray-200 absolute bottom-6 z-20 whitespace-nowrap"><%= output["name"] %></span>
-                          <div class={"jack rack-jack w-6 h-6 rounded-full bg-[#ddd] border-2 cursor-pointer relative z-20 transition-colors #{if is_selected?(@patching_state, device.id, output["id"]), do: "border-[#00f] shadow-[0_0_10px_#00f]", else: "border-[#999] hover:border-[#000]"}"}
+                          <div class={"jack rack-jack w-6 h-6 rounded-full bg-[#ddd] border-2 cursor-pointer relative z-20 transition-colors #{if is_selected?(@patching_state, device.id, output["id"]), do: "border-[#000] shadow-[0_0_8px_rgba(0,0,0,0.5)]", else: "border-[#999] hover:border-[#000]"}"}
                             title={output["name"]}
                             data-jack-id={"#{device.id}-#{output["id"]}"}
                             phx-click="jack_click"
@@ -263,7 +254,7 @@ defmodule GreenManTavernWeb.RackComponent do
               <div class="text-[10px] font-bold text-[#666] rotate-90 mb-4 whitespace-nowrap">SYS OUTPUTS</div>
               <%= for output <- (@current_view_device.settings["outputs"] || []) do %>
                 <div class="flex flex-col items-center group/jack relative">
-                  <div class={"jack rack-jack w-8 h-8 rounded-full bg-[#ccc] border-4 border-[#999] cursor-pointer relative z-20 transition-colors #{if is_selected?(@patching_state, @current_view_device.id, output["id"]), do: "border-[#00f] shadow-[0_0_10px_#00f]", else: "hover:border-[#666]"}"}
+                  <div class={"jack rack-jack w-8 h-8 rounded-full bg-[#ccc] border-4 border-[#999] cursor-pointer relative z-20 transition-colors #{if is_selected?(@patching_state, @current_view_device.id, output["id"]), do: "border-[#000] shadow-[0_0_8px_rgba(0,0,0,0.5)]", else: "hover:border-[#666]"}"}
                     title={output["name"]}
                     data-jack-id={"#{@current_view_device.id}-#{output["id"]}"}
                     phx-click="jack_click"
@@ -288,7 +279,7 @@ defmodule GreenManTavernWeb.RackComponent do
             <div class="flex justify-between items-center mb-4">
               <h2 class="text-xl font-bold">Edit Device</h2>
               <%= if @editing_device.settings["is_composite"] do %>
-                <button class={"px-3 py-1 text-xs font-bold uppercase tracking-wider border rounded transition-colors " <> if(@edit_mode == :back, do: "bg-purple-600 text-white border-purple-600", else: "bg-white text-purple-600 border-purple-200 hover:bg-purple-50")}
+                <button class={"px-3 py-1 text-xs font-bold uppercase tracking-wider border rounded transition-colors " <> if(@edit_mode == :back, do: "bg-[#555] text-white border-[#555]", else: "bg-white text-[#333] border-[#ccc] hover:bg-[#f5f5f5]")}
                         phx-click="toggle_edit_mode"
                         phx-target={@myself}>
                   <%= if @edit_mode == :back, do: "Show Front", else: "Show Internals" %>
@@ -304,14 +295,14 @@ defmodule GreenManTavernWeb.RackComponent do
                          phx-blur="update_device_name"
                          phx-value-name={@editing_device.name}
                          phx-target={@myself}
-                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500" />
                 </div>
 
                 <!-- Inputs Config -->
                 <div class="mb-4">
                   <div class="flex justify-between items-center mb-2">
                     <label class="block text-sm font-medium text-gray-700">Inputs</label>
-                    <button type="button" phx-click="add_port" phx-value-type="input" phx-target={@myself} class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded hover:bg-blue-200">+ Add</button>
+                    <button type="button" phx-click="add_port" phx-value-type="input" phx-target={@myself} class="text-xs bg-[#e0e0e0] text-[#333] px-2 py-1 rounded hover:bg-[#d0d0d0] transition-colors">+ Add</button>
                   </div>
                   <div class="space-y-2">
                     <%= for {input, idx} <- Enum.with_index(@editing_device.settings["inputs"] || []) do %>
@@ -325,18 +316,18 @@ defmodule GreenManTavernWeb.RackComponent do
                                  phx-target={@myself}
                                  class="block w-full text-sm rounded-md border-gray-300" />
                           <input type="hidden" name={"inputs[#{idx}][id]"} value={input["id"]} />
-                          <button type="button" phx-click="remove_port" phx-value-type="input" phx-value-idx={idx} phx-target={@myself} class="text-red-500 hover:text-red-700">×</button>
+                          <button type="button" phx-click="remove_port" phx-value-type="input" phx-value-idx={idx} phx-target={@myself} class="text-[#666] hover:text-[#000] font-bold transition-colors">×</button>
                         </div>
 
                         <% connected_cable = get_connected_cable(@editing_device.id, input["id"], @cables) %>
                         <%= if connected_cable do %>
-                          <div class="flex items-center justify-between text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded border border-blue-100">
+                          <div class="flex items-center justify-between text-xs text-[#333] bg-[#f5f5f5] px-2 py-1 rounded border border-[#ddd]">
                             <span>🔗 Connected to: <strong><%= get_peer_device_name(connected_cable, @editing_device.id, @devices) %></strong></span>
                             <button type="button"
                                     phx-click="delete_cable"
                                     phx-value-id={connected_cable.id}
                                     phx-target={@myself}
-                                    class="text-red-500 hover:text-red-700 font-bold px-1"
+                                    class="text-[#666] hover:text-[#000] font-bold px-1 transition-colors"
                                     title="Disconnect">
                               Disconnect
                             </button>
@@ -351,7 +342,7 @@ defmodule GreenManTavernWeb.RackComponent do
                 <div class="mb-4">
                   <div class="flex justify-between items-center mb-2">
                     <label class="block text-sm font-medium text-gray-700">Outputs</label>
-                    <button type="button" phx-click="add_port" phx-value-type="output" phx-target={@myself} class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded hover:bg-blue-200">+ Add</button>
+                    <button type="button" phx-click="add_port" phx-value-type="output" phx-target={@myself} class="text-xs bg-[#e0e0e0] text-[#333] px-2 py-1 rounded hover:bg-[#d0d0d0] transition-colors">+ Add</button>
                   </div>
                   <div class="space-y-2">
                     <%= for {output, idx} <- Enum.with_index(@editing_device.settings["outputs"] || []) do %>
@@ -365,18 +356,18 @@ defmodule GreenManTavernWeb.RackComponent do
                                  phx-target={@myself}
                                  class="block w-full text-sm rounded-md border-gray-300" />
                           <input type="hidden" name={"outputs[#{idx}][id]"} value={output["id"]} />
-                          <button type="button" phx-click="remove_port" phx-value-type="output" phx-value-idx={idx} phx-target={@myself} class="text-red-500 hover:text-red-700">×</button>
+                          <button type="button" phx-click="remove_port" phx-value-type="output" phx-value-idx={idx} phx-target={@myself} class="text-[#666] hover:text-[#000] font-bold transition-colors">×</button>
                         </div>
 
                         <% connected_cable = get_connected_cable(@editing_device.id, output["id"], @cables) %>
                         <%= if connected_cable do %>
-                          <div class="flex items-center justify-between text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded border border-blue-100">
+                          <div class="flex items-center justify-between text-xs text-[#333] bg-[#f5f5f5] px-2 py-1 rounded border border-[#ddd]">
                             <span>🔗 Connected to: <strong><%= get_peer_device_name(connected_cable, @editing_device.id, @devices) %></strong></span>
                             <button type="button"
                                     phx-click="delete_cable"
                                     phx-value-id={connected_cable.id}
                                     phx-target={@myself}
-                                    class="text-red-500 hover:text-red-700 font-bold px-1"
+                                    class="text-[#666] hover:text-[#000] font-bold px-1 transition-colors"
                                     title="Disconnect">
                               Disconnect
                             </button>
@@ -389,7 +380,7 @@ defmodule GreenManTavernWeb.RackComponent do
 
                 <div class="flex justify-end gap-2 mt-6">
                   <button type="button" phx-click="cancel_edit" phx-target={@myself} class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">Cancel</button>
-                  <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save Changes</button>
+                  <button type="submit" class="px-4 py-2 bg-[#555] text-white rounded hover:bg-[#333] transition-colors">Save Changes</button>
                 </div>
               </form>
             <% else %>
@@ -416,14 +407,14 @@ defmodule GreenManTavernWeb.RackComponent do
                         <div class="flex items-start justify-between mb-3">
                           <div>
                             <div class="font-bold text-base mb-1 flex items-center gap-2">
-                              <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                              <div class="w-2 h-2 rounded-full bg-[#666]"></div>
                               <%= child.name %>
                             </div>
                             <div class="text-[10px] text-gray-500 font-mono mb-1">
                               ID: <%= String.slice(to_string(child.id), 0, 12) %>...
                             </div>
                             <%= if child.project_id do %>
-                              <div class="text-[10px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded inline-block">
+                              <div class="text-[10px] bg-[#e8e8e8] text-[#555] px-1.5 py-0.5 rounded inline-block border border-[#ccc]">
                                 Project-based
                               </div>
                             <% end %>
@@ -445,11 +436,11 @@ defmodule GreenManTavernWeb.RackComponent do
                                   <% connected_cable = get_connected_cable(child.id, input["id"], @editing_device_cables) %>
                                   <div class="flex flex-col gap-1 p-1.5 rounded bg-gray-50 border border-gray-100">
                                     <div class="flex items-center gap-1.5">
-                                      <div class={"w-2 h-2 rounded-full #{if connected_cable, do: "bg-green-500", else: "bg-gray-300"}"} title={if connected_cable, do: "Connected", else: "Disconnected"}></div>
+                                      <div class={"w-2 h-2 rounded-full #{if connected_cable, do: "bg-[#000]", else: "bg-gray-300"}"} title={if connected_cable, do: "Connected", else: "Disconnected"}></div>
                                       <span class="font-mono text-xs font-semibold text-gray-700"><%= input["name"] %></span>
                                     </div>
                                     <%= if connected_cable do %>
-                                      <div class="text-[10px] text-blue-600 ml-3.5 flex items-start gap-1">
+                                      <div class="text-[10px] text-[#333] ml-3.5 flex items-start gap-1">
                                         <span class="shrink-0">🔗</span>
                                         <span class="break-all"><%= get_peer_device_name(connected_cable, child.id, @editing_device_children ++ [@editing_device]) %></span>
                                       </div>
@@ -475,11 +466,11 @@ defmodule GreenManTavernWeb.RackComponent do
                                   <% connected_cable = get_connected_cable(child.id, output["id"], @editing_device_cables) %>
                                   <div class="flex flex-col gap-1 p-1.5 rounded bg-gray-50 border border-gray-100">
                                     <div class="flex items-center gap-1.5">
-                                      <div class={"w-2 h-2 rounded-full #{if connected_cable, do: "bg-green-500", else: "bg-gray-300"}"} title={if connected_cable, do: "Connected", else: "Disconnected"}></div>
+                                      <div class={"w-2 h-2 rounded-full #{if connected_cable, do: "bg-[#000]", else: "bg-gray-300"}"} title={if connected_cable, do: "Connected", else: "Disconnected"}></div>
                                       <span class="font-mono text-xs font-semibold text-gray-700"><%= output["name"] %></span>
                                     </div>
                                     <%= if connected_cable do %>
-                                      <div class="text-[10px] text-blue-600 ml-3.5 flex items-start gap-1">
+                                      <div class="text-[10px] text-[#333] ml-3.5 flex items-start gap-1">
                                         <span class="shrink-0">🔗</span>
                                         <span class="break-all"><%= get_peer_device_name(connected_cable, child.id, @editing_device_children ++ [@editing_device]) %></span>
                                       </div>
@@ -520,12 +511,12 @@ defmodule GreenManTavernWeb.RackComponent do
             <form phx-submit="confirm_save_system" phx-target={@myself}>
               <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700">System Name</label>
-                <input type="text" name="name" placeholder="e.g. My Custom Filter" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500" />
+                <input type="text" name="name" placeholder="e.g. My Custom Filter" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500" />
               </div>
 
               <div class="flex justify-end gap-2 mt-6">
                 <button type="button" phx-click="cancel_save_system" phx-target={@myself} class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">Cancel</button>
-                <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">Save System</button>
+                <button type="submit" class="px-4 py-2 bg-[#555] text-white rounded hover:bg-[#333] transition-colors">Save System</button>
               </div>
             </form>
           </div>
@@ -893,14 +884,18 @@ defmodule GreenManTavernWeb.RackComponent do
           # Clicked same jack, cancel
           {:noreply, assign(socket, :patching_state, nil)}
         else
-          # Complete connection
+          # Complete connection - use grayscale with different patterns
+          cable_shades = ["#000", "#333", "#666", "#999"]
+          cable_patterns = ["solid", "dashed", "dotted", "dash-dot"]
+
           cable_attrs = %{
             user_id: socket.assigns.current_user.id,
             source_device_id: source_device_id,
             source_jack_id: source_jack_id,
             target_device_id: device_id,
             target_jack_id: jack_id,
-            cable_color: Enum.random(["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff"])
+            cable_color: Enum.random(cable_shades),
+            cable_pattern: Enum.random(cable_patterns)
           }
 
           case Rack.create_patch_cable(cable_attrs) do
