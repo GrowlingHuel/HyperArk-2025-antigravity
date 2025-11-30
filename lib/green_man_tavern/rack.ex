@@ -18,8 +18,12 @@ defmodule GreenManTavern.Rack do
       [%Device{}, ...]
 
   """
-  def list_devices do
-    Repo.all(Device)
+  def list_devices(parent_id \\ nil) do
+    if parent_id do
+      Repo.all(from d in Device, where: d.parent_device_id == ^parent_id, order_by: [asc: d.position_index])
+    else
+      Repo.all(from d in Device, where: is_nil(d.parent_device_id), order_by: [asc: d.position_index])
+    end
   end
 
   @doc """
@@ -112,8 +116,32 @@ defmodule GreenManTavern.Rack do
       [%PatchCable{}, ...]
 
   """
-  def list_patch_cables do
-    Repo.all(PatchCable)
+  def list_patch_cables(parent_id \\ nil) do
+    # We need to join with devices to check parent_device_id
+    # A cable is visible in context X if:
+    # 1. Source is child of X AND Target is child of X (Internal)
+    # 2. Source is X AND Target is child of X (Boundary Input)
+    # 3. Source is child of X AND Target is X (Boundary Output)
+    
+    if parent_id do
+      query = from c in PatchCable,
+        join: s in assoc(c, :source_device),
+        join: t in assoc(c, :target_device),
+        where: 
+          (s.parent_device_id == ^parent_id and t.parent_device_id == ^parent_id) or
+          (s.id == ^parent_id and t.parent_device_id == ^parent_id) or
+          (s.parent_device_id == ^parent_id and t.id == ^parent_id)
+      
+      Repo.all(query)
+    else
+      # Top level: Source and Target must be top-level devices (parent_device_id is nil)
+      query = from c in PatchCable,
+        join: s in assoc(c, :source_device),
+        join: t in assoc(c, :target_device),
+        where: is_nil(s.parent_device_id) and is_nil(t.parent_device_id)
+      
+      Repo.all(query)
+    end
   end
 
   @doc """
