@@ -124,392 +124,460 @@ defmodule GreenManTavernWeb.PlantingGuidePanelComponent do
       |> assign(:editing_plant_id, nil)
 
     # If we have a default city from user_plants, filter plants accordingly
-    if page_data[:selected_city_id] do
-      filter_planting_guide_plants(socket)
-    else
-      socket
-    end
+    socket =
+      if page_data[:selected_city_id] do
+        # Auto-load weather for default city
+        city_name = page_data[:selected_city].city_name
+        weather_report = fetch_weather(city_name)
+        
+        socket
+        |> assign(:weather_report, weather_report)
+        |> filter_planting_guide_plants()
+      else
+        socket
+      end
+
+    socket
   end
 
   @impl true
   def render(assigns) do
     ~H"""
-    <div style="height: 100%">
-              <div class="planting-guide-container">
-                <%!-- Filter Section --%>
-                <div class="filters-section">
-                  <%!-- City Selector --%>
-                  <div class="filter-group">
-                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                      <label style="margin: 0; font-weight: bold;">Select your city:</label>
-                      <form phx-change="select_city" phx-target={@myself} phx-submit="ignore" style="flex: 1; margin: 0;">
-                        <select name="city_id" id="city-selector" style="width: 100%;">
-                          <option value="">-- Choose a city --</option>
-                          <%= for city <- @page_data[:cities] || [] do %>
-                            <% hemisphere_abbr = if city.hemisphere == "Southern", do: "S", else: "N" %>
-                            <option value={city.id} selected={@page_data[:selected_city_id] == city.id}>
-                              <%= city.city_name %>, <%= city.country %> (<%= city.koppen_code %>) - <%= hemisphere_abbr %>
-                            </option>
-                          <% end %>
-                        </select>
-                      </form>
+    <div style="height: 100%; display: flex; flex-direction: column;">
+      <div class="planting-guide-container" style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
+        <%!-- Filter Section --%>
+        <div class="filters-section" style="flex-shrink: 0;">
+          
+          <%!-- 2-Column Grid for Main Filters --%>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+            
+            <%!-- Row 1, Col 1: Plant Type --%>
+            <div class="filter-group" style="margin: 0;">
+              <label style="font-weight: bold; display: block; margin-bottom: 4px;">Plant Type:</label>
+              <form phx-change="select_plant_type" phx-target={@myself} phx-submit="ignore">
+                <select name="type" style="width: 100%;">
+                  <option value="all" selected={@page_data[:selected_plant_type] == "all"}>All Types</option>
+                  <option value="vegetable" selected={@page_data[:selected_plant_type] == "vegetable"}>Vegetables</option>
+                  <option value="herb" selected={@page_data[:selected_plant_type] == "herb"}>Herbs</option>
+                  <option value="fruit" selected={@page_data[:selected_plant_type] == "fruit"}>Fruits</option>
+                  <option value="flower" selected={@page_data[:selected_plant_type] == "flower"}>Flowers</option>
+                </select>
+              </form>
+            </div>
+
+            <%!-- Row 1, Col 2: Difficulty --%>
+            <div class="filter-group" style="margin: 0;">
+              <label style="font-weight: bold; display: block; margin-bottom: 4px;">Difficulty:</label>
+              <form phx-change="select_difficulty" phx-target={@myself} phx-submit="ignore">
+                <select name="difficulty" style="width: 100%;">
+                  <option value="all" selected={@page_data[:selected_difficulty] == "all"}>All Levels</option>
+                  <option value="easy" selected={@page_data[:selected_difficulty] == "easy"}>Easy</option>
+                  <option value="medium" selected={@page_data[:selected_difficulty] == "medium"}>Medium</option>
+                  <option value="hard" selected={@page_data[:selected_difficulty] == "hard"}>Hard</option>
+                </select>
+              </form>
+            </div>
+
+            <%!-- Row 2, Col 1: City Selector --%>
+            <div class="filter-group" style="margin: 0;">
+              <label style="font-weight: bold; display: block; margin-bottom: 4px;">Select City:</label>
+              <form phx-change="select_city" phx-target={@myself} phx-submit="ignore">
+                <select name="city_id" id="city-selector" style="width: 100%;">
+                  <option value="">-- Choose a city --</option>
+                  <%= for city <- @page_data[:cities] || [] do %>
+                    <% hemisphere_abbr = if city.hemisphere == "Southern", do: "S", else: "N" %>
+                    <option value={city.id} selected={@page_data[:selected_city_id] == city.id}>
+                      <%= city.city_name %> (<%= city.koppen_code %>)
+                    </option>
+                  <% end %>
+                </select>
+              </form>
+            </div>
+
+            <%!-- Row 2, Col 2: Companion Planting --%>
+            <div class="filter-group" style="margin: 0;">
+              <label style="font-weight: bold; display: block; margin-bottom: 4px; color: #2E7D32;">Companion Planting:</label>
+              <div style="display: flex; gap: 5px;">
+                <form phx-change="toggle_companion_filter" phx-target={@myself} phx-submit="ignore" style="flex: 1;">
+                  <select name="plant_id" style="width: 100%;">
+                    <option value="">-- Highlight Companions --</option>
+                    <%= for plant <- @page_data[:all_plants] || [] do %>
+                      <option value={plant.id} selected={@page_data[:selected_companion_plant] && @page_data[:selected_companion_plant].id == plant.id}>
+                        <%= plant.common_name %>
+                      </option>
+                    <% end %>
+                  </select>
+                </form>
+                <%= if @page_data[:selected_companion_plant] do %>
+                  <button phx-click="clear_companion_filter" phx-target={@myself} style="background: #FFF; border: 1px solid #2E7D32; cursor: pointer; padding: 0 8px; font-size: 12px; color: #2E7D32;">Clear</button>
+                <% end %>
+              </div>
+            </div>
+
+          </div>
+
+          <%!-- Date Selection (Compact) --%>
+          <div class="filter-group" style="background: #FFF; padding: 8px; border: 2px solid #000; box-shadow: 2px 2px 0 #000; display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+            <label style="font-weight: bold; white-space: nowrap;">Planning Date:</label>
+            <div style="display: flex; gap: 5px; flex: 1;">
+              <form phx-change="select_month" phx-target={@myself} phx-submit="ignore" style="flex: 2;">
+                <select name="month" style="width: 100%;">
+                  <%= for month <- 1..12 do %>
+                    <option value={month} selected={@page_data[:selected_month] == month}>
+                      <%= Calendar.strftime(Date.new!(2024, month, 1), "%B") %>
+                    </option>
+                  <% end %>
+                </select>
+              </form>
+              <form phx-change="select_day" phx-target={@myself} phx-submit="ignore" style="flex: 1;">
+                <select name="day" style="width: 100%;">
+                  <%= for day <- 1..31 do %>
+                    <option value={day} selected={@page_data[:selected_day] && @page_data[:selected_day].day == day}>
+                      <%= day %>
+                    </option>
+                  <% end %>
+                </select>
+              </form>
+            </div>
+            <div style="font-weight: bold; font-size: 12px; white-space: nowrap;">
+              <%= if @page_data[:selected_day] do %>
+                <%= Calendar.strftime(@page_data[:selected_day], "%b %d") %>
+              <% else %>
+                Select date
+              <% end %>
+            </div>
+          </div>
+
+          <%!-- Weather Report (Collapsible) --%>
+          <details style="margin-bottom: 15px; border: 1px solid #999; padding: 8px; background: #E0F7FA;">
+            <summary style="font-weight: bold; cursor: pointer; font-family: Georgia, 'Times New Roman', serif; font-size: 12px; display: flex; justify-content: space-between; align-items: center;">
+              <span>🌤️ Weather Forecast (<%= if @page_data[:selected_city], do: @page_data[:selected_city].city_name, else: "Select City" %>)</span>
+              <span style="font-size: 10px; font-weight: normal;">(wttr.in)</span>
+            </summary>
+            <div style="margin-top: 10px;">
+              <%= if @page_data[:selected_city] do %>
+                <%= if assigns[:weather_report] do %>
+                  <pre style="font-family: monospace; font-size: 10px; background: #000; color: #FFF; padding: 10px; overflow-x: auto; border-radius: 4px; line-height: 1.2;"><%= @weather_report %></pre>
+                  <div style="text-align: right; margin-top: 5px;">
+                    <button phx-click="load_weather" phx-target={@myself} style="font-size: 10px; text-decoration: underline; background: none; border: none; cursor: pointer; color: #006064;">Refresh</button>
+                  </div>
+                <% else %>
+                  <div style="text-align: center; padding: 10px;">
+                    <button phx-click="load_weather" phx-target={@myself} style="background: #006064; color: #FFF; border: none; padding: 5px 15px; cursor: pointer; font-weight: bold; border-radius: 4px;">
+                      Load 3-Day Forecast
+                    </button>
+                    <div style="font-size: 10px; margin-top: 5px; color: #666;">Fetches ASCII weather from wttr.in</div>
+                  </div>
+                <% end %>
+              <% else %>
+                <div style="text-align: center; padding: 10px; font-style: italic; color: #666;">
+                  Please select a city first.
+                </div>
+              <% end %>
+            </div>
+          </details>
+
+          <%!-- Manual Overrides (Collapsible) --%>
+          <details style="margin-bottom: 15px; border: 1px solid #999; padding: 8px; background: #EEE;">
+            <summary style="font-weight: bold; cursor: pointer; font-family: Georgia, 'Times New Roman', serif; font-size: 12px;">
+              Manual Climate Settings
+            </summary>
+            <div style="margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <div class="filter-group" style="grid-column: span 2;">
+                <label>Climate Zone (Koppen):</label>
+                <form phx-change="select_zone" phx-target={@myself} phx-submit="ignore">
+                  <select name="zone_id" style="width: 100%;">
+                    <option value="">-- Select Zone --</option>
+                    <%= for zone <- @page_data[:koppen_zones] || [] do %>
+                      <option value={zone.code} selected={@page_data[:selected_climate_zone] == zone.code}>
+                        <%= zone.code %> - <%= zone.description %>
+                      </option>
+                    <% end %>
+                  </select>
+                </form>
+              </div>
+
+              <div class="filter-group">
+                <label>Last Frost (Spring):</label>
+                <form phx-change="select_last_frost" phx-target={@myself} phx-submit="ignore">
+                  <input type="date" name="date" value={if @page_data[:last_frost_date], do: Date.to_string(@page_data[:last_frost_date])} 
+                         style="width: 100%; padding: 5px; border: 2px solid #000; font-family: Georgia, 'Times New Roman', serif;">
+                </form>
+              </div>
+
+              <div class="filter-group">
+                <label>First Frost (Autumn):</label>
+                <form phx-change="select_first_frost" phx-target={@myself} phx-submit="ignore">
+                  <input type="date" name="date" value={if @page_data[:first_frost_date], do: Date.to_string(@page_data[:first_frost_date])}
+                         style="width: 100%; padding: 5px; border: 2px solid #000; font-family: Georgia, 'Times New Roman', serif;">
+                </form>
+              </div>
+            </div>
+          </details>
+
+        </div>
+
+        <%!-- Resizer Handle --%>
+        <div id="planting-guide-resizer" class="planting-guide-resizer" phx-hook="PlantingGuideResizer">
+          <div class="resizer-handle">↕</div>
+        </div>
+
+        <%!-- Plants Grid --%>
+        <div class="plants-grid-container" style="flex: 1; overflow-y: auto;">
+          <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="font-family: Georgia, 'Times New Roman', serif; margin: 0; font-size: 18px;">
+              Available Plants (<%= length(@page_data[:filtered_plants] || []) %>)
+            </h2>
+            
+            <%!-- View Toggle --%>
+            <div style="display: flex; border: 2px solid #000;">
+              <button phx-click="set_view_mode" phx-value-mode="grid" phx-target={@myself}
+                      style={"padding: 5px 10px; cursor: pointer; background: #{if @page_data[:view_mode] == "grid", do: "#000", else: "#FFF"}; color: #{if @page_data[:view_mode] == "grid", do: "#FFF", else: "#000"}; border: none; font-family: monospace;"}>
+                GRID
+              </button>
+              <button phx-click="set_view_mode" phx-value-mode="list" phx-target={@myself}
+                      style={"padding: 5px 10px; cursor: pointer; background: #{if @page_data[:view_mode] == "list", do: "#000", else: "#FFF"}; color: #{if @page_data[:view_mode] == "list", do: "#FFF", else: "#000"}; border: none; font-family: monospace;"}>
+                LIST
+              </button>
+            </div>
+          </div>
+
+          <%= if @page_data[:filtered_plants] && length(@page_data[:filtered_plants]) > 0 do %>
+            <%= if @page_data[:view_mode] == "list" do %>
+              <%!-- List View --%>
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                <%= for plant <- @page_data[:filtered_plants] do %>
+                  <% 
+                    # Determine companion status style
+                    companion_style = 
+                      cond do
+                        @page_data[:selected_companion_plant] && plant.id == @page_data[:selected_companion_plant].id ->
+                          "border-color: #000; background: #FFF; box-shadow: 0 0 10px rgba(0,0,0,0.5);"
+                        @page_data[:selected_companion_plant] && plant.id in (@page_data[:good_companion_ids] || []) ->
+                          "border-color: #2E7D32; background: #E8F5E9;"
+                        @page_data[:selected_companion_plant] && plant.id in (@page_data[:bad_companion_ids] || []) ->
+                          "border-color: #C62828; background: #FFEBEE;"
+                        true -> ""
+                      end
+                      
+                    # Determine companion group pattern class
+                    companion_group_class = ""
+                  %>
+                  <div class={"plant-card #{companion_group_class}"} phx-click="view_plant_details" phx-value-plant_id={plant.id} phx-target={@myself} style={companion_style}>
+                    <div class="plant-type-sidebar">
+                      <span class="plant-type-text"><%= String.upcase(plant.plant_type) %></span>
                     </div>
-                    <div style="font-size: 11px; color: #666; margin-top: 4px;">
-                      * Selecting a city will automatically set your climate zone and frost dates
+                    <div class="plant-card-content" style="display: flex; justify-content: space-between; align-items: center;">
+                      <div>
+                        <h3 style="border: none; margin: 0;"><%= plant.common_name %></h3>
+                        <div style="font-size: 11px; color: #666;"><%= plant.scientific_name %></div>
+                      </div>
+                      <div style="text-align: right;">
+                        <div style="font-weight: bold; font-size: 12px;">
+                          <%= if plant.days_to_harvest_min, do: "#{plant.days_to_harvest_min} days", else: "N/A" %>
+                        </div>
+                        <div style="font-size: 10px;">to harvest</div>
+                      </div>
                     </div>
                   </div>
+                <% end %>
+              </div>
+            <% else %>
+              <%!-- Grid View --%>
+              <div class="plants-grid">
+                <%= for plant <- @page_data[:filtered_plants] do %>
+                  <% 
+                    # Determine companion status style
+                    companion_style = 
+                      cond do
+                        @page_data[:selected_companion_plant] && plant.id == @page_data[:selected_companion_plant].id ->
+                          "border-color: #000; background: #FFF; box-shadow: 0 0 10px rgba(0,0,0,0.5);"
+                        @page_data[:selected_companion_plant] && plant.id in (@page_data[:good_companion_ids] || []) ->
+                          "border-color: #2E7D32; background: #E8F5E9;"
+                        @page_data[:selected_companion_plant] && plant.id in (@page_data[:bad_companion_ids] || []) ->
+                          "border-color: #C62828; background: #FFEBEE;"
+                        true -> ""
+                      end
+                      
+                    # Determine companion group pattern class
+                    companion_group_class = ""
+                  %>
+                  <div class={"plant-card #{companion_group_class}"} phx-click="view_plant_details" phx-value-plant_id={plant.id} phx-target={@myself} style={companion_style}>
+                    <div class="plant-type-sidebar">
+                      <span class="plant-type-text"><%= String.upcase(plant.plant_type) %></span>
+                    </div>
+                    <div class="plant-card-content">
+                      <h3><%= plant.common_name %></h3>
+                      <div class="plant-info">
+                        <p><strong>Scientific:</strong> <%= plant.scientific_name %></p>
+                        <p><strong>Family:</strong> <%= plant.plant_family %></p>
+                        <p><strong>Spacing:</strong> <%= plant.space_required %>"</p>
+                        <p><strong>Sun:</strong> <%= plant.sunlight_needs %></p>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          <% else %>
+            <div style="text-align: center; padding: 40px; color: #666; font-style: italic;">
+              No plants match your current filters. Try adjusting the climate zone or date.
+            </div>
+          <% end %>
+        </div>
+      </div>
 
-                  <%!-- Manual Overrides (Collapsible) --%>
-                  <details style="margin-bottom: 15px; border: 1px solid #999; padding: 8px; background: #EEE;">
-                    <summary style="font-weight: bold; cursor: pointer; font-family: Georgia, 'Times New Roman', serif; font-size: 12px;">
-                      Manual Climate Settings
-                    </summary>
-                    <div style="margin-top: 10px;">
-                      <div class="filter-group">
-                        <label>Climate Zone (Koppen):</label>
-                        <form phx-change="select_zone" phx-target={@myself} phx-submit="ignore">
-                          <select name="zone_id">
-                            <option value="">-- Select Zone --</option>
-                            <%= for zone <- @page_data[:koppen_zones] || [] do %>
-                              <option value={zone.code} selected={@page_data[:selected_climate_zone] == zone.code}>
-                                <%= zone.code %> - <%= zone.description %>
-                              </option>
-                            <% end %>
+      <%!-- Plant Details Modal --%>
+      <%= if @page_data[:selected_plant] do %>
+        <div class="modal-overlay" phx-click="clear_plant_details" phx-target={@myself}>
+          <div class="modal-content" phx-click="stop_propagation" phx-target={@myself}>
+            <button class="modal-close-btn" phx-click="clear_plant_details" phx-target={@myself}>X</button>
+            
+            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+              <div style="flex: 1; min-width: 300px;">
+                <h2 style="font-family: Georgia, 'Times New Roman', serif; font-size: 28px; margin-top: 0; border-bottom: 4px solid #000; padding-bottom: 10px;">
+                  <%= @page_data[:selected_plant].common_name %>
+                </h2>
+                <div style="font-style: italic; margin-bottom: 20px; font-size: 16px;"><%= @page_data[:selected_plant].scientific_name %></div>
+                
+                <div style="background: #EEE; padding: 15px; border: 2px solid #000; margin-bottom: 20px;">
+                  <h3 style="margin-top: 0;">Quick Facts</h3>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;">
+                    <div><strong>Type:</strong> <%= String.capitalize(@page_data[:selected_plant].plant_type) %></div>
+                    <div><strong>Family:</strong> <%= @page_data[:selected_plant].plant_family %></div>
+                    <div><strong>Difficulty:</strong> <%= String.capitalize(@page_data[:selected_plant].growing_difficulty) %></div>
+                    <div><strong>Life Cycle:</strong> <%= String.capitalize(@page_data[:selected_plant].perennial_annual) %></div>
+                    <div><strong>Sun:</strong> <%= @page_data[:selected_plant].sunlight_needs %></div>
+                    <div><strong>Water:</strong> <%= @page_data[:selected_plant].water_needs %></div>
+                  </div>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                  <h3>Description</h3>
+                  <p style="line-height: 1.6;"><%= @page_data[:selected_plant].description %></p>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                  <h3>Growing Information</h3>
+                  <ul style="line-height: 1.6;">
+                    <li><strong>Sowing Method:</strong> <%= @page_data[:selected_plant].description %></li>
+                    <li><strong>Depth:</strong> N/A inches</li>
+                    <li><strong>Spacing:</strong> <%= @page_data[:selected_plant].space_required %> inches apart</li>
+                    <li><strong>Days to Maturity:</strong> <%= @page_data[:selected_plant].days_to_harvest_min %> days</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div style="flex: 1; min-width: 300px;">
+                <div class="companions-section">
+                  <h3>Good Companions (Friends)</h3>
+                  <div class="companion-tags">
+                    <%= for companion <- @page_data[:good_companions] || [] do %>
+                      <div class="companion-tag good" phx-click="view_plant_details" phx-value-plant_id={companion.id} phx-target={@myself} style="cursor: pointer;">
+                        <strong><%= companion.common_name %></strong>
+                        <div style="font-size: 10px; margin-top: 2px;"><%= companion.relationship_notes %></div>
+                      </div>
+                    <% end %>
+                    <%= if length(@page_data[:good_companions] || []) == 0 do %>
+                      <div style="font-style: italic; color: #666;">No specific good companions listed.</div>
+                    <% end %>
+                  </div>
+
+                  <h3>Bad Companions (Foes)</h3>
+                  <div class="companion-tags">
+                    <%= for companion <- @page_data[:bad_companions] || [] do %>
+                      <div class="companion-tag bad" phx-click="view_plant_details" phx-value-plant_id={companion.id} phx-target={@myself} style="cursor: pointer;">
+                        <strong><%= companion.common_name %></strong>
+                        <div style="font-size: 10px; margin-top: 2px;"><%= companion.relationship_notes %></div>
+                      </div>
+                    <% end %>
+                    <%= if length(@page_data[:bad_companions] || []) == 0 do %>
+                      <div style="font-style: italic; color: #666;">No specific bad companions listed.</div>
+                    <% end %>
+                  </div>
+                </div>
+
+                <%!-- User Actions --%>
+                <div style="margin-top: 30px; border-top: 4px solid #000; padding-top: 20px;">
+                  <h3>My Garden Actions</h3>
+                  
+                  <% 
+                    user_plant = Enum.find(@user_plants || [], fn up -> up.plant_id == @page_data[:selected_plant].id end)
+                  %>
+                  
+                  <%= if user_plant do %>
+                    <div style="background: #E8F5E9; border: 2px solid #2E7D32; padding: 15px;">
+                      <div style="font-weight: bold; color: #2E7D32; margin-bottom: 10px;">✓ In Your Garden</div>
+                      
+                      <div style="margin-bottom: 10px;">
+                        <label style="font-weight: bold; display: block; margin-bottom: 5px;">Status:</label>
+                        <form phx-change="update_plant_status" phx-target={@myself}>
+                          <input type="hidden" name="plant_id" value={user_plant.id}>
+                          <select name="status" style="width: 100%; padding: 5px; border: 1px solid #000;">
+                            <option value="planned" selected={user_plant.status == "planned"}>Planned</option>
+                            <option value="planted" selected={user_plant.status == "planted"}>Planted</option>
+                            <option value="harvested" selected={user_plant.status == "harvested"}>Harvested</option>
                           </select>
                         </form>
                       </div>
 
-                      <div class="filter-group">
-                        <label>Last Frost Date (Spring):</label>
-                        <form phx-change="select_last_frost" phx-target={@myself} phx-submit="ignore">
-                          <input type="date" name="date" value={if @page_data[:last_frost_date], do: Date.to_string(@page_data[:last_frost_date])} 
-                                 style="width: 100%; padding: 5px; border: 2px solid #000; font-family: Georgia, 'Times New Roman', serif;">
-                        </form>
-                      </div>
-
-                      <div class="filter-group">
-                        <label>First Frost Date (Autumn):</label>
-                        <form phx-change="select_first_frost" phx-target={@myself} phx-submit="ignore">
-                          <input type="date" name="date" value={if @page_data[:first_frost_date], do: Date.to_string(@page_data[:first_frost_date])}
-                                 style="width: 100%; padding: 5px; border: 2px solid #000; font-family: Georgia, 'Times New Roman', serif;">
-                        </form>
+                      <div style="display: flex; gap: 10px;">
+                        <button phx-click="delete_user_plant" phx-value-id={user_plant.id} phx-target={@myself}
+                                style="background: #FFEBEE; color: #C62828; border: 1px solid #C62828; padding: 5px 10px; cursor: pointer; font-weight: bold;">
+                          Remove from Garden
+                        </button>
                       </div>
                     </div>
-                  </details>
-
-                  <%!-- Date Selection --%>
-                  <div class="filter-group" style="background: #FFF; padding: 10px; border: 2px solid #000; box-shadow: 2px 2px 0 #000;">
-                    <label style="border-bottom: 1px solid #000; padding-bottom: 5px; margin-bottom: 10px;">Planning Date:</label>
-                    <div style="display: flex; gap: 10px;">
-                      <form phx-change="select_month" phx-target={@myself} phx-submit="ignore" style="flex: 1;">
-                        <select name="month">
-                          <%= for month <- 1..12 do %>
-                            <option value={month} selected={@page_data[:selected_month] == month}>
-                              <%= Calendar.strftime(Date.new!(2024, month, 1), "%B") %>
-                            </option>
-                          <% end %>
-                        </select>
-                      </form>
-                      <form phx-change="select_day" phx-target={@myself} phx-submit="ignore" style="flex: 0 0 80px;">
-                        <select name="day">
-                          <%= for day <- 1..31 do %>
-                            <option value={day} selected={@page_data[:selected_day] && @page_data[:selected_day].day == day}>
-                              <%= day %>
-                            </option>
-                          <% end %>
-                        </select>
-                      </form>
-                    </div>
-                    <div style="text-align: center; margin-top: 10px; font-weight: bold; font-size: 14px;">
-                      <%= if @page_data[:selected_day] do %>
-                        <%= Calendar.strftime(@page_data[:selected_day], "%B %d, %Y") %>
-                      <% else %>
-                        Select a date
-                      <% end %>
-                    </div>
-                  </div>
-
-                  <%!-- Filters --%>
-                  <div class="filter-group">
-                    <label>Plant Type:</label>
-                    <form phx-change="select_plant_type" phx-target={@myself} phx-submit="ignore">
-                      <select name="type">
-                        <option value="all" selected={@page_data[:selected_plant_type] == "all"}>All Types</option>
-                        <option value="vegetable" selected={@page_data[:selected_plant_type] == "vegetable"}>Vegetables</option>
-                        <option value="herb" selected={@page_data[:selected_plant_type] == "herb"}>Herbs</option>
-                        <option value="fruit" selected={@page_data[:selected_plant_type] == "fruit"}>Fruits</option>
-                        <option value="flower" selected={@page_data[:selected_plant_type] == "flower"}>Flowers</option>
-                      </select>
-                    </form>
-                  </div>
-
-                  <div class="filter-group">
-                    <label>Difficulty:</label>
-                    <form phx-change="select_difficulty" phx-target={@myself} phx-submit="ignore">
-                      <select name="difficulty">
-                        <option value="all" selected={@page_data[:selected_difficulty] == "all"}>All Levels</option>
-                        <option value="easy" selected={@page_data[:selected_difficulty] == "easy"}>Easy</option>
-                        <option value="medium" selected={@page_data[:selected_difficulty] == "medium"}>Medium</option>
-                        <option value="hard" selected={@page_data[:selected_difficulty] == "hard"}>Hard</option>
-                      </select>
-                    </form>
-                  </div>
-
-                  <%!-- Companion Planting Filter --%>
-                  <div class="filter-group" style="margin-top: 20px; border-top: 2px solid #000; padding-top: 15px;">
-                    <label style="color: #2E7D32;">Companion Planting:</label>
-                    <div style="font-size: 11px; margin-bottom: 10px; color: #555;">
-                      Select a plant to highlight its friends (green) and foes (red).
-                    </div>
-                    
-                    <%= if @page_data[:selected_companion_plant] do %>
-                      <div style="background: #E8F5E9; border: 2px solid #2E7D32; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                          <span style="font-weight: bold;"><%= @page_data[:selected_companion_plant].common_name %></span>
-                          <div style="font-size: 10px;">Showing relationships</div>
-                        </div>
-                        <button phx-click="clear_companion_filter" phx-target={@myself} style="background: #FFF; border: 1px solid #2E7D32; cursor: pointer; padding: 2px 6px; font-size: 10px;">Clear</button>
-                      </div>
-                    <% end %>
-
-                    <form phx-change="toggle_companion_filter" phx-target={@myself} phx-submit="ignore">
-                      <select name="plant_id">
-                        <option value="">-- Highlight Companions For... --</option>
-                        <%= for plant <- @page_data[:all_plants] || [] do %>
-                          <option value={plant.id} selected={@page_data[:selected_companion_plant] && @page_data[:selected_companion_plant].id == plant.id}>
-                            <%= plant.common_name %>
-                          </option>
-                        <% end %>
-                      </select>
-                    </form>
-                  </div>
-                </div>
-
-                <%!-- Resizer Handle --%>
-                <div id="planting-guide-resizer" class="planting-guide-resizer" phx-hook="PlantingGuideResizer">
-                  <div class="resizer-handle">↕</div>
-                </div>
-
-                <%!-- Plants Grid --%>
-                <div class="plants-grid-container">
-                  <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
-                    <h2 style="font-family: Georgia, 'Times New Roman', serif; margin: 0; font-size: 18px;">
-                      Available Plants (<%= length(@page_data[:filtered_plants] || []) %>)
-                    </h2>
-                    
-                    <%!-- View Toggle --%>
-                    <div style="display: flex; border: 2px solid #000;">
-                      <button phx-click="set_view_mode" phx-value-mode="grid" phx-target={@myself}
-                              style={"padding: 5px 10px; cursor: pointer; background: #{if @page_data[:view_mode] == "grid", do: "#000", else: "#FFF"}; color: #{if @page_data[:view_mode] == "grid", do: "#FFF", else: "#000"}; border: none; font-family: monospace;"}>
-                        GRID
-                      </button>
-                      <button phx-click="set_view_mode" phx-value-mode="list" phx-target={@myself}
-                              style={"padding: 5px 10px; cursor: pointer; background: #{if @page_data[:view_mode] == "list", do: "#000", else: "#FFF"}; color: #{if @page_data[:view_mode] == "list", do: "#FFF", else: "#000"}; border: none; font-family: monospace;"}>
-                        LIST
-                      </button>
-                    </div>
-                  </div>
-
-                  <%= if @page_data[:filtered_plants] && length(@page_data[:filtered_plants]) > 0 do %>
-                    <%= if @page_data[:view_mode] == "list" do %>
-                      <%!-- List View --%>
-                      <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <%= for plant <- @page_data[:filtered_plants] do %>
-                          <% 
-                            # Determine companion status style
-                            companion_style = 
-                              cond do
-                                @page_data[:selected_companion_plant] && plant.id == @page_data[:selected_companion_plant].id ->
-                                  "border-color: #000; background: #FFF; box-shadow: 0 0 10px rgba(0,0,0,0.5);"
-                                @page_data[:selected_companion_plant] && plant.id in (@page_data[:good_companion_ids] || []) ->
-                                  "border-color: #2E7D32; background: #E8F5E9;"
-                                @page_data[:selected_companion_plant] && plant.id in (@page_data[:bad_companion_ids] || []) ->
-                                  "border-color: #C62828; background: #FFEBEE;"
-                                true -> ""
-                              end
-                              
-                            # Determine companion group pattern class
-                            companion_group_class = ""
-                          %>
-                          <div class={"plant-card #{companion_group_class}"} phx-click="view_plant_details" phx-value-plant_id={plant.id} phx-target={@myself} style={companion_style}>
-                            <div class="plant-type-sidebar">
-                              <span class="plant-type-text"><%= String.upcase(plant.plant_type) %></span>
-                            </div>
-                            <div class="plant-card-content" style="display: flex; justify-content: space-between; align-items: center;">
-                              <div>
-                                <h3 style="border: none; margin: 0;"><%= plant.common_name %></h3>
-                                <div style="font-size: 11px; color: #666;"><%= plant.scientific_name %></div>
-                              </div>
-                              <div style="text-align: right;">
-                                <div style="font-weight: bold; font-size: 12px;">
-                                  <%= if plant.days_to_harvest_min, do: "#{plant.days_to_harvest_min} days", else: "N/A" %>
-                                </div>
-                                <div style="font-size: 10px;">to harvest</div>
-                              </div>
-                            </div>
-                          </div>
-                        <% end %>
-                      </div>
-                    <% else %>
-                      <%!-- Grid View --%>
-                      <div class="plants-grid">
-                        <%= for plant <- @page_data[:filtered_plants] do %>
-                          <% 
-                            # Determine companion status style
-                            companion_style = 
-                              cond do
-                                @page_data[:selected_companion_plant] && plant.id == @page_data[:selected_companion_plant].id ->
-                                  "border-color: #000; background: #FFF; box-shadow: 0 0 10px rgba(0,0,0,0.5);"
-                                @page_data[:selected_companion_plant] && plant.id in (@page_data[:good_companion_ids] || []) ->
-                                  "border-color: #2E7D32; background: #E8F5E9;"
-                                @page_data[:selected_companion_plant] && plant.id in (@page_data[:bad_companion_ids] || []) ->
-                                  "border-color: #C62828; background: #FFEBEE;"
-                                true -> ""
-                              end
-                              
-                            # Determine companion group pattern class
-                            companion_group_class = ""
-                          %>
-                          <div class={"plant-card #{companion_group_class}"} phx-click="view_plant_details" phx-value-plant_id={plant.id} phx-target={@myself} style={companion_style}>
-                            <div class="plant-type-sidebar">
-                              <span class="plant-type-text"><%= String.upcase(plant.plant_type) %></span>
-                            </div>
-                            <div class="plant-card-content">
-                              <h3><%= plant.common_name %></h3>
-                              <div class="plant-info">
-                                <p><strong>Scientific:</strong> <%= plant.scientific_name %></p>
-                                <p><strong>Family:</strong> <%= plant.plant_family %></p>
-                                <p><strong>Spacing:</strong> <%= plant.space_required %>"</p>
-                                <p><strong>Sun:</strong> <%= plant.sunlight_needs %></p>
-                              </div>
-                            </div>
-                          </div>
-                        <% end %>
-                      </div>
-                    <% end %>
                   <% else %>
-                    <div style="text-align: center; padding: 40px; color: #666; font-style: italic;">
-                      No plants match your current filters. Try adjusting the climate zone or date.
-                    </div>
+                    <button phx-click="add_plant_to_garden" phx-value-plant_id={@page_data[:selected_plant].id} phx-target={@myself}
+                            style="background: #000; color: #FFF; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; font-size: 16px; width: 100%;">
+                      + Add to My Garden
+                    </button>
                   <% end %>
                 </div>
               </div>
-
-              <%!-- Plant Details Modal --%>
-              <%= if @page_data[:selected_plant] do %>
-                <div class="modal-overlay" phx-click="clear_plant_details" phx-target={@myself}>
-                  <div class="modal-content" phx-click="stop_propagation" phx-target={@myself}>
-                    <button class="modal-close-btn" phx-click="clear_plant_details" phx-target={@myself}>X</button>
-                    
-                    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-                      <div style="flex: 1; min-width: 300px;">
-                        <h2 style="font-family: Georgia, 'Times New Roman', serif; font-size: 28px; margin-top: 0; border-bottom: 4px solid #000; padding-bottom: 10px;">
-                          <%= @page_data[:selected_plant].common_name %>
-                        </h2>
-                        <div style="font-style: italic; margin-bottom: 20px; font-size: 16px;"><%= @page_data[:selected_plant].scientific_name %></div>
-                        
-                        <div style="background: #EEE; padding: 15px; border: 2px solid #000; margin-bottom: 20px;">
-                          <h3 style="margin-top: 0;">Quick Facts</h3>
-                          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;">
-                            <div><strong>Type:</strong> <%= String.capitalize(@page_data[:selected_plant].plant_type) %></div>
-                            <div><strong>Family:</strong> <%= @page_data[:selected_plant].plant_family %></div>
-                            <div><strong>Difficulty:</strong> <%= String.capitalize(@page_data[:selected_plant].growing_difficulty) %></div>
-                            <div><strong>Life Cycle:</strong> <%= String.capitalize(@page_data[:selected_plant].perennial_annual) %></div>
-                            <div><strong>Sun:</strong> <%= @page_data[:selected_plant].sunlight_needs %></div>
-                            <div><strong>Water:</strong> <%= @page_data[:selected_plant].water_needs %></div>
-                          </div>
-                        </div>
-
-                        <div style="margin-bottom: 20px;">
-                          <h3>Description</h3>
-                          <p style="line-height: 1.6;"><%= @page_data[:selected_plant].description %></p>
-                        </div>
-
-                        <div style="margin-bottom: 20px;">
-                          <h3>Growing Information</h3>
-                          <ul style="line-height: 1.6;">
-                            <li><strong>Sowing Method:</strong> <%= @page_data[:selected_plant].description %></li>
-                            <li><strong>Depth:</strong> N/A inches</li>
-                            <li><strong>Spacing:</strong> <%= @page_data[:selected_plant].space_required %> inches apart</li>
-                            <li><strong>Days to Maturity:</strong> <%= @page_data[:selected_plant].days_to_harvest_min %> days</li>
-                          </ul>
-                        </div>
-                      </div>
-
-                      <div style="flex: 1; min-width: 300px;">
-                        <div class="companions-section">
-                          <h3>Good Companions (Friends)</h3>
-                          <div class="companion-tags">
-                            <%= for companion <- @page_data[:good_companions] || [] do %>
-                              <div class="companion-tag good" phx-click="view_plant_details" phx-value-plant_id={companion.id} phx-target={@myself} style="cursor: pointer;">
-                                <strong><%= companion.common_name %></strong>
-                                <div style="font-size: 10px; margin-top: 2px;"><%= companion.relationship_notes %></div>
-                              </div>
-                            <% end %>
-                            <%= if length(@page_data[:good_companions] || []) == 0 do %>
-                              <div style="font-style: italic; color: #666;">No specific good companions listed.</div>
-                            <% end %>
-                          </div>
-
-                          <h3>Bad Companions (Foes)</h3>
-                          <div class="companion-tags">
-                            <%= for companion <- @page_data[:bad_companions] || [] do %>
-                              <div class="companion-tag bad" phx-click="view_plant_details" phx-value-plant_id={companion.id} phx-target={@myself} style="cursor: pointer;">
-                                <strong><%= companion.common_name %></strong>
-                                <div style="font-size: 10px; margin-top: 2px;"><%= companion.relationship_notes %></div>
-                              </div>
-                            <% end %>
-                            <%= if length(@page_data[:bad_companions] || []) == 0 do %>
-                              <div style="font-style: italic; color: #666;">No specific bad companions listed.</div>
-                            <% end %>
-                          </div>
-                        </div>
-
-                        <%!-- User Actions --%>
-                        <div style="margin-top: 30px; border-top: 4px solid #000; padding-top: 20px;">
-                          <h3>My Garden Actions</h3>
-                          
-                          <% 
-                            user_plant = Enum.find(@user_plants || [], fn up -> up.plant_id == @page_data[:selected_plant].id end)
-                          %>
-                          
-                          <%= if user_plant do %>
-                            <div style="background: #E8F5E9; border: 2px solid #2E7D32; padding: 15px;">
-                              <div style="font-weight: bold; color: #2E7D32; margin-bottom: 10px;">✓ In Your Garden</div>
-                              
-                              <div style="margin-bottom: 10px;">
-                                <label style="font-weight: bold; display: block; margin-bottom: 5px;">Status:</label>
-                                <form phx-change="update_plant_status" phx-target={@myself}>
-                                  <input type="hidden" name="plant_id" value={user_plant.id}>
-                                  <select name="status" style="width: 100%; padding: 5px; border: 1px solid #000;">
-                                    <option value="planned" selected={user_plant.status == "planned"}>Planned</option>
-                                    <option value="planted" selected={user_plant.status == "planted"}>Planted</option>
-                                    <option value="harvested" selected={user_plant.status == "harvested"}>Harvested</option>
-                                  </select>
-                                </form>
-                              </div>
-
-                              <div style="display: flex; gap: 10px;">
-                                <button phx-click="delete_user_plant" phx-value-id={user_plant.id} phx-target={@myself}
-                                        style="background: #FFEBEE; color: #C62828; border: 1px solid #C62828; padding: 5px 10px; cursor: pointer; font-weight: bold;">
-                                  Remove from Garden
-                                </button>
-                              </div>
-                            </div>
-                          <% else %>
-                            <button phx-click="add_plant_to_garden" phx-value-plant_id={@page_data[:selected_plant].id} phx-target={@myself}
-                                    style="background: #000; color: #FFF; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; font-size: 16px; width: 100%;">
-                              + Add to My Garden
-                            </button>
-                          <% end %>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
     </div>
     """
+  end
+
+  @impl true
+  def handle_event("load_weather", _params, socket) do
+    city = socket.assigns.page_data[:selected_city]
+    
+    if city do
+      weather_report = fetch_weather(city.city_name)
+      {:noreply, assign(socket, :weather_report, weather_report)}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  defp fetch_weather(city_name) do
+    # Fetch weather from wttr.in using curl to ensure terminal-like output (ASCII art)
+    # We use ?0 to get the current weather + 3 day forecast
+    # We strip ANSI codes to display clean text in the browser
+    
+    try do
+      # Use System.cmd to run curl
+      # -s: Silent mode (don't show progress meter)
+      # We remove ?0 to get the full forecast (current + 3 days with details)
+      case System.cmd("curl", ["-s", "https://wttr.in/#{city_name}"]) do
+        {output, 0} ->
+          strip_ansi(output)
+        {_, _} ->
+          "Unable to fetch weather data."
+      end
+    rescue
+      _ -> "Error connecting to weather service."
+    end
+  end
+
+  defp strip_ansi(text) do
+    Regex.replace(~r/\e\[[0-9;]*m/, text, "")
   end
 
 
