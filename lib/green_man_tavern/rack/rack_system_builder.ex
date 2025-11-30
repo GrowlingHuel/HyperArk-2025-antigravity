@@ -57,7 +57,7 @@ defmodule GreenManTavern.Rack.RackSystemBuilder do
 
     # 4. Serialize Internal Data (exclude unloaded associations)
     internal_nodes_data = Map.new(devices, fn d -> 
-      {d.id, d |> Map.from_struct() |> Map.drop([:__meta__, :user, :project, :user_plant, :source_cables, :target_cables])} 
+      {d.id, d |> Map.from_struct() |> Map.drop([:__meta__, :user, :project, :user_plant, :source_cables, :target_cables, :child_devices, :parent_device])} 
     end)
     
     internal_edges_data = Map.new(internal_cables, fn c -> 
@@ -81,12 +81,41 @@ defmodule GreenManTavern.Rack.RackSystemBuilder do
   end
 
   def instantiate(composite_system_id, user_id, project_id, parent_device_id \\ nil) do
+    IO.puts("DEBUG: instantiate called with system_id=#{composite_system_id}, user_id=#{user_id}, project_id=#{inspect(project_id)}")
+    
     case Diagrams.get_composite_system!(composite_system_id) do
       nil -> {:error, :not_found}
       system ->
+        IO.puts("DEBUG: Found system: #{system.name}")
+        IO.puts("DEBUG: external_inputs: #{inspect(system.external_inputs)}")
+        IO.puts("DEBUG: external_outputs: #{inspect(system.external_outputs)}")
+        
         # 1. Create the Parent Device (The System Container)
-        inputs_list = Map.values(system.external_inputs || %{}) |> Enum.sort_by(& &1["id"])
-        outputs_list = Map.values(system.external_outputs || %{}) |> Enum.sort_by(& &1["id"])
+        # Safely handle external_inputs/outputs which might be nil or have different structures
+        inputs_list = 
+          case system.external_inputs do
+            nil -> []
+            inputs when is_map(inputs) -> 
+              inputs
+              |> Map.values()
+              |> Enum.filter(&is_map/1)
+              |> Enum.sort_by(fn item -> Map.get(item, "id", "") end)
+            _ -> []
+          end
+        
+        outputs_list = 
+          case system.external_outputs do
+            nil -> []
+            outputs when is_map(outputs) -> 
+              outputs
+              |> Map.values()
+              |> Enum.filter(&is_map/1)
+              |> Enum.sort_by(fn item -> Map.get(item, "id", "") end)
+            _ -> []
+          end
+        
+        IO.puts("DEBUG: inputs_list: #{inspect(inputs_list)}")
+        IO.puts("DEBUG: outputs_list: #{inspect(outputs_list)}")
 
         device_attrs = %{
           name: system.name,
@@ -101,12 +130,20 @@ defmodule GreenManTavern.Rack.RackSystemBuilder do
             "outputs" => outputs_list
           }
         }
+        
+        IO.puts("DEBUG: About to create device with attrs: #{inspect(device_attrs)}")
 
         case Rack.create_device(device_attrs) do
           {:ok, parent_device} ->
+            IO.puts("DEBUG: Parent device created: #{parent_device.id}")
+            IO.puts("DEBUG: internal_nodes_data: #{inspect(system.internal_nodes_data)}")
+            IO.puts("DEBUG: Number of internal nodes: #{map_size(system.internal_nodes_data || %{})}")
+            
             # 2. Recursively Create Child Devices
             id_map = 
               Enum.reduce(system.internal_nodes_data, %{}, fn {old_id, data}, acc ->
+                IO.puts("DEBUG: Creating child device for old_id=#{old_id}, name=#{data["name"]}")
+                
                 child_attrs = %{
                   name: data["name"],
                   position_index: data["position_index"],
@@ -125,8 +162,12 @@ defmodule GreenManTavern.Rack.RackSystemBuilder do
                 # Current design: The saved data is a snapshot of the device.
                 
                 case Rack.create_device(child_attrs) do
-                  {:ok, child} -> Map.put(acc, old_id, child.id)
-                  _ -> acc # Skip failed devices? Or error out?
+                  {:ok, child} ->
+                    IO.puts("DEBUG: Child device created: #{child.id}")
+                    Map.put(acc, old_id, child.id)
+                  {:error, changeset} ->
+                    IO.puts("DEBUG: Failed to create child device: #{inspect(changeset)}")
+                    acc # Skip failed devices? Or error out?
                 end
               end)
 
